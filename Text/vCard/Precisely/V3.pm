@@ -117,6 +117,7 @@ with 'vCard::Role::FileIO';
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
+=cut
 sub _data {
     my ( $self, $data ) = @_;
     return unless defined $data;
@@ -126,7 +127,6 @@ sub _data {
         $self->$key($value) if defined $value and $self->can($key);
     }
 }
-
 sub load_hashref {
     my ( $self, $hashref ) = @_;
     $self->_data($hashref);
@@ -156,9 +156,9 @@ sub load_file {
 
 Returns $self in case you feel like chaining.  This method assumes $string is
 decoded (but not MIME decoded).
-
 =cut
 
+=cut
 sub load_string {
     my ( $self, $string ) = @_;
 
@@ -172,6 +172,7 @@ sub load_string {
 
     return $self;
 }
+=cut
 
 my @nodes = qw(
     NICKNAME BDAY ADR TEL EMAIL IMPP TZ GEO ORG TITLE ROLE CATEGORIES
