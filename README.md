@@ -32,6 +32,8 @@ $vc->adr( {
 $vc->url({ value => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
 
 use Facebook::Graph;
+use Encode;
+
 my $fb = Facebook::Graph->new(
   app_id => 'your app id',
   secret => 'your secret key',
