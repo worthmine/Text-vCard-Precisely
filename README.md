@@ -46,7 +46,7 @@ my $q = $fb->query->find( $hash->{'facebookID'} )
   ->request
   ->as_hashref;
 
-$vc->socialprofile({ # Now you can set X-Social-Profile 
+$vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
   value => 'https://www.facebook.com/worthmine',
   types => 'facebook',
   displayname => encode_utf8( $q->{'name'} ),
@@ -119,7 +119,7 @@ it's based on Moose with coercion. So These methods accept Arrrayref[HashRef] or
 ### photo(), logo()
 Accepts/returns an arrayref of URLs or Image. it's include encoding Base64.
 
-Be careful! at least, Mac OS X and iOS **do not** read the description beeing URL.  
+Attention! Mac OS X and iOS **ignore** the description beeing URL.  
 
 ### tz(), geo(), nickname(), impp(), lang(), xml(), key()
 I don't think they are not popular paramater but here are the methods!
