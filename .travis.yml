@@ -17,6 +17,7 @@ install:
    - "dzil listdeps   | grep -vP '[^\\w:]' | cpanm --verbose --skip-satisfied"
 
 script:
+  - dzil authordeps --missing | cpanm
   - dzil smoke --release --author
 
 notifications:
