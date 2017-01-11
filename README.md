@@ -11,7 +11,7 @@ $vc->fn( 'Forrest Gump' );
 my $img = GD->new( ... some param ... )->plot->png;
 $vc->photo([
   { value => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
-  { value => $img, media_type => 'image/png' }, # Now you can set image directly
+  { value => $img, media_type => 'image/png' }, # Now you can set a binary image directly
 ]);
 
 $vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!
@@ -41,8 +41,8 @@ my $fb = Facebook::Graph->new(
   secret => 'your secret key',
 );
 $fb->authorize;
-$fb->access_token( $fb->app_id . '|' . $fb->secret );
-my $q = $fb->query->find( $hash->{'facebookID'} )
+$fb->access_token( $fb->{'app_id'} . '|' . $fb->{'secret'} );
+my $q = $fb->query->find( 'some facebookID' )
   ->select_fields(qw( id name ))
   ->request
   ->as_hashref;
