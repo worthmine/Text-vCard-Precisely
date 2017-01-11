@@ -36,10 +36,4 @@ is $vc->as_string, $expected_content, 'photo()';
 $vc->photo( [ { media_type => 'image/gif', value => $img } ] );
 is $vc->as_string, $expected_content, 'photo([])';
 
-$vc->photo($img);
-is $vc->as_string, $expected_content, 'photo($value)';
-
-$vc->photo([$img]);
-is $vc->as_string, $expected_content, 'photo([$value])';
-
 done_testing;
