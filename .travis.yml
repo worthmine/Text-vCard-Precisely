@@ -13,12 +13,12 @@ perl:
 install:
    - cpanm --quiet --notest --skip-satisfied Dist::Zilla
    - cpanm Test::NoTabs
+   - "dzil authordeps --missing | cpanm"
    - "dzil authordeps | grep -vP '[^\\w:]' | cpanm --verbose --notest --skip-satisfied"
    - "dzil listdeps   | grep -vP '[^\\w:]' | cpanm --verbose --skip-satisfied"
 
 script:
   - dzil smoke --release --author
-  - dzil authordeps --missing | cpanm
 
 notifications:
   email:
