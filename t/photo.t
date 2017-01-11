@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Path::Tiny;
 
-use Test::More tests => 4;
+use Test::More tests => 2;
 
 use lib qw(./lib);
 
@@ -35,11 +35,5 @@ is $vc->as_string, $expected_content, 'photo()';
 
 $vc->photo( [ { media_type => 'image/gif', value => $img } ] );
 is $vc->as_string, $expected_content, 'photo([])';
-
-$vc->photo($img);
-is $vc->as_string, $expected_content, 'photo($value)';
-
-$vc->photo([$img]);
-is $vc->as_string, $expected_content, 'photo([$value])';
 
 done_testing;
