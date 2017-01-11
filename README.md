@@ -48,7 +48,7 @@ my $q = $fb->query->find( 'some facebookID' )
   ->as_hashref;
 
 $vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
-  value => 'https://www.facebook.com/worthmine',
+  value => 'https://www.facebook/' . 'some facebookID',
   types => 'facebook',
   displayname => encode_utf8( $q->{'name'} ),
   userid => $q->{'id'},
