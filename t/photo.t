@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Path::Tiny;
 
-use Test::More tests => 4;
+use Test::More tests => 2;
 
 use lib qw(./lib);
 
