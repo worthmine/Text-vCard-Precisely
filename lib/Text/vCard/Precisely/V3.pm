@@ -2,7 +2,7 @@
 package Text::vCard::Precisely::V3;
 $VERSION = 0.01;
 
-use 5.10;
+use 5.10.1;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
