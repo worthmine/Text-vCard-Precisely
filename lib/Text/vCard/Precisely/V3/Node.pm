@@ -17,9 +17,9 @@ has name => ( is => 'rw', required => 1, isa => 'Name' );
 
 subtype 'VALUE'
     => as 'Str'
-    => where { use utf8; decode_utf8($_) =~  m|^[\w\s\W]*$|s }# 本来は厳密にチェックすべき
+    => where { use utf8; decode_utf8($_) =~  m|^[\w\W\s]*$|is }# 本来は厳密にチェックすべき
     => message { "The VALUE you provided, $_, was not supported" };
-has value => ( is => 'rw', required => 1, isa => 'VALUE|ArrayRef' );
+has value => ( is => 'rw', required => 1, isa => 'VALUE' );
 
 has pref => ( is => 'rw', isa => subtype 'Preffered'
     => as 'Int'
@@ -30,8 +30,8 @@ has pref => ( is => 'rw', isa => subtype 'Preffered'
 subtype 'Type'
     => as 'Str'
     => where {
-        m/^(:?work|home)$/s or #common
-        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/s or    # 本当にこれでいのか怪しい
+        m/^(:?work|home)$/is or #common
+        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is or    # 本当にこれでいのか怪しい
         m|^(:?[a-zA-z0-9\-]+/X-[a-zA-z0-9\-]+)$|s; # 結局何でも通る恐れあり
     }
     => message { "The text you provided, $_, was not supported in 'Type'" };
@@ -75,15 +75,18 @@ sub as_string {
     my ($self) = @_;
     my @lines;
     push @lines, uc( $self->name ) || croak "Empty name";
-    push @lines, 'TYPE="' . join( ',', @{ $self->types } ). '"' if @{ $self->types || [] } > 0;
+    push @lines, 'TYPE=' . join( ',', @{ $self->types } ) if @{ $self->types || [] } > 0;
+    push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
     push @lines, 'SORT-AS="' . $self->sort_as . '"' if $self->sort_as and $self->name =~ /^(:?N|ORG)$/is;
 
-    return join(';', @lines ) . ':' . Text::vCard::Precisely::V3::_escape($self->value) unless ref $self->value eq 'Array';
-    return join(';', @lines ) . ':' . join ';', map{ Text::vCard::Precisely::V3::_escape($_) } @{ $self->value };
+    return join(';', @lines ) . ':' . ( ref $self->value eq 'Array'?
+        map{ Text::vCard::Precisely::V3::_escape($_) } @{ $self->value }:
+        Text::vCard::Precisely::V3::_escape($self->value)
+    );
 }
 
 1;

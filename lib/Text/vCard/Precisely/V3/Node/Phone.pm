@@ -10,18 +10,15 @@ has name => (is => 'ro', default => 'TEL', isa => 'Str' );
 
 subtype 'Phone'
     => as 'Str'
-    => where { m/^\d+(:?[ \-]*\d*[ \-]*\d*)$/so }
-    => message { "The Phone you provided, $_, was not supported" };
-coerce 'Phone'
-    => from 'Str'
-    => via { $_ =~ s/[-+\s]+/ /go };
-has value => (is => 'ro', default => '', isa => 'Phone', coerce => 1 );
+    => where { s/[\(\)]//sg; m/^\d+(:?[ \-]*\d*[ \-]*\d*)$/s }
+    => message { "The Number you provided, $_, was not supported in Phone" };
+has value => (is => 'ro', default => '', isa => 'Phone' );
 
 subtype 'PhoneType'
     => as 'Str'
     => where {
-        m/^(:?work|home)$/so or #common
-        m/^(:?text|voice|fax|cell|video|pager|textphone)$/so # for tel
+        m/^(:?work|home)$/iso or #common
+        m/^(:?text|voice|fax|cell|video|pager|textphone)$/is # for tel
     }
     => message { "The text you provided, $_, was not supported in 'Type'" };
 has types => ( is => 'rw', isa => 'ArrayRef[PhoneType] | Undef');
@@ -30,11 +27,13 @@ override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
     push @lines, $self->name || croak "Empty name";
-    push @lines, 'TYPE="' . join( ',', @{ $self->types } ). '"' if @{ $self->types || [] } > 0;
+    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
 
-    return join(';', @lines ) . ':' . $self->value;
+    ( my $value = $self->value ) =~ s/[-+()\s]+/ /sg;
+    $value =~ s/^ //s;
+    return join(';', @lines ) . ':' . $value;
 };
 
 __PACKAGE__->meta->make_immutable;
