@@ -1,10 +1,11 @@
 # NAME
-Text::vCard::Precisely::V3 - Make vCards 3.0 **not 4.0**
+Text::vCard::Precisely::V3 - Read, Write and Make vCards 3.0 **not 4.0**
 
 ## SYNOPSIS
+
 ```
 my $vc = Text::vCard::Precisely::V3->new();
-$vc->n([ 'Gump', 'Forrest', , 'Mr' ]);
+$vc->n([ 'Gump', 'Forrest', , 'Mr', '' ]);
 $vc->fn( 'Forrest Gump' );
 
 my $img = GD->new( ... some param ... )->plot->png;
@@ -13,7 +14,7 @@ $vc->photo([
   { value => $img, media_type => 'image/png' }, # Now you can set image directly
 ]);
 
-$vc->org({ name => 'ORG', value => 'Bubba Gump Shrimp Co.' }); # Now you can set/get org!
+$vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!
 
 $vc->tel({ value => '+1-111-555-1212', types => ['work'], pref => 1 });
 
@@ -55,6 +56,7 @@ $vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
 
 print $vc->as_string();
 ```
+
 ## DESCRIPTION
 
 A vCard is a digital business card.  vCard and [vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) provide an
@@ -84,7 +86,7 @@ These methods accept and return strings.
 ### version()
 Version number of the vcard.  Defaults to **'3.0'**
 
-### fn()
+### fn(), fullname()
 A person's entire name as they would like to see it displayed.  
 
 ### kind()
@@ -93,7 +95,7 @@ To specify the kind of object the vCard represents.
 ### rev()
 To specify revision information about the current vCard.
 
-### bday()
+### bday(), birthday()
 To specify the birth date of the object the vCard represents.
 
 ### anniversary()
@@ -120,8 +122,12 @@ it's based on Moose with coercion. So These methods accept Arrrayref[HashRef] or
 Accepts/returns an arrayref of URLs or Image. it's include encoding Base64.
 
 Attention! Mac OS X and iOS **ignore** the description beeing URL.  
+use Base64 encoding or raw image if you have to show the image you want.
 
-### tz(), geo(), nickname(), impp(), lang(), xml(), key()
+### tz(), timezone()
+To specify information related to the time zone of the object the vCard represents.
+
+### geo(), nickname(), impp(), lang(), xml(), key()
 I don't think they are not popular paramater but here are the methods!
 
 ### note()
