@@ -18,6 +18,7 @@ install:
 
 script:
   - dzil smoke --release --author
+  - dzil authordeps --missing | cpanm
 
 notifications:
   email:
