@@ -13,7 +13,7 @@ has types => ( is => 'rw', isa => 'ArrayRef[Str]');
 subtype 'URL' => as 'Str';
 coerce 'URL'
     => from 'Str'
-    => via { URI->new($_)->as_string };
+    => via { [ URI->new($_)->as_string ] };
 has value => (is => 'ro', default => '', isa => 'URL', coerce => 1 );
 
 override 'as_string' => sub {

@@ -45,6 +45,7 @@ my $hashref = {
     }],
 
     EMAIL => { value => 'forrestgump@example.com' },
+    URL => { value => 'http://www.example.com/dir_photos/my_photo.gif' },
     REV => '2008-04-24T19:52:43Z',
 };
 
@@ -83,6 +84,7 @@ TEL;TYPE=HOME,VOICE:404 555 1212
 EMAIL:forrestgump@example.com
 ORG:Bubba Gump Shrimp Co.
 TITLE:Shrimp Man
+URL:http://www.example.com/dir_photos/my_photo.gif
 PHOTO;MEDIATYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
 REV:2008-04-24T19:52:43Z
 END:VCARD
