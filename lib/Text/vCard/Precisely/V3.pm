@@ -90,7 +90,7 @@ coerce 'Node'
 coerce 'Node'
     => from 'ArrayRef[HashRef]'
     => via { [ map { Text::vCard::Precisely::V3::Node->new($_) } @$_ ] };
-has [qw|fn nickname org impp lang title role categories note xml key geo|]
+has [qw|fn nickname org impp lang title role categories note xml key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
@@ -170,8 +170,8 @@ sub load_file {
 
 =head2 load_string($string)
 
-Returns $self in case you feel like chaining.  This method assumes $string is
-decoded (but not MIME decoded).
+ Returns $self in case you feel like chaining.  This method assumes $string is
+ decoded (but not MIME decoded).
 =cut
 
 sub load_string {
@@ -190,8 +190,11 @@ sub load_string {
 }
 
 my @nodes = qw(
-    FN NICKNAME BDAY ADR TEL EMAIL IMPP TZ GEO ORG TITLE ROLE CATEGORIES
-    NOTE SOUND UID URL KEY SOCIALPROFILE PHOTO LOGO SOURCE
+    FN NICKNAME BDAY ANNIVERSARY GENDER
+    ADR LABEL TEL EMAIL IMPP LANG XML KEY TZ GEO
+    ORG TITLE ROLE CATEGORIES
+    NOTE SOUND UID URL FBURL CALADRURI CALURI
+    KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
 
 sub as_string {
@@ -199,9 +202,10 @@ sub as_string {
     my $string = "BEGIN:VCARD\r\n";
     $string .= 'VERSION:' . $self->version . "\r\n";
     $string .= 'PRODID:' . $self->prodid . "\r\n" if $self->prodid;
+    $string .= 'N:' . join( ';', map{ _escape($_) } @{ $self->n || [ '','','','','' ] } ) . "\r\n";
+#     $string .= 'SORT-STRING:' . decode_utf8($self->sort_string) . "\r\n"
      $string .= 'SORT-STRING:' . $self->sort_string . "\r\n"
     if $self->version ne '4.0' and $self->sort_string;
-    $string .= 'N:' . join( ';', map{ _escape($_) } @{ $self->n || [ '','','','','' ] } ) . "\r\n";
 
     foreach my $node ( @nodes ) {
         my $method = $self->can( lc $node );
@@ -215,18 +219,18 @@ sub as_string {
                 }
             }
         }elsif( $self->$method and $self->$method->isa('Text::vCard::Precisely::V3::Node') ) {
-             $string .= $self->$method->as_string . "\r\n";
+            $string .= $self->$method->as_string . "\r\n";
         }
     }
     unless ( $self->rev ) {
         my ( $s, $m, $h, $d, $M, $y ) = gmtime();
         $self->rev( sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s );
-#        $self->rev( sprintf '%4d%02d%02dT%02d%02d%02dz', $y + 1900, $M + 1, $d, $h, $m, $s );  # in vCard4
+        #        $self->rev( sprintf '%4d%02d%02dT%02d%02d%02dz', $y + 1900, $M + 1, $d, $h, $m, $s );  # in vCard4
     }
 
     $string .= 'REV:' . $self->rev . "\r\n";
     $string .= "END:VCARD";
-
+    #$string = encode( $self->encoding_out, $string );
     my $lf = Text::LineFold->new( CharMax => 74,ColMin => 50, Newline => "\r\n" );   # line break with 75bytes
     return $lf->fold( "", " ", $string );
 }

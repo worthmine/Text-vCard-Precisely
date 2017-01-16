@@ -1,6 +1,7 @@
 BEGIN:VCARD
 VERSION:3.0
 N:Gump;Forrest;;Mr.;
+SORT-STRING:Forrest Gump
 FN:Forrest Gump
 ADR;TYPE=WORK;PREF=1:;100;Waters Edge;Baytown;LA;30314;United States of
  America
@@ -10,7 +11,6 @@ TEL;TYPE=HOME,VOICE:404 555 1212
 EMAIL:forrestgump@example.com
 ORG:Bubba Gump Shrimp Co.
 TITLE:Shrimp Man
-URL:http://www.example.com/dir_photos/my_photo.gif
 PHOTO;MEDIATYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
 REV:2008-04-24T19:52:43Z
 END:VCARD
