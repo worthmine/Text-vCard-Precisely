@@ -1,5 +1,5 @@
 # NAME
-Text::vCard::Precisely::V3 - Read, Write and Make vCards 3.0 **not 4.0**
+Text::vCard::Precisely::V3 - Read, Write and Edit vCards 3.0 **not 4.0**
 
 ## SYNOPSIS
 
@@ -67,77 +67,55 @@ This module is rebuilt from [Text::vCard](https://github.com/ranguard/text-vcard
 To handle an address book with several vCard entries in it, start with
 [vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) and then come back to this module.
 
-Note that the vCard RFC requires version() and full\_name().  This module does
+Note that the vCard RFC requires version() and full_name().  This module does
 not check or warn if these conditions have not been met.
 
 ## METHODS
 
-### as\_string()
+### as_string()
+
 Returns the vCard as a string.
 
-### as\_file($filename)
+### as_file($filename)
+
 Write data in vCard format to $filename.
 
 Dies if not successful.
 
 ## SIMPLE GETTERS/SETTERS
+
 These methods accept and return strings.  
 
 ### version()
+
 Version number of the vcard.  Defaults to **'3.0'**
 
-### fn(), fullname()
-A person's entire name as they would like to see it displayed.  
-
-### kind()
-To specify the kind of object the vCard represents.
-
 ### rev()
+
 To specify revision information about the current vCard.
 
-### bday(), birthday()
-To specify the birth date of the object the vCard represents.
+### kind()
 
-### anniversary()
-The date of marriage, or equivalent, of the object the vCard represents.
-
-### gender()
-To specify the components of the sex and gender identity of the object the vCard represents.
-
-### prodid() 
-To specify the identifier for the product that created the vCard object.
+To specify the kind of object the vCard represents.
 
 ### sort_string()
+
 To specify the family name or given name text to be used for national-language-specific sorting of the FN and N types.
 
 ## ArrayRef GETTERS/SETTERS
 
 ### n()
+
 To specify the components of the name of the object the vCard represents.
 
 ## COMPLEX GETTERS/SETTERS
+
 it's based on Moose with coercion. So These methods accept Arrrayref[HashRef] or HashRef.
 
-### photo(), logo()
-Accepts/returns an arrayref of URLs or Image. it's include encoding Base64.
-
-Attention! Mac OS X and iOS **ignore** the description beeing URL.  
-use Base64 encoding or raw image if you have to show the image you want.
-
-### tz(), timezone()
-To specify information related to the time zone of the object the vCard represents.
-
-### geo(), nickname(), impp(), lang(), xml(), key()
-I don't think they are not popular paramater but here are the methods!
-
-### note()
-To specify supplemental information or a comment that is associated with the vCard.
-
-### org(), title(), role(), categories()
-To specify additional information for your jobs.
-
 ### tel()
+
 Accepts/returns an arrayref that looks like:
+
 ```
     [
       { type => ['work'], value => '651-290-1234', preferred => 1 },
@@ -146,7 +124,9 @@ Accepts/returns an arrayref that looks like:
 ```
 
 ### adr()
+
 Accepts/returns an arrayref that looks like:
+
 ```
     [
       { types => ['work'], street => 'Main St', pref => 1 },
@@ -164,15 +144,26 @@ Accepts/returns an arrayref that looks like:
 ```
 
 ## email()
+
 Accepts/returns an arrayref that looks like:
+
 ```
     [
       { type => ['work'], value => 'bbanner@ssh.secret.army.mil' },
       { type => ['home'], value => 'bbanner@timewarner.com', pref => 1 },
     ]
 ```
+
+or accept the string as email like bellow 
+
+```
+    'bbanner@timewarner.com'
+```
+
 ### url()
+
 Accepts/returns an arrayref that looks like:
+
 ```
     [
       { value => 'https://twitter.com/worthmine', types => ['twitter'] },
@@ -180,11 +171,68 @@ Accepts/returns an arrayref that looks like:
     ]
 ```
 
-### source(), sound(), fburl(), caladruri(), caluri()
-I don't think they are not popular paramater but here are the methods!
+or accept the string as email like bellow 
+
+```
+    'https://github.com/worthmine'
+```
+
+
+### photo(), logo()
+
+Accepts/returns an arrayref of URLs or Image. it's include encoding Base64.
+
+Attention! Mac OS X and iOS **ignore** the description beeing URL.  
+use Base64 encoding or raw image if you have to show the image you want.
+
+### note()
+
+To specify supplemental information or a comment that is associated with the vCard.
+
+### org(), title(), role(), categories()
+
+To specify additional information for your jobs.
+
+### tz(), timezone()
+
+To specify information related to the time zone of the object the vCard represents.
+
+### fn(), fullname()
+
+A person's entire name as they would like to see it displayed.  
+
+### nickname()
+
+To specify the text corresponding to the nickname of the object the vCard represents.
+
+### bday(), birthday()
+
+To specify the birth date of the object the vCard represents.
+
+### anniversary()
+
+The date of marriage, or equivalent, of the object the vCard represents.
+
+### gender()
+
+To specify the components of the sex and gender identity of the object the vCard represents.
+
+### source()
+  
+To identify the source of directory information contained in the content type.
+
+### lang()
+
+To specify the language(s) that may be used for contacting the entity associated with the vCard.
+
+### geo(), impp(), prodid(), xml(), key(), sound(), fburl(), caladruri(), caluri()
+
+I don't think they are not popular paramater, but here are the methods!
 
 ## SEE ALOSO
+
 [RFC6350](https://tools.ietf.org/html/rfc6350), [RFC2426](https://tools.ietf.org/html/rfc2426)
 
 ## AUTHOR
+
 [Yuki Yoshida (worthmine)](https://github.com/worthmine)

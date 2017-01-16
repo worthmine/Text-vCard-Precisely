@@ -6,7 +6,6 @@ use Test::More tests => 7;
 use Data::Section::Simple qw(get_data_section);
 
 use lib qw(./lib);
-use Encode qw(encode_utf8 decode_utf8);
 
 BEGIN { use_ok ('Text::vCard::Precisely::V3') };        #1
 
@@ -50,7 +49,6 @@ my $hashref = {
 #        pref  => 1,
 #        value => "100 Waters Edge\nBaytown\, LA 30314\nUnited States of America"
 #    },
-#    URL => { value => 'http://www.example.com/dir_photos/my_photo.gif' },
     URL => 'http://www.example.com/dir_photos/my_photo.gif',
     EMAIL => 'forrestgump@example.com',
     REV => '2008-04-24T19:52:43Z',
