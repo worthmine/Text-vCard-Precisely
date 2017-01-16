@@ -50,6 +50,9 @@ has tel => ( is => 'rw', isa => 'Tel', coerce => 1 );
 
 subtype 'Email' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Email]';
 coerce 'Email'
+    => from 'Str'
+    => via { [ Text::vCard::Precisely::V3::Node::Email->new({ value => $_ }) ] };
+coerce 'Email'
     => from 'HashRef'
     => via { [ Text::vCard::Precisely::V3::Node::Email->new($_) ] };
 coerce 'Email'
@@ -94,6 +97,9 @@ has [qw|fn nickname org impp lang title role categories note xml key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
+coerce 'URLs'
+    => from 'Str'
+    => via { [Text::vCard::Precisely::V3::Node::URL->new({ value => $_ })] };
 coerce 'URLs'
     => from 'HashRef'
     => via  { [ Text::vCard::Precisely::V3::Node::URL->new($_) ] };

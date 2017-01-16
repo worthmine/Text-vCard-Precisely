@@ -50,7 +50,9 @@ my $hashref = {
 #        pref  => 1,
 #        value => "100 Waters Edge\nBaytown\, LA 30314\nUnited States of America"
 #    },
-    EMAIL => { value => 'forrestgump@example.com' },
+#    URL => { value => 'http://www.example.com/dir_photos/my_photo.gif' },
+    URL => 'http://www.example.com/dir_photos/my_photo.gif',
+    EMAIL => 'forrestgump@example.com',
     REV => '2008-04-24T19:52:43Z',
 };
 
@@ -73,7 +75,7 @@ TODO: {
     my $in_file = path( 't', 'vcard4.vcf' );
     $string = $vc->load_file($in_file)->as_string();
     my $expected_content = $in_file->slurp_utf8;
-    is $string, $expected_content, 'reading vCard4';    #7
+    is $string, $expected_content, 'parsing vCard4';    #7
 }
 
 done_testing;
@@ -94,6 +96,7 @@ TEL;TYPE=HOME,VOICE:404 555 1212
 EMAIL:forrestgump@example.com
 ORG:Bubba Gump Shrimp Co.
 TITLE:Shrimp Man
+URL:http://www.example.com/dir_photos/my_photo.gif
 PHOTO;MEDIATYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
 REV:2008-04-24T19:52:43Z
 END:VCARD
