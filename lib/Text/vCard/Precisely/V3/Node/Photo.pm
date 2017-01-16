@@ -25,7 +25,6 @@ subtype 'Media_type'
     => as 'Str'
     => where { m|^image/(:?X-)?[a-zA-z0-9\-]+$|s }
     => message { "The Text you provided, $_, was not supported in 'Media_type'" };
-#"Text::vCard::Addressbook dones't parse MEDIATYPE around PHOTO"
 has media_type => ( is => 'rw', isa => 'Media_type' );#, default => 'image/gif' );
 override 'as_string' => sub {
     my ($self) = @_;

@@ -1,6 +1,5 @@
 package Text::vCard::Precisely::V3::Node::Address;
 use Carp;
-use Encode;
 
 use Moose;
 use Moose::Util::TypeConstraints;
