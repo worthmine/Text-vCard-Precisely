@@ -171,7 +171,7 @@ Accepts/returns an arrayref that looks like:
     ]
 ```
 
-or accept the string as email like bellow 
+or accept the string as URL like bellow 
 
 ```
     'https://github.com/worthmine'
