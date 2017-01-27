@@ -9,6 +9,7 @@ use lib qw(./lib);
 use Text::vCard::Precisely::V3;
 
 my $vc = Text::vCard::Precisely::V3->new();
+$vc->n([ 'tester', 'test', 'test', 'test', ''  ]);
 $vc->rev('2008-04-24T19:52:43Z');
 
 my $img = <<'END';
