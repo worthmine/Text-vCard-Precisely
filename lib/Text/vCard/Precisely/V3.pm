@@ -75,8 +75,8 @@ has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'St
 
 subtype 'N'
     => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]'
-;#    => where { scalar @$_ == scalar grep{ scalar @$_ == 5 } @$_ }
-#    => message { 'Unvalid length. the length of N must be 5. you provided:' . scalar @$_ };
+    => where { @$_ == scalar grep{ $_->length == 5 } @$_ }
+    => message { 'Unvalid length. the length of N must be 5. you provided:' . ref $_ };
 coerce 'N'
     => from 'HashRef[Str]'
     => via {[ Text::vCard::Precisely::V3::Node::N->new($_) ]};

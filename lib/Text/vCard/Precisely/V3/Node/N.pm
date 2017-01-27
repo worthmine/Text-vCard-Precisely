@@ -5,7 +5,8 @@ use Moose;
 extends 'Text::vCard::Precisely::V3::Node';
 
 has name => (is => 'ro', default => 'N', isa => 'Str' );
-has [qw( family given additional prefixes suffixes )] => ( is => 'rw', isa => 'Str' );
+has [qw( family given additional prefixes suffixes )]
+    => ( is => 'rw', isa => 'Str', default => undef );
 
 has value => ( is => 'rw', default => sub{[ (undef) x 5 ]}, isa => 'ArrayRef[Str]|ArrayRef[Undef]' );
 
@@ -34,6 +35,11 @@ override 'as_string' => sub {
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
+
+sub length {
+    my $self = shift;
+    return scalar @{ $self->value };
+}
 
 #Alias
 sub family_name {
