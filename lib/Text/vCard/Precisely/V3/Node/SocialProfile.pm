@@ -12,7 +12,7 @@ has value => (is => 'rw', isa => 'Str', required => 1 );
 
 subtype 'SocialProfileType'
     => as 'Str'
-    => where { m/^(:?facebook|twitter|linkedin|flickr|myspace|sinaweibo|LINE)$/s } # for social profiles
+    => where { m/^(:?facebook|twitter|linkedin|flickr|myspace|sinaweibo|LINE|GitHub)$/s } # for social profiles
     => message { "The text you provided, $_, was not supported in 'SocialProfileType'" };
 has types => ( is => 'rw', isa => 'SocialProfileType', required => 1 );
 

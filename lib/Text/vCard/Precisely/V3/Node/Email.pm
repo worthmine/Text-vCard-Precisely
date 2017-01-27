@@ -13,8 +13,8 @@ has value => (is => 'ro', default => '', isa => EmailAddress );
 subtype 'EmailType'
     => as 'Str'
     => where {
-        m/^(:?work|home)$/so or # common
-        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/so    # is this correct?
+        m/^(:?work|home)$/so or #common
+        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/so    # 本当にこれでいのか怪しい
     }
     => message { "The Email you provided, $_, was not supported in 'Type'" };
 

@@ -13,6 +13,7 @@ use Encode;
 use Text::LineFold;
 
 use Text::vCard::Precisely::V3::Node;
+use Text::vCard::Precisely::V3::Node::N;
 use Text::vCard::Precisely::V3::Node::Address;
 use Text::vCard::Precisely::V3::Node::Phone;
 use Text::vCard::Precisely::V3::Node::Email;
@@ -24,21 +25,11 @@ has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has version => ( is => 'rw', isa => 'Str', default => '3.0' );
 
-subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
-coerce 'Node'
-    => from 'Str'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
-    };
-coerce 'Node'
-    => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node->new($_) ] };
-coerce 'Node'
-    => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node->new($_) } @$_ ] };
-has [qw|fn nickname impp lang org title role categories note xml key geo label prodid bday anniversary gender|]
-    => ( is => 'rw', isa => 'Node', coerce => 1 );
+has kind => ( is => 'rw', isa => subtype 'KIND'
+    => as 'Str'
+    => where { m/^(:?individual|group|org|location|[a-zA-z0-9\-]+|X-[a-zA-z0-9\-]+)$/s}
+    => message { "The KIND you provided, $_, was not supported" }
+);
 
 subtype 'Address' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Address]';
 coerce 'Address'
@@ -70,13 +61,57 @@ coerce 'Email'
     => via { [ map { Text::vCard::Precisely::V3::Node::Email->new($_) } @$_ ] };
 has email => ( is => 'rw', isa => 'Email', coerce => 1 );
 
+subtype 'Timestamp'
+    => as 'Str'
+    => where { m/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z?$/is  }
+    => message { "The TimeStamp you provided, $_, was not correct" };
+has rev => ( is => 'rw', isa => 'Timestamp' );
+
+has [qw| uid clientpidmap |] => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
+has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
+# utc-offset format is NOT RECOMMENDED in vCard 4.0
+
+has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
+
 subtype 'N'
-    => as 'ArrayRef[Str]'
-    => where { @$_ == 5 }
-    => message { 'Unvalid length. the length of N must be 5. you provided: ' . scalar @$_ };
-has n => ( is => 'rw', isa => 'N' );
+    => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]'
+;#    => where { scalar @$_ == scalar grep{ scalar @$_ == 5 } @$_ }
+#    => message { 'Unvalid length. the length of N must be 5. you provided:' . scalar @$_ };
+coerce 'N'
+    => from 'HashRef[Str]'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new($_) ]};
+coerce 'N'
+    => from 'ArrayRef[HashRef[Str]]'
+    => via {[ map{ Text::vCard::Precisely::V3::Node::N->new($_) } @$_ ]};
+coerce 'N'
+    => from 'ArrayRef[Str]'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new(
+        { family => $_[0][0], given => $_[0][1], additional => $_[0][2], prefixes => $_[0][3], suffixes => $_[0][4] }
+    ) ]};
+coerce 'N'
+    => from 'ArrayRef[ArrayRef[Str]]'
+    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new(
+    { family => $_[0][0], given => $_[0][1], additional => $_[0][2], prefixes => $_[0][3], suffixes => $_[0][4] }
+    ) } @$_ ]};
+has n => ( is => 'rw', isa => 'N', coerce => 1 );
 
 has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );
+
+subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
+coerce 'Node'
+    => from 'Str'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
+    };
+coerce 'Node'
+    => from 'HashRef'
+    => via { [ Text::vCard::Precisely::V3::Node->new($_) ] };
+coerce 'Node'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V3::Node->new($_) } @$_ ] };
+has [qw|fn nickname org impp lang title role categories note xml key geo label|]
+    => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
 coerce 'URLs'
@@ -114,24 +149,6 @@ coerce 'Image'
     };
 has [qw| photo logo |] => ( is => 'rw', isa => 'Image', coerce => 1 );
 
-has kind => ( is => 'rw', isa => subtype 'KIND'
-    => as 'Str'
-    => where { m/^(:?individual|group|org|location|[a-zA-z0-9\-]+|X-[a-zA-z0-9\-]+)$/s}
-    => message { "The KIND you provided, $_, was not supported" }
-);
-
-subtype 'Timestamp'
-    => as 'Str'
-    => where { m/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z?$/is  }
-    => message { "The TimeStamp you provided, $_, was not correct" };
-has rev => ( is => 'rw', isa => 'Timestamp' );
-
-has [qw| uid clientpidmap |] => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
-has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
-# utc-offset format is NOT RECOMMENDED in vCard 4.0
-
-has sort_string => ( is => 'rw', isa => 'Str' );
-
 subtype 'SocialProfile' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::SocialProfile]';
 coerce 'SocialProfile'
     => from 'HashRef'
@@ -140,7 +157,6 @@ coerce 'SocialProfile'
     => from 'ArrayRef[HashRef]'
     => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
 has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
-
 
 with 'vCard::Role::FileIO';
 
@@ -197,7 +213,7 @@ sub load_string {
 }
 
 my @nodes = qw(
-    FN NICKNAME BDAY ANNIVERSARY GENDER
+    N FN NICKNAME BDAY ANNIVERSARY GENDER
     ADR LABEL TEL EMAIL IMPP LANG XML KEY TZ GEO
     ORG TITLE ROLE CATEGORIES
     NOTE SOUND UID URL FBURL CALADRURI CALURI
@@ -209,7 +225,6 @@ sub as_string {
     my $string = "BEGIN:VCARD\r\n";
     $string .= 'VERSION:' . $self->version . "\r\n";
     $string .= 'PRODID:' . $self->prodid . "\r\n" if $self->prodid;
-    $string .= 'N:' . join( ';', map{ _escape($_) } @{ $self->n || [ '','','','','' ] } ) . "\r\n";
 #     $string .= 'SORT-STRING:' . decode_utf8($self->sort_string) . "\r\n"
      $string .= 'SORT-STRING:' . $self->sort_string . "\r\n"
     if $self->version ne '4.0' and $self->sort_string;

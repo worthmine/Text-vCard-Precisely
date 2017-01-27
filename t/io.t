@@ -16,7 +16,7 @@ $vc = Text::vCard::Precisely::V3->new({});
 is 'Text::vCard::Precisely::V3', ref($vc), 'new({})';   #3
 
 my $hashref = {
-    N   => ['Gump','Forrest','','Mr.',''],
+    N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
     FN  => 'Forrest Gump',
     SORT_STRING => 'Forrest Gump',
     ORG => 'Bubba Gump Shrimp Co.',
@@ -83,8 +83,8 @@ __DATA__
 @@ data.vcf
 BEGIN:VCARD
 VERSION:3.0
-N:Gump;Forrest;;Mr.;
 SORT-STRING:Forrest Gump
+N:Gump;Forrest;;Mr.;
 FN:Forrest Gump
 ADR;TYPE=WORK;PREF=1:;100;Waters Edge;Baytown;LA;30314;United States of
  America
