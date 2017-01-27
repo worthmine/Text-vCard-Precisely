@@ -100,7 +100,7 @@ coerce 'N'
     => via {[ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
 coerce 'N'
     => from 'ArrayRef[ArrayRef[Str]]'
-    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => \@$_ }) } @$_ ]};
+    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
 has n => ( is => 'rw', isa => 'N', coerce => 1 );
 
 has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );
