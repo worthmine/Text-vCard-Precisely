@@ -12,8 +12,8 @@ has \@order => ( is => 'rw', isa => 'Str|Undef', default => undef );
 
 subtype 'Values'
     => as 'ArrayRef[Str]'
-;#    => where { scalar @$_ == 5 }
-#    => message { 'Unvalid length. the length of N->value must be 5. you provided:' . @$_ };
+    => where { scalar @$_ == 5 }
+    => message { 'Unvalid length. the length of N->value must be 5. you provided:' . @$_ };
 coerce 'Values'
     => from 'Str'
     => via { my @value = split( /;/, $_ ); $value[4] ||= ''; return \@value };
