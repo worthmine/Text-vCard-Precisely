@@ -75,21 +75,32 @@ has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'St
 
 subtype 'N' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]';
 coerce 'N'
+    => from 'Str'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
+coerce 'N'
     => from 'HashRef'
     => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
+coerce 'N'
+    => from 'ArrayRef[Str]'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => {
+        family => $_[0][0] || '',
+        given => $_[0][1] || '',
+        additional => $_[0][2] || '',
+        prefixes => $_[0][3] || '',
+        suffixes => $_[0][4] || '',
+    } }) ]};
+coerce 'N'
+    => from 'HashRef[Str]'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new($_) ]};
+coerce 'N'
+    => from 'HashRef[HashRef]'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new($_) ]};
 coerce 'N'
     => from 'ArrayRef[HashRef[Str]]'
     => via {[ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
 coerce 'N'
-    => from 'ArrayRef[Str]'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value =>
-        { family => $_[0][0], given => $_[0][1], additional => $_[0][2], prefixes => $_[0][3], suffixes => $_[0][4] }
-    }) ]};
-coerce 'N'
     => from 'ArrayRef[ArrayRef[Str]]'
-    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new(
-    { family => $_[0][0], given => $_[0][1], additional => $_[0][2], prefixes => $_[0][3], suffixes => $_[0][4] }
-    ) } @$_ ]};
+    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => \@$_ }) } @$_ ]};
 has n => ( is => 'rw', isa => 'N', coerce => 1 );
 
 has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );
