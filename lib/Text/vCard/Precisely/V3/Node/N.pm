@@ -1,14 +1,29 @@
 package Text::vCard::Precisely::V3::Node::N;
 use Carp;
 use Moose;
+use Moose::Util::TypeConstraints;
 
 extends 'Text::vCard::Precisely::V3::Node';
 
-has name => (is => 'ro', default => 'N', isa => 'Str' );
-has [qw( family given additional prefixes suffixes )]
-    => ( is => 'rw', isa => 'Str', default => undef );
+my @order = qw( family given additional prefixes suffixes );
 
-has value => ( is => 'rw', default => sub{[ (undef) x 5 ]}, isa => 'ArrayRef[Str]|ArrayRef[Undef]' );
+has name => (is => 'ro', default => 'N', isa => 'Str' );
+has \@order => ( is => 'rw', isa => 'Str|Undef', default => undef );
+
+subtype 'Values'
+    => as 'ArrayRef[Str]'
+    => where { scalar @$_ == 5 }
+    => message { 'Unvalid length. the length of N->value must be 5. you provided:' . @$_ };
+coerce 'Values'
+    => from 'Str'
+    => via { my @value = split( /;/, $_ ); $value[4] ||= ''; return \@value };
+coerce 'Values'
+    => from 'ArrayRef[Str]'
+    => via { my @value = @$_; $value[4] ||= ''; return \@value };
+coerce 'Values'
+    => from 'HashRef[Str]'
+    => via {my @value = @$_{@order}; $value[4] ||= ''; return \@value };
+has value => ( is => 'rw', default => sub{[ (undef) x 5 ]}, isa => 'Values', coerce => 1 );
 
 override 'as_string' => sub {
     my ($self) = @_;
@@ -36,7 +51,7 @@ override 'as_string' => sub {
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
-sub length {
+sub _length {
     my $self = shift;
     return scalar @{ $self->value };
 }
