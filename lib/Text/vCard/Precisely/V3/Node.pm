@@ -85,13 +85,13 @@ sub as_string {
     my ($self) = @_;
     my @lines;
     push @lines, uc( $self->name ) || croak "Empty name";
-    push @lines, 'CHARSET=' . $self->charset if $self->charset;
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
+    push @lines, 'CHARSET=' . $self->charset if $self->charset;
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as and $self->name eq 'ORG';
 
     return join(';', @lines ) . ':' . (
