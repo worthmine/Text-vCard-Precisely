@@ -25,12 +25,6 @@ has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has version => ( is => 'rw', isa => 'Str', default => '3.0' );
 
-has kind => ( is => 'rw', isa => subtype 'KIND'
-    => as 'Str'
-    => where { m/^(:?individual|group|org|location|[a-zA-z0-9\-]+|X-[a-zA-z0-9\-]+)$/s}
-    => message { "The KIND you provided, $_, was not supported" }
-);
-
 subtype 'N'
     => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]'
     => where { ref $_ eq 'ARRAY' }
@@ -75,6 +69,9 @@ has adr => ( is => 'rw', isa => 'Address', coerce => 1 );
 
 subtype 'Tel' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Phone]';
 coerce 'Tel'
+    => from 'Str'
+    => via { [ Text::vCard::Precisely::V3::Node::Phone->new({ value => $_ }) ] };
+coerce 'Tel'
     => from 'HashRef'
     => via { [ Text::vCard::Precisely::V3::Node::Phone->new($_) ] };
 coerce 'Tel'
@@ -93,20 +90,6 @@ coerce 'Email'
     => from 'ArrayRef[HashRef]'
     => via { [ map { Text::vCard::Precisely::V3::Node::Email->new($_) } @$_ ] };
 has email => ( is => 'rw', isa => 'Email', coerce => 1 );
-
-subtype 'Timestamp'
-    => as 'Str'
-    => where { m/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z?$/is  }
-    => message { "The TimeStamp you provided, $_, was not correct" };
-has rev => ( is => 'rw', isa => 'Timestamp' );
-
-has [qw| uid clientpidmap |] => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
-has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
-# utc-offset format is NOT RECOMMENDED in vCard 4.0
-
-has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
-
-has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );
 
 subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
 coerce 'Node'
@@ -150,9 +133,9 @@ coerce 'Image'
 coerce 'Image'
     => from 'ArrayRef[HashRef]'
     => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new($_) } @$_ ] };
-coerce 'Image'
-    => from 'URI'   #when parse from vCard::Addressbook
-    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
+#coerce 'Image'
+#    => from 'URI'   #when parse from vCard::Addressbook
+#    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
 coerce 'Image'
     => from 'ArrayRef[URI]'   #when parse from vCard::Addressbook
     => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) } @$_ ] };
@@ -174,6 +157,27 @@ coerce 'SocialProfile'
     => from 'ArrayRef[HashRef]'
     => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
 has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
+
+subtype 'KIND'
+    => as 'Str'
+    => where { m/^(:?individual|group|org|location|[a-zA-z0-9\-]+|X-[a-zA-z0-9\-]+)$/s}
+    => message { "The KIND you provided, $_, was not supported" };
+has kind => ( is => 'rw', isa => 'KIND' );
+
+subtype 'Timestamp'
+    => as 'Str'
+    => where { m/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z?$/is  }
+    => message { "The TimeStamp you provided, $_, was not correct" };
+has rev => ( is => 'rw', isa => 'Timestamp' );
+
+has [qw| uid clientpidmap |] => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
+has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
+# utc-offset format is NOT RECOMMENDED in vCard 4.0
+
+has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
+
+has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );
+
 
 with 'vCard::Role::FileIO';
 
