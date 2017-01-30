@@ -12,7 +12,7 @@ has value => (is => 'rw', isa => 'Str', required => 1 );
 
 subtype 'SocialProfileType'
     => as 'Str'
-    => where { m/^(:?facebook|twitter|linkedin|flickr|myspace|sinaweibo|LINE|GitHub)$/s } # for social profiles
+    => where { m/^(:?facebook|twitter|linkedin|flickr|myspace|sinaweibo|LINE|GitHub)$/is } # for social profiles
     => message { "The text you provided, $_, was not supported in 'SocialProfileType'" };
 has types => ( is => 'rw', isa => 'SocialProfileType', required => 1 );
 
@@ -31,7 +31,7 @@ override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
     push @lines, $self->name || croak "Empty name";
-    push @lines, 'TYPE=' . $self->types;
+    push @lines, 'TYPE=' . $self->types || croak "Empty types";
     push @lines, 'X-USERID="' . $self->userid . '"' if defined $self->userid and $self->userid;
     push @lines, 'X-DISPLAYNAME="' . $self->displayname . '"' if defined $self->displayname and $self->displayname;
     push @lines, 'ALTID=' . $self->altID if $self->altID;

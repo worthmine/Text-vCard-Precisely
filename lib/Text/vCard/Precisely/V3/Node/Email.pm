@@ -13,8 +13,8 @@ has value => (is => 'ro', default => '', isa => EmailAddress );
 subtype 'EmailType'
     => as 'Str'
     => where {
-        m/^(:?work|home)$/so or #common
-        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/so    # 本当にこれでいのか怪しい
+        m/^(:?work|home)$/s or      # common
+        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is    # 本当にこれでいのか怪しい
     }
     => message { "The Email you provided, $_, was not supported in 'Type'" };
 
@@ -25,7 +25,7 @@ override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
     push @lines, $self->name || croak "Empty name";
-    push @lines, 'TYPE="' . join( ',', @{ $self->types } ). '"' if @{ $self->types  || [] } > 0;
+    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
 

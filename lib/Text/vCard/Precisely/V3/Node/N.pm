@@ -11,18 +11,20 @@ has name => (is => 'ro', default => 'N', isa => 'Str' );
 has \@order => ( is => 'rw', isa => 'Str|Undef', default => undef );
 
 subtype 'Values'
-    => as 'ArrayRef[Str]'
+    => as 'ArrayRef[Maybe[Str]]'
     => where { scalar @$_ == 5 }
-    => message { 'Unvalid length. the length of N->value must be 5. you provided:' . @$_ };
+    => message {
+        my $length = ref $_ eq'Array'? scalar @$_ : return ref $_;
+        return "Unvalid length. the length of N->value must be 5. you provided:$length" };
+coerce 'Values'
+    => from 'ArrayRef[Maybe[Str]]'
+    => via { my @value = @$_; $value[4] ||= ''; return \@value };
+coerce 'Values'
+    => from 'HashRef[Maybe[Str]]'
+    => via {my @value = @$_{@order}; $value[4] ||= ''; return \@value };
 coerce 'Values'
     => from 'Str'
     => via { my @value = split( /;/, $_ ); $value[4] ||= ''; return \@value };
-coerce 'Values'
-    => from 'ArrayRef[Str]'
-    => via { my @value = @$_; $value[4] ||= ''; return \@value };
-coerce 'Values'
-    => from 'HashRef[Str]'
-    => via {my @value = @$_{@order}; $value[4] ||= ''; return \@value };
 has value => ( is => 'rw', default => sub{[ (undef) x 5 ]}, isa => 'Values', coerce => 1 );
 
 override 'as_string' => sub {

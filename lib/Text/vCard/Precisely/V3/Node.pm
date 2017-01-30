@@ -21,7 +21,7 @@ has name => ( is => 'rw', required => 1, isa => 'Name' );
 
 subtype 'VALUE'
     => as 'Str'
-    => where { use utf8; decode_utf8($_) =~  m|^[\w\W\s]*$|is }   # it needs to be more strictly
+    => where { use utf8; decode_utf8($_) =~  m|^[\w\W\s]*$|s }   # it needs to be more strictly
     => message { "The VALUE you provided, $_, was not supported" };
 has value => ( is => 'rw', required => 1, isa => 'VALUE' );
 
@@ -62,19 +62,19 @@ has language => ( is => 'rw', isa => subtype 'Language'
 
 has media_type => ( is => 'rw', isa => subtype 'MediaType'
     => as 'Str'
-    => where { m{^(:?application|audio|example|image|message|model|multipart|text|video)/[\w+\-\.]+$}s }
+    => where { m{^(:?application|audio|example|image|message|model|multipart|text|video)/[\w+\-\.]+$}is }
     => message { "The MediaType you provided, $_, was not supported" }
 );
 
 has sort_as => ( is => 'rw', isa => subtype 'SortAs' # from vCard 4.0
     => as 'Str'
-    => where { use utf8; decode_utf8($_) =~  m|^[\w\s\W]*$|s }   # does everything pass?
+    => where { use utf8; decode_utf8($_) =~  m|^[\w\s\W]+$|s }   # does everything pass?
     => message { "The SortAs you provided, $_, was not supported" }
 );
 
 has charset => ( is => 'rw', isa => subtype 'Charset' # not recommend for vCard 4.0
     => as 'Str'
-    => where { m|^[\w-]*$|s }    # does everything pass?
+    => where { m|^[\w-]+$|s }    # does everything pass?
     => message { "The Charset you provided, $_, was not supported" }
 );
 
@@ -86,7 +86,7 @@ sub as_string {
     my @lines;
     push @lines, uc( $self->name ) || croak "Empty name";
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
-    push @lines, 'TYPE=' . join( ',', @{ $self->types } ) if @{ $self->types || [] } > 0;
+    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
     push @lines, 'ALTID=' . $self->altID if $self->altID;

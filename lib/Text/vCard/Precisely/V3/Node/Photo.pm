@@ -23,7 +23,7 @@ has value => (is => 'ro', default => '', isa => 'Photo', coerce => 1 );
 
 subtype 'Media_type'
     => as 'Str'
-    => where { m|^image/(:?X-)?[a-zA-z0-9\-]+$|s }
+    => where { m|^image/(:?X-)?[a-zA-z0-9\-]+$|is }
     => message { "The Text you provided, $_, was not supported in 'Media_type'" };
 #"Text::vCard::Addressbook dones't parse MEDIATYPE around PHOTO"
 has media_type => ( is => 'rw', isa => 'Media_type' );#, default => 'image/gif' );
@@ -41,4 +41,5 @@ override 'as_string' => sub {
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
+
 1;

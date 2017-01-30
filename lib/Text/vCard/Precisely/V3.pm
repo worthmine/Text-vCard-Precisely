@@ -73,15 +73,27 @@ has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
 
 has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
 
-subtype 'N' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]';
+subtype 'N'
+    => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]'
+    => where { ref $_ eq 'ARRAY' }
+    => message { 'N must be a ArrayRef you provided:' . ref $_  };
 coerce 'N'
-    => from 'Str'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
+    => from 'HashRef[Maybe[Ref]|Maybe[Str]]'
+    => via {
+        my %param;
+        while( my ($key, $value) = each %$_ ) {
+            $param{$key} = $value if $value;
+        }
+        return [ Text::vCard::Precisely::V3::Node::N->new(\%param) ];
+    };
 coerce 'N'
-    => from 'HashRef'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
+    => from 'ArrayRef[HashRef[Maybe[Str]]]'
+    => via {[ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
 coerce 'N'
-    => from 'ArrayRef[Str]'
+    => from 'ArrayRef[ArrayRef[Maybe[Str]]]'
+    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
+coerce 'N'
+    => from 'ArrayRef[Maybe[Str]]'
     => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => {
         family => $_[0][0] || '',
         given => $_[0][1] || '',
@@ -90,17 +102,8 @@ coerce 'N'
         suffixes => $_[0][4] || '',
     } }) ]};
 coerce 'N'
-    => from 'HashRef[Str]'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new($_) ]};
-coerce 'N'
-    => from 'HashRef[HashRef]'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new($_) ]};
-coerce 'N'
-    => from 'ArrayRef[HashRef[Str]]'
-    => via {[ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
-coerce 'N'
-    => from 'ArrayRef[ArrayRef[Str]]'
-    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
+    => from 'Str'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
 has n => ( is => 'rw', isa => 'N', coerce => 1 );
 
 has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );

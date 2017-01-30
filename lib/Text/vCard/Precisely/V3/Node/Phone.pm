@@ -17,11 +17,11 @@ has value => (is => 'ro', default => '', isa => 'Phone' );
 subtype 'PhoneType'
     => as 'Str'
     => where {
-        m/^(:?work|home)$/iso or #common
+        m/^(:?work|home)$/is or #common
         m/^(:?text|voice|fax|cell|video|pager|textphone)$/is # for tel
     }
     => message { "The text you provided, $_, was not supported in 'Type'" };
-has types => ( is => 'rw', isa => 'ArrayRef[PhoneType] | Undef');
+has types => ( is => 'rw', isa => 'ArrayRef[Maybe[PhoneType]]');
 
 override 'as_string' => sub {
     my ($self) = @_;
