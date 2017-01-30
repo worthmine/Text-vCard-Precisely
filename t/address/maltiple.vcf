@@ -1,0 +1,7 @@
+BEGIN:VCARD
+VERSION:3.0
+ADR:pobox;extended;street;city;region;post_code;country
+ADR:another pobox;another extended;another street;another city;another
+ region;another post_code;another country
+REV:2008-04-24T19:52:43Z
+END:VCARD

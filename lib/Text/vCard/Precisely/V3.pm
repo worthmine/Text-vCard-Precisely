@@ -31,6 +31,39 @@ has kind => ( is => 'rw', isa => subtype 'KIND'
     => message { "The KIND you provided, $_, was not supported" }
 );
 
+subtype 'N'
+    => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]'
+    => where { ref $_ eq 'ARRAY' }
+    => message { 'N must be a ArrayRef you provided:' . ref $_  };
+coerce 'N'
+    => from 'HashRef[Maybe[Ref]|Maybe[Str]]'
+    => via {
+        my %param;
+        while( my ($key, $value) = each %$_ ) {
+            $param{$key} = $value if $value;
+        }
+        return [ Text::vCard::Precisely::V3::Node::N->new(\%param) ];
+    };
+coerce 'N'
+    => from 'ArrayRef[HashRef[Maybe[Str]]]'
+    => via {[ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
+coerce 'N'
+    => from 'ArrayRef[ArrayRef[Maybe[Str]]]'
+    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
+coerce 'N'
+    => from 'ArrayRef[Maybe[Str]]'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => {
+        family => $_[0][0] || '',
+        given => $_[0][1] || '',
+        additional => $_[0][2] || '',
+        prefixes => $_[0][3] || '',
+        suffixes => $_[0][4] || '',
+    } }) ]};
+coerce 'N'
+    => from 'Str'
+    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
+has n => ( is => 'rw', isa => 'N', coerce => 1 );
+
 subtype 'Address' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Address]';
 coerce 'Address'
     => from 'HashRef'
@@ -73,39 +106,6 @@ has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
 
 has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
 
-subtype 'N'
-    => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]'
-    => where { ref $_ eq 'ARRAY' }
-    => message { 'N must be a ArrayRef you provided:' . ref $_  };
-coerce 'N'
-    => from 'HashRef[Maybe[Ref]|Maybe[Str]]'
-    => via {
-        my %param;
-        while( my ($key, $value) = each %$_ ) {
-            $param{$key} = $value if $value;
-        }
-        return [ Text::vCard::Precisely::V3::Node::N->new(\%param) ];
-    };
-coerce 'N'
-    => from 'ArrayRef[HashRef[Maybe[Str]]]'
-    => via {[ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
-coerce 'N'
-    => from 'ArrayRef[ArrayRef[Maybe[Str]]]'
-    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
-coerce 'N'
-    => from 'ArrayRef[Maybe[Str]]'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => {
-        family => $_[0][0] || '',
-        given => $_[0][1] || '',
-        additional => $_[0][2] || '',
-        prefixes => $_[0][3] || '',
-        suffixes => $_[0][4] || '',
-    } }) ]};
-coerce 'N'
-    => from 'Str'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
-has n => ( is => 'rw', isa => 'N', coerce => 1 );
-
 has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );
 
 subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
@@ -113,11 +113,17 @@ coerce 'Node'
     => from 'Str'
     => via {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
+        return [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
     };
 coerce 'Node'
-    => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node->new($_) ] };
+    => from 'HashRef[Maybe[Str]]'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node->new({
+            name => $_->{'name'} || $name,
+            value => $_->{'value'} || croak "No value in HashRef!",
+        }) ]
+    };
 coerce 'Node'
     => from 'ArrayRef[HashRef]'
     => via { [ map { Text::vCard::Precisely::V3::Node->new($_) } @$_ ] };
@@ -258,12 +264,11 @@ sub as_string {
     unless ( $self->rev ) {
         my ( $s, $m, $h, $d, $M, $y ) = gmtime();
         $self->rev( sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s );
-        #        $self->rev( sprintf '%4d%02d%02dT%02d%02d%02dz', $y + 1900, $M + 1, $d, $h, $m, $s );  # in vCard4
     }
 
     $string .= 'REV:' . $self->rev . "\r\n";
     $string .= "END:VCARD";
-    #$string = encode( $self->encoding_out, $string );
+    $string = decode( $self->encoding_out, $string );
     my $lf = Text::LineFold->new( CharMax => 74,ColMin => 50, Newline => "\r\n" );   # line break with 75bytes
     return $lf->fold( "", " ", $string );
 }
