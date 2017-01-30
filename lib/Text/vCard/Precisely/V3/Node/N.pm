@@ -31,10 +31,10 @@ override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
     push @lines, $self->name || croak "Empty name";
-    push @lines, 'CHARSET=' . $self->charset if $self->charset;
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as;
+    push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
     ( my $family        = $self->family     || $self->value->[0] || '' ) =~ s/([,;\\])/\\$1/sg;
     ( my $given         = $self->given      || $self->value->[1] || '' ) =~ s/([,;\\])/\\$1/sg;
