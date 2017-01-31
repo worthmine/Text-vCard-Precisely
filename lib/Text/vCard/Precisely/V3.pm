@@ -11,6 +11,7 @@ use Carp;
 use Data::UUID;
 use Encode;
 use Text::LineFold;
+use URI;
 
 use Text::vCard::Precisely::V3::Node;
 use Text::vCard::Precisely::V3::Node::N;
@@ -94,10 +95,28 @@ has email => ( is => 'rw', isa => 'Email', coerce => 1 );
 subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
 coerce 'URLs'
     => from 'Str'
-    => via { [Text::vCard::Precisely::V3::Node::URL->new({ value => $_ })] };
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [Text::vCard::Precisely::V3::Node::URL->new({ name => $name, value => $_ })]
+    };
 coerce 'URLs'
-    => from 'HashRef'
-    => via  { [ Text::vCard::Precisely::V3::Node::URL->new($_) ] };
+    => from 'HashRef[Str]'
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node::URL->new({
+            name => $name,
+            value => $_->{'value'}
+        }) ]
+    };
+coerce 'URLs'
+    => from 'Object'    # Can't asign 'URI' or 'Object[URI]'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [Text::vCard::Precisely::V3::Node::URL->new({
+            name => $name,
+            value => $_->as_string,
+        })]
+    };
 coerce 'URLs'
     => from 'ArrayRef[HashRef]'
     => via  { [ map{ Text::vCard::Precisely::V3::Node::URL->new($_) } @$_ ] };
@@ -111,9 +130,9 @@ coerce 'Image'
 coerce 'Image'
     => from 'ArrayRef[HashRef]'
     => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new($_) } @$_ ] };
-#coerce 'Image'
-#    => from 'URI'   #when parse from vCard::Addressbook
-#    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
+coerce 'Image'
+    => from 'Object'   #when parse from vCard::Addressbook
+    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
 coerce 'Image'
     => from 'ArrayRef[URI]'   #when parse from vCard::Addressbook
     => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) } @$_ ] };
