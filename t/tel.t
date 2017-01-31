@@ -28,6 +28,6 @@ $vc->tel([
     { types => ['home'], value => '0120-000-000' },
     { types => ['fax'], value => '0120-000-001' },
 ]);
-is $vc->as_string, $expected_content, 'tel(ArrayRef of HashRef)';        # test2
+is $vc->as_string, $expected_content, 'tel(ArrayRef of HashRef)';        # test3
 
 done_testing;

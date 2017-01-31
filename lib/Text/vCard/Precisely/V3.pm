@@ -91,28 +91,6 @@ coerce 'Email'
     => via { [ map { Text::vCard::Precisely::V3::Node::Email->new($_) } @$_ ] };
 has email => ( is => 'rw', isa => 'Email', coerce => 1 );
 
-subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
-coerce 'Node'
-    => from 'Str'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
-    };
-coerce 'Node'
-    => from 'HashRef[Maybe[Str]]'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node->new({
-            name => $_->{'name'} || $name,
-            value => $_->{'value'} || croak "No value in HashRef!",
-        }) ]
-    };
-coerce 'Node'
-    => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node->new($_) } @$_ ] };
-has [qw|fn nickname org impp lang title role categories note xml key geo label|]
-    => ( is => 'rw', isa => 'Node', coerce => 1 );
-
 subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
 coerce 'URLs'
     => from 'Str'
@@ -157,6 +135,28 @@ coerce 'SocialProfile'
     => from 'ArrayRef[HashRef]'
     => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
 has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
+
+subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
+coerce 'Node'
+    => from 'Str'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
+    };
+coerce 'Node'
+    => from 'HashRef[Maybe[Str]]'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node->new({
+            name => $_->{'name'} || $name,
+            value => $_->{'value'} || croak "No value in HashRef!",
+        }) ]
+    };
+coerce 'Node'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V3::Node->new($_) } @$_ ] };
+has [qw|fn nickname org impp lang title role categories note xml key geo label|]
+    => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 subtype 'KIND'
     => as 'Str'
