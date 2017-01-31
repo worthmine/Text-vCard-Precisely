@@ -15,7 +15,7 @@ $vc->rev('2008-04-24T19:52:43Z');
 
 SKIP: {
     eval { require_ok('GD') };                                      # test1
-    skip "GD::Image not installed", 0 if $@;
+    skip "GD::Image not installed", 1 if $@;
 
     $gd = new GD::Image(100,100);
     $black = $gd->colorAllocate(0,0,0);
