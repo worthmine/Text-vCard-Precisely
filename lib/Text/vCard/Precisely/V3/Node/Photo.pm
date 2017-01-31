@@ -7,7 +7,7 @@ use Moose::Util::TypeConstraints;
 use Data::Validate::URI qw(is_web_uri);
 extends 'Text::vCard::Precisely::V3::Node';
 
-has name => ( is => 'ro', default => 'PHOTO', isa => 'Str' );
+has name => ( is => 'rw', default => 'PHOTO', isa => 'Str', required => 1 );
 
 subtype 'Photo'
     => as 'Str'
@@ -19,14 +19,14 @@ subtype 'Photo'
 coerce 'Photo'
     => from 'Str'
     => via { is_web_uri($_) && return $_->as_string or encode_base64( $_, "" ) };
-has value => (is => 'ro', default => '', isa => 'Photo', coerce => 1 );
+has value => (is => 'rw', default => '', isa => 'Photo', coerce => 1 );
 
 subtype 'Media_type'
     => as 'Str'
     => where { m|^image/(:?X-)?[a-zA-z0-9\-]+$|is }
     => message { "The Text you provided, $_, was not supported in 'Media_type'" };
-#"Text::vCard::Addressbook dones't parse MEDIATYPE around PHOTO"
-has media_type => ( is => 'rw', isa => 'Media_type' );#, default => 'image/gif' );
+has media_type => ( is => 'rw', isa => 'Media_type' );
+
 override 'as_string' => sub {
     my ($self) = @_;
     my @lines;

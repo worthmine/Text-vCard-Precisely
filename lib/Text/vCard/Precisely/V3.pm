@@ -126,23 +126,36 @@ has [qw|source sound url fburl caladruri caluri|]
 subtype 'Image' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Photo]';
 coerce 'Image'
     => from 'HashRef'
-    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new($_) ] };
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node::Photo->new({
+            name => $name,
+            media_type => $_->{'media_type'},
+            value => $_->{'value'},
+        }) ] };
 coerce 'Image'
     => from 'ArrayRef[HashRef]'
     => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new($_) } @$_ ] };
 coerce 'Image'
-    => from 'Object'   #when parse from vCard::Addressbook
+    => from 'Object'   # when parse from vCard::Addressbook, URI->new is called.
     => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
 coerce 'Image'
-    => from 'ArrayRef[URI]'   #when parse from vCard::Addressbook
-    => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) } @$_ ] };
+    => from 'Str'   # when parse BASE64 encoded strings
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node::Photo->new({
+            name => $name,
+            value => $_,
+        } ) ]
+    };
 coerce 'Image'
-    => from 'Str'   #when parse BASE64 encoded strings
-    => via  { s/\s//g; [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_ } ) ] };
-coerce 'Image'
-    => from 'ArrayRef[Str]'   #when parse BASE64 encoded strings
-    => via  { grep { s/\s//g } @$_;
-        [ map{ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_ } ) } @$_ ]
+    => from 'ArrayRef[Str]'   # when parse BASE64 encoded strings
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ map{ Text::vCard::Precisely::V3::Node::Photo->new({
+            name => $name,
+            value => $_,
+        }) } @$_ ]
     };
 has [qw| photo logo |] => ( is => 'rw', isa => 'Image', coerce => 1 );
 
@@ -292,7 +305,7 @@ sub as_string {
     $string .= 'REV:' . $self->rev . "\r\n";
     $string .= "END:VCARD";
     $string = decode( $self->encoding_out, $string );
-    my $lf = Text::LineFold->new( CharMax => 74,ColMin => 50, Newline => "\r\n" );   # line break with 75bytes
+    my $lf = Text::LineFold->new( CharMax => 74, ColMin => 50, Newline => "\r\n" );   # line break with 75bytes
     return $lf->fold( "", " ", $string );
 }
 
