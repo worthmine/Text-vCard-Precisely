@@ -4,70 +4,115 @@ use Path::Tiny;
 use MIME::Base64;
 use URI;
 
-use Test::More tests => 8;
-
-my $GD_ok = require_ok ('GD');
-my ($img, $black, $red);
-
 use lib qw(./lib);
 use Text::vCard::Precisely::V3;
 
+use Test::More tests => 7;
+
+my ($gd, $black, $red, $img, $raw);
 my $vc = Text::vCard::Precisely::V3->new();
 $vc->rev('2008-04-24T19:52:43Z');
 
-if($GD_ok){
-    $img = new GD::Image(100,100);
-    $black = $img->colorAllocate(0,0,0);
-    $red = $img->colorAllocate(255,0,0);
-    $img->rectangle(0,0,99,99,$black);
+SKIP: {
+    eval { require GD };
+    skip "GD::Image not installed", 0 if $@;
+
+    $gd = new GD::Image(100,100);
+    $black = $gd->colorAllocate(0,0,0);
+    $red = $gd->colorAllocate(255,0,0);
+    $gd->rectangle(0,0,99,99,$black);
+    $raw = $gd->png;
+    $img = encode_base64( $raw, "" );
 }
 
-my $raw = $img->png if $GD_ok;
-my $base64 = encode_base64( $raw, "" );
+$img ||= <<'EOL';
+iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQMAAABKLAcXAAAABlBMVEUAAAD/AAAb/
+40iAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAFElEQVQ4jWNgGAWjYBSMglFATwAABXgAAfmlXsc
+AAAAASUVORK5CYII=
+EOL
+$img =~ s/\s//g;
 
 my $in_file = path( 't', 'Image', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
-$vc->photo($raw);
-$vc->logo($raw);
-is $vc->as_string, $expected_content, 'photo(raw)';                 # test1
-
-$vc->photo($base64);
-is $vc->as_string, $expected_content, 'photo(Base64)';              # test2
-
-$in_file = path( 't', 'Image', 'hash.vcf' );
-$expected_content = $in_file->slurp_utf8;
-
-$vc->photo( { media_type => 'image/png', value => $raw } );
-$vc->logo( { media_type => 'image/png', value => $raw } );
-is $vc->as_string, $expected_content, 'photo(Hashref of raw)';      # test3
-
-$vc->photo( { media_type => 'image/png', value => $base64 } );
-$vc->logo( { media_type => 'image/png', value => $base64 } );
-is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';   # test4
+$vc->photo($img);
+$vc->logo($img);
+is $vc->as_string, $expected_content, 'photo(Base64)';              # test1
 
 $in_file = path( 't', 'Image', 'uri.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $uri = URI->new('https://www.example.com/image.png');
 $vc->photo($uri);
-is $vc->as_string, $expected_content, 'photo(URL)';                 # test5
+is $vc->as_string, $expected_content, 'photo(URL)';                 # test2
+
+$in_file = path( 't', 'Image', 'hash.vcf' );
+$expected_content = $in_file->slurp_utf8;
+
+$vc->photo( { media_type => 'image/png', value => $img } );
+$vc->logo( { media_type => 'image/png', value => $img } );
+is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';   # test3
+
 
 $in_file = path( 't', 'Image', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$img->fill(50,50,$red) if $GD_ok;
-my $raw2 = $img->jpeg if $GD_ok;
-$vc->photo([ $raw, $raw2 ]);
-is $vc->as_string, $expected_content, 'photo(ArrayRef of raw)';     # test6
+$gd->fill(50,50,$red);
+my $img2 = <<'EOL';
+/9j/4AAQSkZJRgABAQEAYABgAAD//gA+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkc
+gSlBFRyB2ODApLCBkZWZhdWx0IHF1YWxpdHkK/9sAQwAIBgYHBgUIBwcHCQkICgwUDQwLCwwZEh
+MPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJCQkMCwwYDQ0YM
+iEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy/8AA
+EQgAZABkAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAI
+BAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGB
+kaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk
+5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz
+9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQ
+EAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKS
+o1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZm
+qKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/a
+AAwDAQACEQMRAD8A4uiiivmT9xCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
+iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK
+KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
+oooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/2Q==
+EOL
+$img2 =~ s/\s//g;
 
-$in_file = path( 't', 'Image', 'maltiple2.vcf' );
+$vc->photo([ $img, $img2 ]);
+is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';     # test4
+
+$in_file = path( 't', 'Image', 'maltiple_base64.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->photo([
-    { media_type => 'image/png', value => $base64 },
-    { media_type => 'image/jpeg', value => $raw2 },
+    { media_type => 'image/png', value => $img },
+    { media_type => 'image/jpeg', value => $img2 },
 ]);
-is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)';     # test7
+is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)'; # test5
+
+SKIP: {
+    eval { require GD };
+    skip "GD::Image not installed", 2 if $@;
+
+    $in_file = path( 't', 'Image', 'base.vcf' );
+    $expected_content = $in_file->slurp_utf8;
+
+    $vc->photo($raw);
+    $vc->logo($raw);
+    is $vc->as_string, $expected_content, 'photo(raw)';             # test6
+
+    $gd->fill(50,50,$red);
+    my $raw2 = $gd->jpeg;
+
+    $in_file = path( 't', 'Image', 'maltiple_base64.vcf' );
+    $expected_content = $in_file->slurp_utf8;
+
+    $vc->photo([
+        { media_type => 'image/png', value => $raw },
+        { media_type => 'image/jpeg', value => $raw2 },
+    ]);
+    $vc->logo( { media_type => 'image/png', value => $raw } );
+    is $vc->as_string, $expected_content, 'photo(ArrayRef of Hashref of raw)';  # test7
+}
 
 done_testing;
