@@ -91,7 +91,7 @@ $vc->photo([
 is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)'; # test6
 
 SKIP: {
-    eval { require GD };
+    eval { require 'GD.pm' };
     skip "GD::Image not installed", 2 if $@;
 
     $in_file = path( 't', 'Image', 'base.vcf' );
