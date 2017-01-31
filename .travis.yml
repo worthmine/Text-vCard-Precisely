@@ -2,7 +2,7 @@ language: perl
 bundler_args: --deployment
 cache: bundler
 
-sudo: required
+#sudo: required
 
 perl:
   - "5.24"
@@ -15,7 +15,7 @@ perl:
   - "5.10"
  
 install:
-#   - sudo apt-get install libgd
+   - apt-get install libgd
 #   - cpanm GD -f
    - cpanm --quiet --notest --skip-satisfied Dist::Zilla
    - cpanm Test::NoTabs
