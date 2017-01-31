@@ -7,17 +7,17 @@ use URI;
 use lib qw(./lib);
 use Text::vCard::Precisely::V3;
 
-use Test::More tests => 8;
+use Test::More tests => 7;
 
 my ($gd, $black, $red, $img, $raw);
 my $vc = Text::vCard::Precisely::V3->new();
 $vc->rev('2008-04-24T19:52:43Z');
 
 SKIP: {
-    eval { require_ok('GD') };                                      # test1
-    skip "GD::Image not installed", 1 if $@;
+    eval { require GD };                                      # test1
+    skip "GD::Image not installed", 0 if $@;
 
-    $gd = new GD::Image(100,100);
+    $gd = GD::Image(100,100)->new unless $@;
     $black = $gd->colorAllocate(0,0,0);
     $red = $gd->colorAllocate(255,0,0);
     $gd->rectangle(0,0,99,99,$black);
@@ -57,7 +57,6 @@ is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';   # test4
 $in_file = path( 't', 'Image', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$gd->fill(50,50,$red);
 my $img2 = <<'EOL';
 /9j/4AAQSkZJRgABAQEAYABgAAD//gA+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkc
 gSlBFRyB2ODApLCBkZWZhdWx0IHF1YWxpdHkK/9sAQwAIBgYHBgUIBwcHCQkICgwUDQwLCwwZEh
