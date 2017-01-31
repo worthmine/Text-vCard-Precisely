@@ -5,6 +5,7 @@ use MIME::Base64;
 use Moose;
 use Moose::Util::TypeConstraints;
 use Data::Validate::URI qw(is_web_uri);
+
 extends 'Text::vCard::Precisely::V3::Node';
 
 has name => ( is => 'rw', default => 'PHOTO', isa => 'Str', required => 1 );
