@@ -15,7 +15,7 @@ perl:
   - "5.10"
  
 install:
-   - apt-get install libgd
+#   - apt-get install libgd
 #   - cpanm GD -f
    - cpanm --quiet --notest --skip-satisfied Dist::Zilla
    - cpanm Test::NoTabs
