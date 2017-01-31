@@ -9,23 +9,10 @@ use Text::vCard::Precisely::V3;
 
 use Test::More tests => 7;
 
-my ($gd, $black, $red, $img, $raw);
 my $vc = Text::vCard::Precisely::V3->new();
 $vc->rev('2008-04-24T19:52:43Z');
 
-SKIP: {
-    eval { require GD };                                      # test1
-    skip "GD::Image not installed", 0 if $@;
-
-    $gd = GD::Image(100,100)->new unless $@;
-    $black = $gd->colorAllocate(0,0,0);
-    $red = $gd->colorAllocate(255,0,0);
-    $gd->rectangle(0,0,99,99,$black);
-    $raw = $gd->png;
-    $img = encode_base64( $raw, "" );
-}
-
-$img ||= <<'EOL';
+my $img = <<'EOL';
 iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQMAAABKLAcXAAAABlBMVEUAAAD/AAAb/
 40iAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAFElEQVQ4jWNgGAWjYBSMglFATwAABXgAAfmlXsc
 AAAAASUVORK5CYII=
@@ -90,8 +77,13 @@ $vc->photo([
 is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)'; # test6
 
 SKIP: {
-    eval { require 'GD.pm' };
-    skip "GD::Image not installed", 2 if $@;
+    eval { require GD };
+    skip "GD not installed", 2 if $@;
+
+    my $gd = GD::Image(100,100)->new unless $@;
+    my $black = $gd->colorAllocate(0,0,0);
+    $gd->rectangle(0,0,99,99,$black);
+    my $raw = $gd->png;
 
     $in_file = path( 't', 'Image', 'base.vcf' );
     $expected_content = $in_file->slurp_utf8;
@@ -100,6 +92,7 @@ SKIP: {
     $vc->logo($raw);
     is $vc->as_string, $expected_content, 'photo(raw)';             # test7
 
+    my $red = $gd->colorAllocate(255,0,0);
     $gd->fill(50,50,$red);
     my $raw2 = $gd->jpeg;
 
