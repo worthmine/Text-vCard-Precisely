@@ -2,8 +2,6 @@ language: perl
 bundler_args: --deployment
 cache: bundler
 
-#sudo: required
-
 perl:
   - "5.24"
   - "5.22"
@@ -15,8 +13,6 @@ perl:
   - "5.10"
  
 install:
-#   - apt-get install libgd
-#   - cpanm GD -f
    - cpanm --quiet --notest --skip-satisfied Dist::Zilla
    - cpanm Test::NoTabs
    - "dzil authordeps | grep -vP '[^\\w:]' | cpanm --verbose --notest --skip-satisfied"
@@ -24,7 +20,6 @@ install:
 
 script:
   - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
-#  - cpanm --uninstall GD
   - dzil smoke --release --author
 
 notifications:
