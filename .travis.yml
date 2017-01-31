@@ -17,9 +17,10 @@ install:
    - cpanm Test::NoTabs
    - "dzil authordeps | grep -vP '[^\\w:]' | cpanm --verbose --notest --skip-satisfied"
    - "dzil listdeps --missing  | grep -vP '[^\\w:]' | cpanm --verbose --skip-satisfied"
+
 script:
-  - cpanm --uninstall GD
   - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
+  - cpanm --uninstall GD
   - dzil smoke --release --author
 
 notifications:
