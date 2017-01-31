@@ -15,7 +15,7 @@ perl:
 install:
    - cpanm --quiet --notest --skip-satisfied Dist::Zilla
    - cpanm Test::NoTabs
-   - cpanm --installdeps GD
+   - cpanm GD --notest --build-args="--ignore_missing_gd"
    - "dzil authordeps | grep -vP '[^\\w:]' | cpanm --verbose --notest --skip-satisfied"
    - "dzil listdeps   | grep -vP '[^\\w:]' | cpanm --verbose --skip-satisfied"
 
