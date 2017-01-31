@@ -7,14 +7,14 @@ use URI;
 use lib qw(./lib);
 use Text::vCard::Precisely::V3;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 my ($gd, $black, $red, $img, $raw);
 my $vc = Text::vCard::Precisely::V3->new();
 $vc->rev('2008-04-24T19:52:43Z');
 
 SKIP: {
-    eval { require GD };
+    eval { require_ok('GD') };                                      # test1
     skip "GD::Image not installed", 0 if $@;
 
     $gd = new GD::Image(100,100);
@@ -37,21 +37,21 @@ my $expected_content = $in_file->slurp_utf8;
 
 $vc->photo($img);
 $vc->logo($img);
-is $vc->as_string, $expected_content, 'photo(Base64)';              # test1
+is $vc->as_string, $expected_content, 'photo(Base64)';              # test2
 
 $in_file = path( 't', 'Image', 'uri.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $uri = URI->new('https://www.example.com/image.png');
 $vc->photo($uri);
-is $vc->as_string, $expected_content, 'photo(URL)';                 # test2
+is $vc->as_string, $expected_content, 'photo(URL)';                 # test3
 
 $in_file = path( 't', 'Image', 'hash.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->photo( { media_type => 'image/png', value => $img } );
 $vc->logo( { media_type => 'image/png', value => $img } );
-is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';   # test3
+is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';   # test4
 
 
 $in_file = path( 't', 'Image', 'maltiple.vcf' );
@@ -79,7 +79,7 @@ EOL
 $img2 =~ s/\s//g;
 
 $vc->photo([ $img, $img2 ]);
-is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';     # test4
+is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';  # test5
 
 $in_file = path( 't', 'Image', 'maltiple_base64.vcf' );
 $expected_content = $in_file->slurp_utf8;
@@ -88,7 +88,7 @@ $vc->photo([
     { media_type => 'image/png', value => $img },
     { media_type => 'image/jpeg', value => $img2 },
 ]);
-is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)'; # test5
+is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)'; # test6
 
 SKIP: {
     eval { require GD };
@@ -99,7 +99,7 @@ SKIP: {
 
     $vc->photo($raw);
     $vc->logo($raw);
-    is $vc->as_string, $expected_content, 'photo(raw)';             # test6
+    is $vc->as_string, $expected_content, 'photo(raw)';             # test7
 
     $gd->fill(50,50,$red);
     my $raw2 = $gd->jpeg;
@@ -112,7 +112,7 @@ SKIP: {
         { media_type => 'image/jpeg', value => $raw2 },
     ]);
     $vc->logo( { media_type => 'image/png', value => $raw } );
-    is $vc->as_string, $expected_content, 'photo(ArrayRef of Hashref of raw)';  # test7
+    is $vc->as_string, $expected_content, 'photo(ArrayRef of Hashref of raw)';  # test8
 }
 
 done_testing;
