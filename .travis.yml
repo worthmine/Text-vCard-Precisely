@@ -18,8 +18,8 @@ install:
    - "dzil authordeps | grep -vP '[^\\w:]' | cpanm --verbose --notest --skip-satisfied"
    - "dzil listdeps   | grep -vP '[^\\w:]' | cpanm --verbose --skip-satisfied"
 script:
-  - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
   - cpanm --uninstall GD
+  - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
   - dzil smoke --release --author
 
 notifications:
