@@ -13,11 +13,11 @@ perl:
   - "5.10"
  
 install:
-//   - sudo apt-get install libgd
+#   - sudo apt-get install libgd
    - cpanm --quiet --notest --skip-satisfied Dist::Zilla
    - cpanm Test::NoTabs
-   - "dzil authordeps | grep -vP '[^\w:]' | cpanm --verbose --notest --skip-satisfied"
-   - "dzil listdeps   | grep -vP '[^\w:]' | cpanm --verbose --skip-satisfied"
+   - "dzil authordeps | grep -vP '[^\\w:]' | cpanm --verbose --notest --skip-satisfied"
+   - "dzil listdeps   | grep -vP '[^\\w:]' | cpanm --verbose --skip-satisfied"
 
 script:
   - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
