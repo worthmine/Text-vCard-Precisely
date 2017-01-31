@@ -1,24 +1,28 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use GD;
 use MIME::Base64;
 use URI;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
+
+my $GD_ok = require_ok ('GD');
+my ($img, $black, $red);
 
 use lib qw(./lib);
-
 use Text::vCard::Precisely::V3;
 
 my $vc = Text::vCard::Precisely::V3->new();
 $vc->rev('2008-04-24T19:52:43Z');
 
-my $img = new GD::Image(100,100);
-my $black = $img->colorAllocate(0,0,0);
-my $red = $img->colorAllocate(255,0,0);
-$img->rectangle(0,0,99,99,$black);
-my $raw = $img->png;
+if($GD_ok){
+    $img = new GD::Image(100,100);
+    $black = $img->colorAllocate(0,0,0);
+    $red = $img->colorAllocate(255,0,0);
+    $img->rectangle(0,0,99,99,$black);
+}
+
+my $raw = $img->png if $GD_ok;
 my $base64 = encode_base64( $raw, "" );
 
 my $in_file = path( 't', 'Image', 'base.vcf' );
@@ -52,8 +56,8 @@ is $vc->as_string, $expected_content, 'photo(URL)';                 # test5
 $in_file = path( 't', 'Image', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$img->fill(50,50,$red);
-my $raw2 = $img->jpeg;
+$img->fill(50,50,$red) if $GD_ok;
+my $raw2 = $img->jpeg if $GD_ok;
 $vc->photo([ $raw, $raw2 ]);
 is $vc->as_string, $expected_content, 'photo(ArrayRef of raw)';     # test6
 
