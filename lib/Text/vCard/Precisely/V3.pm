@@ -1,6 +1,6 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely::V3;
-
+$VERSION = 0.01;
 
 use 5.10.1;
 use Moose;
