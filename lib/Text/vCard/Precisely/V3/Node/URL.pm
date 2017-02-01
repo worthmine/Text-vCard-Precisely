@@ -1,4 +1,5 @@
 package Text::vCard::Precisely::V3::Node::URL;
+
 use Carp;
 use URI;
 

@@ -1,4 +1,5 @@
 package Text::vCard::Precisely::V3::Node::Photo;
+
 use Carp;
 use MIME::Base64;
 

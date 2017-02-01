@@ -1,4 +1,5 @@
 package Text::vCard::Precisely::V3::Node::N;
+
 use Carp;
 use Moose;
 use Moose::Util::TypeConstraints;
