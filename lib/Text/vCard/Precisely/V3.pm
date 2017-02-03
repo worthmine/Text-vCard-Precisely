@@ -198,11 +198,14 @@ coerce 'Node'
 has [qw|fn nickname org impp lang title role categories note xml key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
-subtype 'KIND'
-    => as 'Str'
-    => where { m/^(:?individual|group|org|location|[a-zA-z0-9\-]+|X-[a-zA-z0-9\-]+)$/s}
-    => message { "The KIND you provided, $_, was not supported" };
-has kind => ( is => 'rw', isa => 'KIND' );
+subtype 'KINDs'
+    => as 'ArrayRef[Str]'
+    => where { grep{ /^(:?individual|group|org|location|[a-zA-z0-9\-]+|X-[a-zA-z0-9\-]+)$/s } @$_ }
+    => message { "The KIND you provided, @$_, was not supported" };
+coerce 'KINDs'
+    => from 'Str'
+    => via { [$_] };
+has kind => ( is => 'rw', isa => 'KINDs', coerce => 1 );
 
 subtype 'Timestamp'
     => as 'Str'
@@ -276,7 +279,7 @@ sub load_string {
 my @nodes = qw(
     N FN NICKNAME BDAY ANNIVERSARY GENDER
     ADR LABEL TEL EMAIL IMPP LANG TZ GEO
-    ORG TITLE ROLE CATEGORIES
+    KIND ORG TITLE ROLE CATEGORIES
     NOTE SOUND UID URL FBURL CALADRURI CALURI
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
