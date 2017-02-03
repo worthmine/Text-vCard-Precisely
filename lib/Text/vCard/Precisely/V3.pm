@@ -176,17 +176,25 @@ coerce 'Node'
         return [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
     };
 coerce 'Node'
-    => from 'HashRef[Maybe[Str]]'
+    => from 'HashRef'
     => via {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
         return [ Text::vCard::Precisely::V3::Node->new({
             name => $_->{'name'} || $name,
+            types => $_->{'types'} || [],
             value => $_->{'value'} || croak "No value in HashRef!",
         }) ]
     };
 coerce 'Node'
     => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node->new($_) } @$_ ] };
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ map { Text::vCard::Precisely::V3::Node->new({
+            name => $_->{'name'} || $name,
+            types => $_->{'types'} || [],
+            value => $_->{'value'} || croak "No value in HashRef!",
+        }) } @$_ ]
+    };
 has [qw|fn nickname org impp lang title role categories note xml key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
@@ -267,10 +275,10 @@ sub load_string {
 
 my @nodes = qw(
     N FN NICKNAME BDAY ANNIVERSARY GENDER
-    ADR LABEL TEL EMAIL IMPP LANG XML KEY TZ GEO
+    ADR LABEL TEL EMAIL IMPP LANG TZ GEO
     ORG TITLE ROLE CATEGORIES
     NOTE SOUND UID URL FBURL CALADRURI CALURI
-    KEY SOCIALPROFILE PHOTO LOGO SOURCE
+    XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
 
 sub as_string {
@@ -314,12 +322,6 @@ sub as_file {
     my $file = $self->_path($filename);
     $file->spew( $self->_iomode_out, $self->as_string );
     return $file;
-}
-
-sub _escape {
-    my $txt = shift;
-    ( my $r = $txt ) =~ s/([,;\\])/\\$1/sg if $txt;
-    return $r || '';
 }
 
 # Alias

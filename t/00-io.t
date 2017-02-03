@@ -56,9 +56,9 @@ my $hashref = {
 
 my $data = get_data_section('data.vcf');
 $data =~ s/\n/\r\n/g;
+
 my $string = $vc->load_hashref($hashref)->as_string();
 is $string, $data, 'as_string()';                       #4
-
 
 my $in_file = path( 't', 'expected.vcf' );
 $string = $vc->load_file($in_file)->as_string();
@@ -71,7 +71,9 @@ is $load_s->as_string(), $data, 'load_string()';        #6
 TODO: {
     local $TODO = "it doesn't support parsing vCard4.0 yet";
     my $in_file = path( 't', 'vcard4.vcf' );
-    $string = $vc->load_file($in_file)->as_string();
+    $vc->load_file($in_file);
+    $vc->version('4.0');
+    $string = $vc->as_string();
     my $expected_content = $in_file->slurp_utf8;
     is $string, $expected_content, 'parsing vCard4';    #7
 }

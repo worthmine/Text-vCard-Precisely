@@ -36,12 +36,12 @@ has pref => ( is => 'rw', isa => subtype 'Preffered'
 subtype 'Type'
     => as 'Str'
     => where {
-        m/^(:?work|home)$/is or #common
+        m/^(:?work|home|PGP)$/is or #common
         m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is or    # it needs tests
         m|^(:?[a-zA-z0-9\-]+/X-[a-zA-z0-9\-]+)$|s; # does everything pass?
     }
     => message { "The text you provided, $_, was not supported in 'Type'" };
-has types => ( is => 'rw', isa => 'ArrayRef[Type]', default => sub{ [] } );
+has types => ( is => 'rw', isa => 'ArrayRef[Type]', default => sub{[]} );
 
 subtype 'PIDNum'
     => as 'Num'
@@ -98,9 +98,15 @@ sub as_string {
 
     return join(';', @lines ) . ':' . (
         ref $self->value eq 'Array'?
-        map{ Text::vCard::Precisely::V3::_escape($_) } @{ $self->value }:
-        Text::vCard::Precisely::V3::_escape( $self->value )
+            map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: _escape($_) } @{ $self->value }:
+            $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: _escape( $self->value )
     );
+}
+
+sub _escape {
+    my $txt = shift;
+    ( my $r = $txt ) =~ s/([,;\\])/\\$1/sg if $txt;
+    return $r || '';
 }
 
 1;

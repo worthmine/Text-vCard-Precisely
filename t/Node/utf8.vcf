@@ -1,0 +1,18 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Forrest Gump
+NICKNAME:一期一会
+LABEL;TYPE=HOME:123 Main St.\nSpringfield, IL 12345\nUSA
+IMPP:aim:johndoe@aol.com
+LANG:en-us
+LANG:ja-jp
+GEO:39.95;-75.1667
+ORG:Bubba Gump Shrimp Co.
+TITLE:Shrimp Man
+ROLE:Section 9
+CATEGORIES:fisher
+NOTE:It's a note!
+XML:<b>Not an xCard XML element</b>
+KEY;TYPE=PGP:http://example.com/key.pgp
+REV:2008-04-24T19:52:43Z
+END:VCARD
