@@ -9,8 +9,8 @@ extends 'Text::vCard::Precisely::V3::Node';
 has name => (is => 'ro', default => 'ADR', isa => 'Str' );
 has value => (is => 'ro', default => '', isa => 'Str' );
 
-has [qw( pobox extended street city region post_code country )]
-    => ( is => 'rw', isa => 'Str' );
+my @order = qw( pobox extended street city region post_code country );
+has \@order => ( is => 'rw', isa => 'Str' );
 
 override 'as_string' => sub {
     my ($self) = @_;
@@ -23,22 +23,9 @@ override 'as_string' => sub {
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
-    ( my $pobox     = $self->pobox    || '' ) =~ s/([,;\\])/\\$1/sg;
-    ( my $extended  = $self->extended || '' ) =~ s/([,;\\])/\\$1/sg;
-    ( my $street    = $self->street         ) =~ s/([,;\\])/\\$1/sg;
-    ( my $city      = $self->city           ) =~ s/([,;\\])/\\$1/sg;
-    ( my $region    = $self->region         ) =~ s/([,;\\])/\\$1/sg;
-    ( my $post_code = $self->post_code      ) =~ s/([,;\\])/\\$1/sg;
-    ( my $country   = $self->country        ) =~ s/([,;\\])/\\$1/sg;
-
-    my $line = join(';', @lines ) . ':' . join ';',
-    $pobox      || '',
-    $extended   || '',
-    $street     || '',
-    $city       || '',
-    $region     || '',
-    $post_code  || '',
-    $country    || '';
+    my @values = ();
+    map{ push @values, Text::vCard::Precisely::V3::Node::_escape( $self->$_ ) } @order;
+    return join(';', @lines ) . ':' . join ';', @values;
 };
 
 __PACKAGE__->meta->make_immutable;

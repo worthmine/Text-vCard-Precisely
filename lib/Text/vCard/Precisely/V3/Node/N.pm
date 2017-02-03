@@ -38,18 +38,10 @@ override 'as_string' => sub {
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as;
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
-    ( my $family        = $self->family     || $self->value->[0] || '' ) =~ s/([,;\\])/\\$1/sg;
-    ( my $given         = $self->given      || $self->value->[1] || '' ) =~ s/([,;\\])/\\$1/sg;
-    ( my $additional    = $self->additional || $self->value->[2] || '' ) =~ s/([,;\\])/\\$1/sg;
-    ( my $prefixes      = $self->prefixes   || $self->value->[3] || '' ) =~ s/([,;\\])/\\$1/sg;
-    ( my $suffixes      = $self->suffixes   || $self->value->[4] || '' ) =~ s/([,;\\])/\\$1/sg;
-
-    my $line = join(';', @lines ) . ':' . join ';',
-        $family,
-        $given,
-        $additional,
-        $prefixes,
-        $suffixes;
+    my @values = ();
+    my $num = 0;
+    map{ push @values, Text::vCard::Precisely::V3::Node::_escape( $self->$_ || $self->value->[$num++] ) } @order;
+    return join(';', @lines ) . ':' . join ';', @values;
 };
 
 __PACKAGE__->meta->make_immutable;
