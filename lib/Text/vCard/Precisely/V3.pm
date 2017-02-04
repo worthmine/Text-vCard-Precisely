@@ -27,9 +27,7 @@ has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has version => ( is => 'rw', isa => 'Str', default => '3.0' );
 
 subtype 'N'
-    => as 'ArrayRef[Text::vCard::Precisely::V3::Node::N]'
-    => where { ref $_ eq 'ARRAY' }
-    => message { 'N must be a ArrayRef you provided:' . ref $_  };
+    => as 'Text::vCard::Precisely::V3::Node::N';
 coerce 'N'
     => from 'HashRef[Maybe[Ref]|Maybe[Str]]'
     => via {
@@ -37,26 +35,23 @@ coerce 'N'
         while( my ($key, $value) = each %$_ ) {
             $param{$key} = $value if $value;
         }
-        return [ Text::vCard::Precisely::V3::Node::N->new(\%param) ];
+        return Text::vCard::Precisely::V3::Node::N->new(\%param);
     };
 coerce 'N'
-    => from 'ArrayRef[HashRef[Maybe[Str]]]'
-    => via {[ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
-coerce 'N'
-    => from 'ArrayRef[ArrayRef[Maybe[Str]]]'
-    => via { [ map{ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) } @$_ ]};
+    => from 'HashRef[Maybe[Str]]'
+    => via { Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) };
 coerce 'N'
     => from 'ArrayRef[Maybe[Str]]'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => {
-        family => $_[0][0] || '',
-        given => $_[0][1] || '',
-        additional => $_[0][2] || '',
-        prefixes => $_[0][3] || '',
-        suffixes => $_[0][4] || '',
-    } }) ]};
+    => via { Text::vCard::Precisely::V3::Node::N->new({ value => {
+        family      => $_->[0] || '',
+        given       => $_->[1] || '',
+        additional  => $_->[2] || '',
+        prefixes    => $_->[3] || '',
+        suffixes    => $_->[4] || '',
+    } }) };
 coerce 'N'
     => from 'Str'
-    => via {[ Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) ]};
+    => via { Text::vCard::Precisely::V3::Node::N->new({ value => [split ';', $_] }) };
 has n => ( is => 'rw', isa => 'N', coerce => 1 );
 
 subtype 'Address' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Address]';
@@ -198,22 +193,27 @@ coerce 'Node'
 has [qw|fn nickname org impp lang title role categories note xml key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
-subtype 'KINDs'
-    => as 'ArrayRef[Str]'
-    => where { grep{ /^(:?individual|group|org|location|[a-zA-z0-9\-]+|X-[a-zA-z0-9\-]+)$/s } @$_ }
-    => message { "The KIND you provided, @$_, was not supported" };
-coerce 'KINDs'
-    => from 'Str'
-    => via { [$_] };
-has kind => ( is => 'rw', isa => 'KINDs', coerce => 1 );
+subtype 'KIND'
+    => as 'Str'
+    => where { m/^(:?individual|group|org|location|[a-z0-9\-]+|X-[a-z0-9\-]+)$/s }
+    => message { "The KIND you provided, $_, was not supported" };
+has kind => ( is => 'rw', isa => 'KIND' );
 
-subtype 'Timestamp'
+subtype 'TimeStamp'
     => as 'Str'
     => where { m/^\d{4}-\d{2}-\d{2}(:?T\d{2}:\d{2}:\d{2}Z)?$/is  }
     => message { "The TimeStamp you provided, $_, was not correct" };
-has rev => ( is => 'rw', isa => 'Timestamp' );
+coerce 'TimeStamp'
+    => from 'Int'
+    => via {
+        my ( $s, $m, $h, $d, $M, $y ) = gmtime();
+        return sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
+    };
+has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1  );
 
-has [qw| uid clientpidmap |] => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
+has uid => ( is => 'rw', isa => 'Data::UUID' );
+
+has clientpidmap => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
 
 has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
 # utc-offset format is NOT RECOMMENDED in vCard 4.0
@@ -280,7 +280,7 @@ sub load_string {
 my @nodes = qw(
     N FN NICKNAME BDAY ANNIVERSARY GENDER
     ADR LABEL TEL EMAIL IMPP LANG TZ GEO
-    KIND ORG TITLE ROLE CATEGORIES
+    ORG TITLE ROLE CATEGORIES
     NOTE SOUND UID URL FBURL CALADRURI CALURI
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
@@ -290,6 +290,7 @@ sub as_string {
     my $string = "BEGIN:VCARD\r\n";
     $string .= 'VERSION:' . $self->version . "\r\n";
     $string .= 'PRODID:' . $self->prodid . "\r\n" if $self->prodid;
+    $string .= 'KIND:' . $self->kind . "\r\n" if $self->kind;
 #     $string .= 'SORT-STRING:' . decode_utf8($self->sort_string) . "\r\n"
      $string .= 'SORT-STRING:' . $self->sort_string . "\r\n"
     if $self->version ne '4.0' and $self->sort_string;
@@ -309,12 +310,8 @@ sub as_string {
             $string .= $self->$method->as_string . "\r\n";
         }
     }
-    unless ( $self->rev ) {
-        my ( $s, $m, $h, $d, $M, $y ) = gmtime();
-        $self->rev( sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s );
-    }
 
-    $string .= 'REV:' . $self->rev . "\r\n";
+    $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;
     $string .= "END:VCARD";
     $string = decode( $self->encoding_out, $string );
     my $lf = Text::LineFold->new( CharMax => 74, ColMin => 50, Newline => "\r\n" );   # line break with 75bytes

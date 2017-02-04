@@ -10,7 +10,6 @@ use Text::vCard::Precisely::V3;
 use Test::More tests => 7;
 
 my $vc = Text::vCard::Precisely::V3->new();
-$vc->rev('2008-04-24T19:52:43Z');
 
 my $img = <<'EOL';
 iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQMAAABKLAcXAAAABlBMVEUAAAD/AAAb/
