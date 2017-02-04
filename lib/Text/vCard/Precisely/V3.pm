@@ -206,7 +206,7 @@ subtype 'TimeStamp'
 coerce 'TimeStamp'
     => from 'Int'
     => via {
-        my ( $s, $m, $h, $d, $M, $y ) = gmtime();
+        my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
         return sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
     };
 has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1  );
