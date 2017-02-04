@@ -209,11 +209,12 @@ has kind => ( is => 'rw', isa => 'KINDs', coerce => 1 );
 
 subtype 'Timestamp'
     => as 'Str'
-    => where { m/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z?$/is  }
+    => where { m/^\d{4}-\d{2}-\d{2}(:?T\d{2}:\d{2}:\d{2}Z)?$/is  }
     => message { "The TimeStamp you provided, $_, was not correct" };
 has rev => ( is => 'rw', isa => 'Timestamp' );
 
 has [qw| uid clientpidmap |] => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
+
 has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
 # utc-offset format is NOT RECOMMENDED in vCard 4.0
 
@@ -296,7 +297,7 @@ sub as_string {
     foreach my $node ( @nodes ) {
         my $method = $self->can( lc $node );
         croak "the Method you provided, $node is not supported." unless $method;
-        if ( ref $self->$method eq 'ARRAY') {
+        if ( ref $self->$method eq 'ARRAY' ) {
             foreach my $item ( @{ $self->$method } ){
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ){
                     $string .= $item->as_string . "\r\n";
