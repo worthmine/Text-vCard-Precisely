@@ -299,7 +299,7 @@ sub load_string {
 }
 
 my @nodes = qw(
-    N FN NICKNAME BDAY ANNIVERSARY GENDER
+    FN N NICKNAME
     ADR LABEL TEL EMAIL IMPP LANG GEO
     ORG TITLE ROLE CATEGORIES
     NOTE SOUND UID URL FBURL CALADRURI CALURI
@@ -312,10 +312,6 @@ sub as_string {
     $string .= 'VERSION:' . $self->version . "\r\n";
     $string .= 'PRODID:' . $self->prodid . "\r\n" if $self->prodid;
     $string .= 'KIND:' . $self->kind . "\r\n" if $self->kind;
-#     $string .= 'SORT-STRING:' . decode_utf8($self->sort_string) . "\r\n"
-     $string .= 'SORT-STRING:' . $self->sort_string . "\r\n"
-    if $self->version ne '4.0' and $self->sort_string;
-
     foreach my $node ( @nodes ) {
         my $method = $self->can( lc $node );
         croak "the Method you provided, $node is not supported." unless $method;
@@ -331,7 +327,12 @@ sub as_string {
             $string .= $self->$method->as_string . "\r\n";
         }
     }
-    use Data::Dumper qw(Dumper);
+
+     $string .= 'SORT-STRING:' . $self->sort_string . "\r\n"
+    if $self->version ne '4.0' and $self->sort_string;
+    $string .= 'BDAY:' . $self->bday . "\r\n" if $self->bday;
+    $string .= 'ANNIVERSARY:' . $self->anniversary . "\r\n" if $self->anniversary;
+    $string .= 'GENDER:' . $self->gender . "\r\n" if $self->gender;
     $string .= 'UID:' . $self->uid . "\r\n" if $self->uid;
     map { $string .= "CLIENTPIDMAP:$_\r\n" } @{ $self->clientpidmap || [] } if $self->clientpidmap;
     map { $string .= "TZ:" . $_->name . "\r\n" } @{ $self->tz || [] } if $self->tz;
