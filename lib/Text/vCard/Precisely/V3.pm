@@ -6,6 +6,7 @@ use 5.10.1;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
+use MooseX::Types::URI qw(Uri);
 
 use Carp;
 use Data::UUID;
@@ -211,11 +212,30 @@ coerce 'TimeStamp'
     };
 has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1  );
 
-has uid => ( is => 'rw', isa => 'Data::UUID' );
+subtype 'UID'
+    => as 'Str'
+    => where { m/^urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is }
+    => message { "The UID you provided, $_, was not correct" };
+has uid => ( is => 'rw', isa => 'UID' );
 
-has clientpidmap => ( is => 'rw', isa => 'ArrayRef[Data::UUID]' );
+subtype 'CLIENTPIDMAP'
+    => as 'Str'
+    => where { m/^\d+;urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is }
+    => message { "The CLIENTPIDMAP you provided, $_, was not correct" };
+subtype 'CLIENTPIDMAPs'
+    => as 'ArrayRef[CLIENTPIDMAP]';
+coerce 'CLIENTPIDMAPs'
+    => from 'Str'
+    => via { [$_] };
+has clientpidmap => ( is => 'rw', isa => 'CLIENTPIDMAPs', coerce => 1 );
 
-has tz =>  ( is => 'rw', isa => 'ArrayRef[TimeZone] | ArrayRef[URI]' );
+=cut
+class_type 'TimeZone', { class => 'DateTime::TimeZone' };
+coerce 'TimeZone'
+    => from 'Str'
+    => via { DateTime::TimeZone->new( name => $_ ) };
+=cut
+has tz =>  ( is => 'rw', isa => 'Maybe[TimeZone]|Maybe[Uri]' );#, coerce => 1 );
 # utc-offset format is NOT RECOMMENDED in vCard 4.0
 
 has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
@@ -311,6 +331,8 @@ sub as_string {
         }
     }
 
+    $string .= 'UID:' . $self->uid . "\r\n" if $self->uid;
+    map { $string .= "CLIENTPIDMAP:$_\r\n" } @{ $self->clientpidmap || [] } if $self->clientpidmap;
     $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;
     $string .= "END:VCARD";
     $string = decode( $self->encoding_out, $string );
