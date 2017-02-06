@@ -6,7 +6,6 @@ use 5.10.1;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
-use MooseX::Types::URI qw(Uri);
 
 use Carp;
 use Data::UUID;
@@ -229,14 +228,16 @@ coerce 'CLIENTPIDMAPs'
     => via { [$_] };
 has clientpidmap => ( is => 'rw', isa => 'CLIENTPIDMAPs', coerce => 1 );
 
-=cut
-class_type 'TimeZone', { class => 'DateTime::TimeZone' };
-coerce 'TimeZone'
+subtype 'TimeZones' => as 'ArrayRef[DateTime::TimeZone]';
+coerce 'TimeZones'
+    => from 'ArrayRef'
+    => via {[ map{ DateTime::TimeZone->new( name => $_ ) } @$_ ]};
+coerce 'TimeZones'
     => from 'Str'
-    => via { DateTime::TimeZone->new( name => $_ ) };
-=cut
-has tz =>  ( is => 'rw', isa => 'Maybe[TimeZone]|Maybe[Uri]' );#, coerce => 1 );
+    => via {[ DateTime::TimeZone->new( name => $_ ) ]};
+has tz =>  ( is => 'rw', isa => 'TimeZones', coerce => 1 );
 # utc-offset format is NOT RECOMMENDED in vCard 4.0
+# tz can be a URL, but there is no document in RFC2426 and RFC6350
 
 has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
 
@@ -299,7 +300,7 @@ sub load_string {
 
 my @nodes = qw(
     N FN NICKNAME BDAY ANNIVERSARY GENDER
-    ADR LABEL TEL EMAIL IMPP LANG TZ GEO
+    ADR LABEL TEL EMAIL IMPP LANG GEO
     ORG TITLE ROLE CATEGORIES
     NOTE SOUND UID URL FBURL CALADRURI CALURI
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
@@ -330,9 +331,10 @@ sub as_string {
             $string .= $self->$method->as_string . "\r\n";
         }
     }
-
+    use Data::Dumper qw(Dumper);
     $string .= 'UID:' . $self->uid . "\r\n" if $self->uid;
     map { $string .= "CLIENTPIDMAP:$_\r\n" } @{ $self->clientpidmap || [] } if $self->clientpidmap;
+    map { $string .= "TZ:" . $_->name . "\r\n" } @{ $self->tz || [] } if $self->tz;
     $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;
     $string .= "END:VCARD";
     $string = decode( $self->encoding_out, $string );
