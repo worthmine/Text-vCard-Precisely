@@ -217,6 +217,13 @@ subtype 'UID'
     => message { "The UID you provided, $_, was not correct" };
 has uid => ( is => 'rw', isa => 'UID' );
 
+subtype 'MEMBER'
+    => as 'ArrayRef[UID]';
+coerce 'MEMBER'
+    => from 'UID'
+    => via { [$_] };
+has member => ( is => 'rw', isa => 'MEMBER', coerce => 1 );
+
 subtype 'CLIENTPIDMAP'
     => as 'Str'
     => where { m/^\d+;urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is }
@@ -334,6 +341,7 @@ sub as_string {
     $string .= 'ANNIVERSARY:' . $self->anniversary . "\r\n" if $self->anniversary;
     $string .= 'GENDER:' . $self->gender . "\r\n" if $self->gender;
     $string .= 'UID:' . $self->uid . "\r\n" if $self->uid;
+    map { $string .= "MEMBER:$_\r\n" } @{ $self->member || [] } if $self->member;
     map { $string .= "CLIENTPIDMAP:$_\r\n" } @{ $self->clientpidmap || [] } if $self->clientpidmap;
     map { $string .= "TZ:" . $_->name . "\r\n" } @{ $self->tz || [] } if $self->tz;
     $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;

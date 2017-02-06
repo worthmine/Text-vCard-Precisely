@@ -85,9 +85,8 @@ __DATA__
 @@ data.vcf
 BEGIN:VCARD
 VERSION:3.0
-SORT-STRING:Forrest Gump
-N:Gump;Forrest;;Mr.;
 FN:Forrest Gump
+N:Gump;Forrest;;Mr.;
 ADR;TYPE=WORK;PREF=1:;100;Waters Edge;Baytown;LA;30314;United States of
  America
 ADR;TYPE=HOME:;42;Plantation St.;Baytown;LA;30314;United States of America
@@ -98,5 +97,6 @@ ORG:Bubba Gump Shrimp Co.
 TITLE:Shrimp Man
 URL:http://www.example.com/dir_photos/my_photo.gif
 PHOTO;MEDIATYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
+SORT-STRING:Forrest Gump
 REV:2008-04-24T19:52:43Z
 END:VCARD
