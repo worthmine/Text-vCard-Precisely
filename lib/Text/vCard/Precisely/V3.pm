@@ -190,7 +190,7 @@ coerce 'Node'
             value => $_->{'value'} || croak "No value in HashRef!",
         }) } @$_ ]
     };
-has [qw|fn nickname org impp lang title role categories note xml key geo label|]
+has [qw|fn nickname org impp lang title role categories note xml key geo label related|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 subtype 'KIND'
@@ -247,9 +247,6 @@ has tz =>  ( is => 'rw', isa => 'TimeZones', coerce => 1 );
 # tz can be a URL, but there is no document in RFC2426 and RFC6350
 
 has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
-
-has related => ( is => 'rw', isa => 'ArrayRef[Str] | ArrayRef[URI]' );
-
 
 with 'vCard::Role::FileIO';
 
@@ -308,7 +305,7 @@ sub load_string {
 my @nodes = qw(
     FN N NICKNAME
     ADR LABEL TEL EMAIL IMPP LANG GEO
-    ORG TITLE ROLE CATEGORIES
+    ORG TITLE ROLE CATEGORIES RELATED
     NOTE SOUND UID URL FBURL CALADRURI CALURI
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );

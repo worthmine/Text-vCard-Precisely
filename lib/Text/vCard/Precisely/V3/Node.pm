@@ -11,13 +11,12 @@ use overload (
 use Moose;
 use Moose::Util::TypeConstraints;
 
-enum 'Name' => [qw( VERSION PRODID N FN
-    KIND REV BDAY ANNIVERSARY GENDER
-    ADR LABEL TEL EMAIL PHOTO LOGO URL UID
+enum 'Name' => [qw( FN
+    ADR LABEL TEL EMAIL PHOTO LOGO URL
     TZ GEO NICKNAME IMPP LANG XML KEY NOTE
     ORG TITLE ROLE CATEGORIES
     SOURCE SOUND FBURL CALADRURI CALURI
-    X-SOCIALPROFILE SORT_STRING
+    RELATED X-SOCIALPROFILE SORT_STRING
 )];
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
