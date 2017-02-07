@@ -22,8 +22,8 @@ use Text::vCard::Precisely::V3::Node::Photo;
 use Text::vCard::Precisely::V3::Node::URL;
 use Text::vCard::Precisely::V3::Node::SocialProfile;
 
-has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
-has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
+has encoding_in  => ( is => 'rw', isa => 'Str', default => 'none', );
+has encoding_out => ( is => 'rw', isa => 'Str', default => 'none', );
 has version => ( is => 'rw', isa => 'Str', default => '3.0' );
 
 subtype 'N'
@@ -343,7 +343,7 @@ sub as_string {
     map { $string .= "TZ:" . $_->name . "\r\n" } @{ $self->tz || [] } if $self->tz;
     $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;
     $string .= "END:VCARD";
-    
+
     $string = decode( $self->encoding_in, $string ) unless $self->encoding_in eq 'none';
     my $lf = Text::LineFold->new( CharMax => 74, ColMin => 50, Newline => "\r\n" );   # line break with 75bytes
     $string = $lf->fold( "", " ", $string );

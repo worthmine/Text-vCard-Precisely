@@ -59,6 +59,7 @@ is $vc->as_string, $expected_content, 'n(HashRef with no suffixes)';    # 6
 $in_file = path( 't', 'n', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
+$vc->encoding_out('UTF-8');
 $vc->n({
     value => [ '姓', '名', '', '','様' ],
     charset => 'UTF-8',
