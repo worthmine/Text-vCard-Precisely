@@ -343,7 +343,7 @@ sub as_string {
     map { $string .= "TZ:" . $_->name . "\r\n" } @{ $self->tz || [] } if $self->tz;
     $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;
     $string .= "END:VCARD";
-    $string = decode( $self->encoding_out, $string );
+    $string = decode( $self->encoding_out, $string ) unless $self->encoding_out eq 'none';
     my $lf = Text::LineFold->new( CharMax => 74, ColMin => 50, Newline => "\r\n" );   # line break with 75bytes
     return $lf->fold( "", " ", $string );
 }
