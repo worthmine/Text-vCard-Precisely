@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use Encode;
 
 use Test::More tests => 3;
 
@@ -23,7 +22,7 @@ $vc->adr({
     post_code  => 'post_code',
     country    => 'country',
 });
-is $vc->as_string, $expected_content, 'adr(HashRef)';                    # test1
+is $vc->as_string, $expected_content, 'adr(HashRef)';                   # 1
 
 $in_file = path( 't', 'address', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
@@ -45,7 +44,7 @@ $vc->adr([{
     post_code  => 'another post_code',
     country    => 'another country',
 }]);
-is $vc->as_string, $expected_content, 'adr(ArrayRef of HashRef)';        # test2
+is $vc->as_string, $expected_content, 'adr(ArrayRef of HashRef)';       # 2
 
 $in_file = path( 't', 'address', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
@@ -61,6 +60,6 @@ $vc->adr({
     country     => '日本',
     charset     => 'UTF-8',
 });
-is decode_utf8($vc->as_string), $expected_content, 'adr(HashRef with utf8)';           # test3
+is $vc->as_string, $expected_content, 'adr(HashRef with utf8)';         # 3
 
 done_testing;

@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use Encode;
 
 use Test::More tests => 7;
 
@@ -64,6 +63,6 @@ $vc->n({
     value => [ '姓', '名', '', '','様' ],
     charset => 'UTF-8',
 });
-is decode_utf8($vc->as_string), $expected_content, 'n(HashRef with utf8)';  # 7
+is $vc->as_string, $expected_content, 'n(HashRef with utf8)';           # 7
 
 done_testing;

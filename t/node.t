@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use Encode;
 
 use Test::More tests => 4;
 
@@ -64,6 +63,6 @@ $in_file = path( 't', 'Node', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->nickname([{ value => '一期一会' }]);
-is decode_utf8($vc->as_string), $expected_content, 'Node(HashRef with utf8)';           # 4
+is $vc->as_string, $expected_content, 'Node(HashRef with utf8)';        # 4
 
 done_testing;

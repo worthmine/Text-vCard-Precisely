@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use Encode;
 
 use Test::More tests => 1;
 

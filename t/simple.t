@@ -1,7 +1,6 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use Encode;
 
 use Test::More tests => 2;
 
@@ -21,7 +20,7 @@ $vc->prodid('-//ONLINE DIRECTORY//NONSGML Version 1//EN');
 my $in_file = path( 't', 'simple', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
-is $vc->as_string, $expected_content, 'simples(Str)';                           # 1
+is $vc->as_string, $expected_content, 'simples(Str)';                   # 1
 
 $in_file = path( 't', 'simple', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
@@ -29,6 +28,6 @@ $expected_content = $in_file->slurp_utf8;
 $vc->fn('太宰治');
 $vc->n('太宰;治');
 $vc->sort_string('だざいおさむ');
-is decode_utf8($vc->as_string), $expected_content, 'simples(Str with utf8 )';   # 2
+is $vc->as_string, $expected_content, 'simples(Str with utf8 )';        # 2
 
 done_testing;
