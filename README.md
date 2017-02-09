@@ -237,7 +237,7 @@ To specify the language(s) that may be used for contacting the entity associated
 
 ### geo(), impp(), prodid(), xml(), key(), uid(), member(), sound(), fburl(), caladruri(), caluri()
 
-I don't think they are not popular paramater, but here are the methods!
+I don't think they are so popular paramater, but here are the methods!
 
 ## aroud UTF-8
 

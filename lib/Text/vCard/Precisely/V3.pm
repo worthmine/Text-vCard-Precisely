@@ -361,6 +361,7 @@ sub as_file {
     $file->spew( $self->_iomode_out, $self->as_string );
     return $file;
 }
+
 # Alias
 sub address {
     my $self = shift;
