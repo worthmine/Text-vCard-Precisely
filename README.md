@@ -59,10 +59,14 @@ print $vc->as_string();
 
 ## DESCRIPTION
 
-A vCard is a digital business card.  vCard and [vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) provide an
-API for parsing, editing, and creating vCards.
+A vCard is a digital business card. vCard and [vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) provide an API for parsing, editing, and creating vCards.
 
-This module is rebuilt from [Text::vCard](https://github.com/ranguard/text-vcard) because It doesn't provides some methods.
+This module is rebuilt from [Text::vCard](https://github.com/ranguard/text-vcard) because some reason bellow:
+
+- Text::vCard doesn't provides some methods.
+- Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely.
+- Android 4.4.x can't parse vCard4.0.
+- I want to learn about Moose, of course. 
 
 To handle an address book with several vCard entries in it, start with
 [vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) and then come back to this module.
@@ -75,6 +79,7 @@ not check or warn if these conditions have not been met.
 ### as_string()
 
 Returns the vCard as a string.
+You have to use encode_utf8() if your vCard is written in utf8
 
 ### as_file($filename)
 
@@ -97,20 +102,22 @@ To specify revision information about the current vCard.
 ### kind()
 
 To specify the kind of object the vCard represents.
+It's the new method from vCard4.0 but I don't care!
 
 ### sort_string()
 
 To specify the family name or given name text to be used for national-language-specific sorting of the FN and N types.
+**It's DEPRECATED from vCard4.0** Use SORT-AS param instead of it. The both are supported.
 
-## ArrayRef GETTERS/SETTERS
+## COMPLEX GETTERS/SETTERS
+
+They are based on Moose with coercion.
+So these methods accept not only Arrrayref[HashRef] but also ArrayRef[Str], HashRef or Str.
+Read source if you were confused.
 
 ### n()
 
 To specify the components of the name of the object the vCard represents.
-
-## COMPLEX GETTERS/SETTERS
-
-it's based on Moose with coercion. So These methods accept Arrrayref[HashRef] or HashRef.
 
 ### tel()
 
@@ -123,7 +130,7 @@ Accepts/returns an arrayref that looks like:
     ]
 ```
 
-### adr()
+### adr(), address()
 
 Accepts/returns an arrayref that looks like:
 
@@ -138,7 +145,7 @@ Accepts/returns an arrayref that looks like:
         region    => '',
         post_code => '',
         country   => 'USA',
-        pref      => 1,
+        pref      => 2,
       },
     ]
 ```
@@ -197,7 +204,7 @@ To specify additional information for your jobs.
 
 To specify information related to the time zone of the object the vCard represents.
 
-### fn(), fullname()
+### fn(), full_name()
 
 A person's entire name as they would like to see it displayed.  
 
@@ -225,9 +232,18 @@ To identify the source of directory information contained in the content type.
 
 To specify the language(s) that may be used for contacting the entity associated with the vCard.
 
-### geo(), impp(), prodid(), xml(), key(), sound(), fburl(), caladruri(), caluri()
+### geo(), impp(), prodid(), xml(), key(), uid(), member(), sound(), fburl(), caladruri(), caluri()
 
 I don't think they are not popular paramater, but here are the methods!
+
+## aroud UTF-8
+
+if you want to send precisely the vCard3.0 with UTF-8 characters to the **ALMOST** of smartphones, you have to set Charset param for each values like bellow...
+
+```
+ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
+
+```
 
 ## SEE ALOSO
 

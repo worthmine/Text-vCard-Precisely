@@ -362,7 +362,14 @@ sub as_file {
     return $file;
 }
 # Alias
-sub fullname {
+sub address {
+    my $self = shift;
+    $self->adr(@_);
+}
+
+
+
+sub full_name {
     my $self = shift;
     $self->fn(@_);
 }
