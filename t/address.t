@@ -49,7 +49,6 @@ is $vc->as_string, $expected_content, 'adr(ArrayRef of HashRef)';       # 2
 $in_file = path( 't', 'address', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$vc->encoding_out('UTF-8');
 $vc->adr({
     types       => [qw(home work)],
     pobox       => '201号室',

@@ -22,8 +22,8 @@ use Text::vCard::Precisely::V3::Node::Photo;
 use Text::vCard::Precisely::V3::Node::URL;
 use Text::vCard::Precisely::V3::Node::SocialProfile;
 
-has encoding_in  => ( is => 'rw', isa => 'Str', default => 'none', );
-has encoding_out => ( is => 'rw', isa => 'Str', default => 'none', );
+has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
+has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has version => ( is => 'rw', isa => 'Str', default => '3.0' );
 
 subtype 'N'
@@ -344,8 +344,12 @@ sub as_string {
     $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;
     $string .= "END:VCARD";
 
-    $string = decode( $self->encoding_in, $string ) unless $self->encoding_in eq 'none';
-    my $lf = Text::LineFold->new( CharMax => 74, ColMin => 50, Newline => "\r\n" );   # line break with 75bytes
+    my $lf = Text::LineFold->new(   # line break with 75bytes
+        CharMax => 74,
+        Charset => $self->encoding_in,
+        OutputCharset => $self->encoding_out,
+        Newline => "\r\n",
+    );
     $string = $lf->fold( "", " ", $string );
     return decode( $self->encoding_out, $string ) unless $self->encoding_out eq 'none';
     return $string;
@@ -357,7 +361,6 @@ sub as_file {
     $file->spew( $self->_iomode_out, $self->as_string );
     return $file;
 }
-
 # Alias
 sub fullname {
     my $self = shift;
