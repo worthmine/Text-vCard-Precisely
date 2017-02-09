@@ -247,6 +247,8 @@ if you want to send precisely the vCard3.0 with UTF-8 characters to the **ALMOST
 ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
 
 ```
+## for perl 5.8.x
+This module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.  
 
 ## SEE ALOSO
 
