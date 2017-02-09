@@ -207,7 +207,7 @@ To specify additional information for your jobs.
 
 To specify information related to the time zone of the object the vCard represents.
 
-### fn(), full_name()
+### fn(), full_name(), fullname()
 
 A person's entire name as they would like to see it displayed.  
 
