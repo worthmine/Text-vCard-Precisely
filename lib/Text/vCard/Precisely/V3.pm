@@ -367,7 +367,10 @@ sub address {
     $self->adr(@_);
 }
 
-
+sub fullname {
+    my $self = shift;
+    $self->fn(@_);
+}
 
 sub full_name {
     my $self = shift;
