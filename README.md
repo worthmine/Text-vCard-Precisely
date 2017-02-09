@@ -9,9 +9,12 @@ $vc->n([ 'Gump', 'Forrest', , 'Mr', '' ]);
 $vc->fn( 'Forrest Gump' );
 
 my $img = GD->new( ... some param ... )->plot->png;
+my $base64 = MIME::Base64::encode($img);
+
 $vc->photo([
   { value => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
   { value => $img, media_type => 'image/png' }, # Now you can set a binary image directly
+  { value => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
 ]);
 
 $vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!
@@ -187,7 +190,7 @@ or accept the string as URL like bellow
 
 ### photo(), logo()
 
-Accepts/returns an arrayref of URLs or Image. it's include encoding Base64.
+Accepts/returns an arrayref of URLs or Images: Whether it is a raw binary data or a text encoded in Base64 does not matter.
 
 Attention! Mac OS X and iOS **ignore** the description beeing URL.  
 use Base64 encoding or raw image if you have to show the image you want.
