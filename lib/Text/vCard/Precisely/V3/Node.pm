@@ -37,7 +37,7 @@ subtype 'Type'
     => as 'Str'
     => where {
         m/^(:?work|home|PGP)$/is or #common
-        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is or    # it needs tests
+#        m/^(:?contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is or    # it needs tests
         m|^(:?[a-zA-z0-9\-]+/X-[a-zA-z0-9\-]+)$|s; # does everything pass?
     }
     => message { "The text you provided, $_, was not supported in 'Type'" };

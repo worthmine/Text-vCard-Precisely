@@ -21,6 +21,7 @@ use Text::vCard::Precisely::V3::Node::Email;
 use Text::vCard::Precisely::V3::Node::Photo;
 use Text::vCard::Precisely::V3::Node::URL;
 use Text::vCard::Precisely::V3::Node::SocialProfile;
+use Text::vCard::Precisely::V3::Node::Related;
 
 has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
@@ -163,6 +164,15 @@ coerce 'SocialProfile'
     => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
 has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
 
+subtype 'Related' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Related]';
+coerce 'Related'
+    => from 'HashRef'
+    => via { [ Text::vCard::Precisely::V3::Node::Related->new($_) ] };
+    coerce 'Related'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V3::Node::Related->new($_) } @$_ ] };
+has related => ( is => 'rw', isa => 'Related', coerce => 1 );
+
 subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
 coerce 'Node'
     => from 'Str'
@@ -190,7 +200,7 @@ coerce 'Node'
             value => $_->{'value'} || croak "No value in HashRef!",
         }) } @$_ ]
     };
-has [qw|fn nickname org impp lang title role categories note xml key geo label related|]
+has [qw|fn nickname org impp lang title role categories note xml key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 subtype 'KIND'
