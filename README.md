@@ -247,12 +247,13 @@ if you want to send precisely the vCard3.0 with UTF-8 characters to the **ALMOST
 ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
 
 ```
-## for perl 5.8.x
-This module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.  
+## for under perl-5.12.5
+This module uses \P{ascii} in regexp so You have to use 5.12.5 and later.  
+And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.  
 
 ## SEE ALOSO
 
-[RFC6350](https://tools.ietf.org/html/rfc6350), [RFC2426](https://tools.ietf.org/html/rfc2426)
+[RFC 6350](https://tools.ietf.org/html/rfc6350), [RFC 2426](https://tools.ietf.org/html/rfc2426)
 
 ## AUTHOR
 
