@@ -39,7 +39,8 @@ override 'as_string' => sub {
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
     push @lines, "ENCODING=b" unless is_web_uri( $self->value );
 
-    return join(';', @lines ) . ':' . $self->value;
+    my $string =  join(';', @lines ) . ':' . $self->value;
+    return $self->fold( $string, -force => 1 );
 };
 
 __PACKAGE__->meta->make_immutable;

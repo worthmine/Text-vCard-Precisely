@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Path::Tiny;
 
-use Test::More tests => 3;
+use Test::More tests => 5;
 
 use lib qw(./lib);
 
@@ -37,12 +37,12 @@ $vc->adr([{
     country    => 'country',
 },{
     pobox      => 'another pobox',
-    extended   => 'another extended',
+    extended   => 'extended',
     street     => 'another street',
-    city       => 'another city',
-    region     => 'another region',
-    post_code  => 'another post_code',
-    country    => 'another country',
+    city       => 'city',
+    region     => 'region',
+    post_code  => 'post_code',
+    country    => 'country',
 }]);
 is $vc->as_string, $expected_content, 'adr(ArrayRef of HashRef)';       # 2
 
@@ -58,8 +58,37 @@ $vc->adr({
     region      => '都道府県',
     post_code   => '郵便番号',
     country     => '日本',
-    charset     => 'UTF-8',
 });
 is $vc->as_string, $expected_content, 'adr(HashRef with utf8)';         # 3
+
+$in_file = path( 't', 'address', 'long_ascii.vcf' );
+$expected_content = $in_file->slurp_utf8;
+
+$vc->adr({
+    types       => [qw(home work)],
+    pobox      => 'pobox',
+    extended   => 'long named extended',
+    street     => 'long named street',
+    city       => 'long named city',
+    region     => 'long named region',
+    post_code  => 'post_code',
+    country    => 'United States of America',
+});
+is $vc->as_string, $expected_content, 'adr(HashRef with long ascii)';   # 4
+
+$in_file = path( 't', 'address', 'long_utf8.vcf' );
+$expected_content = $in_file->slurp_utf8;
+
+$vc->adr({
+    types       => [qw(home work)],
+    pobox       => '201号室',
+    extended    => '必要以上に長い名前のマンション',
+    street      => '冗長課された通り',
+    city        => '八王子市',
+    region      => '都道府県',
+    post_code   => '郵便番号',
+    country     => '日本',
+});
+is $vc->as_string, $expected_content, 'adr(HashRef with long utf8)';    # 5
 
 done_testing;

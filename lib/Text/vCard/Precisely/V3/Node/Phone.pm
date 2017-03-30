@@ -35,7 +35,8 @@ override 'as_string' => sub {
 
     ( my $value = $self->value ) =~ s/[-+()\s]+/ /sg;
     $value =~ s/^ //s;
-    return join(';', @lines ) . ':' . $value;
+    my $string = join(';', @lines ) . ':' . $value;
+    return $self->fold( $string, -force => 1 );
 };
 
 __PACKAGE__->meta->make_immutable;

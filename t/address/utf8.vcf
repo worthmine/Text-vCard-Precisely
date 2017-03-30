@@ -1,5 +1,4 @@
 BEGIN:VCARD
 VERSION:3.0
-ADR;TYPE=HOME,WORK;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番
- 号;日本
+ADR;TYPE=HOME,WORK:201号室;マンション;通り;市;都道府県;郵便番号;日本
 END:VCARD

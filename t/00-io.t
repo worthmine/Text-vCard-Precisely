@@ -88,7 +88,7 @@ VERSION:3.0
 FN:Forrest Gump
 N:Gump;Forrest;;Mr.;
 ADR;TYPE=WORK;PREF=1:;100;Waters Edge;Baytown;LA;30314;United States of
- America
+  America
 ADR;TYPE=HOME:;42;Plantation St.;Baytown;LA;30314;United States of America
 TEL;TYPE=WORK,VOICE:111 555 1212
 TEL;TYPE=HOME,VOICE:404 555 1212

@@ -27,7 +27,8 @@ override 'as_string' => sub {
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
 
-    return join(';', @lines ) . ':' . $self->value;
+    my $string = join(';', @lines ) . ':' . $self->value;
+    return $self->fold( $string, -force => 1 );
 };
 
 __PACKAGE__->meta->make_immutable;

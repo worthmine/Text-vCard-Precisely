@@ -3,6 +3,7 @@ $VERSION = 0.01;
 
 use Carp;
 use Encode;
+use Text::LineFold;
 
 use overload (
     q{""}	=> \&as_string,
@@ -95,11 +96,26 @@ sub as_string {
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as and $self->name eq 'ORG';
 
-    return join(';', @lines ) . ':' . (
+    my $string = join(';', @lines ) . ':' . (
         ref $self->value eq 'Array'?
             map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: _escape($_) } @{ $self->value }:
             $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: _escape( $self->value )
     );
+    return $self->fold($string);
+}
+
+sub fold {
+    my $self = shift;
+    my $string = shift;
+    my %arg = @_;
+    my $lf = Text::LineFold->new(   # line break with 75bytes
+        CharMax => 74,
+        Newline => "\x0D\x0A",
+    );
+    my $decoded = decode_utf8($string);
+    return $decoded =~ /\P{ascii}+/ || $arg{-force}?
+        $lf->fold( "", " ", $string ):
+        $lf->fold( "", "  ", $string );
 }
 
 sub _escape {

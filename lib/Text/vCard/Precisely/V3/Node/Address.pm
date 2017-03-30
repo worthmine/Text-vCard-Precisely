@@ -25,7 +25,9 @@ override 'as_string' => sub {
 
     my @values = ();
     map{ push @values, Text::vCard::Precisely::V3::Node::_escape( $self->$_ ) } @order;
-    return join(';', @lines ) . ':' . join ';', @values;
+    my $string = join(';', @lines ) . ':' . join ';', @values;
+    return $self->fold($string);
+
 };
 
 __PACKAGE__->meta->make_immutable;

@@ -312,45 +312,46 @@ my @nodes = qw(
 
 sub as_string {
     my ($self) = @_;
-    my $string = "BEGIN:VCARD\r\n";
-    $string .= 'VERSION:' . $self->version . "\r\n";
-    $string .= 'PRODID:' . $self->prodid . "\r\n" if $self->prodid;
-    $string .= 'KIND:' . $self->kind . "\r\n" if $self->kind;
+    my $cr = "\x0D\x0A";
+    my $string = "BEGIN:VCARD" . $cr;
+    $string .= 'VERSION:' . $self->version . $cr;
+    $string .= 'PRODID:' . $self->prodid . $cr if $self->prodid;
+    $string .= 'KIND:' . $self->kind . $cr if $self->kind;
     foreach my $node ( @nodes ) {
         my $method = $self->can( lc $node );
         croak "the Method you provided, $node is not supported." unless $method;
         if ( ref $self->$method eq 'ARRAY' ) {
             foreach my $item ( @{ $self->$method } ){
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ){
-                    $string .= $item->as_string . "\r\n";
+                    $string .= $item->as_string;
                 }elsif($item) {
-                    $string .= uc($node) . ":$item\r\n";
+                    $string .= uc($node) . ":" . $item . $cr;
                 }
             }
         }elsif( $self->$method and $self->$method->isa('Text::vCard::Precisely::V3::Node') ) {
-            $string .= $self->$method->as_string . "\r\n";
+            $string .= $self->$method->as_string;
         }
     }
 
-     $string .= 'SORT-STRING:' . $self->sort_string . "\r\n"
+     $string .= 'SORT-STRING:' . $self->sort_string . $cr
     if $self->version ne '4.0' and $self->sort_string;
-    $string .= 'BDAY:' . $self->bday . "\r\n" if $self->bday;
-    $string .= 'ANNIVERSARY:' . $self->anniversary . "\r\n" if $self->anniversary;
-    $string .= 'GENDER:' . $self->gender . "\r\n" if $self->gender;
-    $string .= 'UID:' . $self->uid . "\r\n" if $self->uid;
-    map { $string .= "MEMBER:$_\r\n" } @{ $self->member || [] } if $self->member;
-    map { $string .= "CLIENTPIDMAP:$_\r\n" } @{ $self->clientpidmap || [] } if $self->clientpidmap;
-    map { $string .= "TZ:" . $_->name . "\r\n" } @{ $self->tz || [] } if $self->tz;
-    $string .= 'REV:' . $self->rev . "\r\n" if $self->rev;
+    $string .= 'BDAY:' . $self->bday . $cr if $self->bday;
+    $string .= 'ANNIVERSARY:' . $self->anniversary . $cr if $self->anniversary;
+    $string .= 'GENDER:' . $self->gender . $cr if $self->gender;
+    $string .= 'UID:' . $self->uid . $cr if $self->uid;
+    map { $string .= "MEMBER:$_" . $cr } @{ $self->member || [] } if $self->member;
+    map { $string .= "CLIENTPIDMAP:$_" . $cr } @{ $self->clientpidmap || [] } if $self->clientpidmap;
+    map { $string .= "TZ:" . $_->name . $cr } @{ $self->tz || [] } if $self->tz;
+    $string .= 'REV:' . $self->rev . $cr if $self->rev;
     $string .= "END:VCARD";
 
     my $lf = Text::LineFold->new(   # line break with 75bytes
         CharMax => 74,
         Charset => $self->encoding_in,
         OutputCharset => $self->encoding_out,
-        Newline => "\r\n",
+        Newline => $cr,
     );
-    $string = $lf->fold( "", " ", $string );
+    $string = $lf->fold( "", "  ", $string );
     return decode( $self->encoding_out, $string ) unless $self->encoding_out eq 'none';
     return $string;
 }
