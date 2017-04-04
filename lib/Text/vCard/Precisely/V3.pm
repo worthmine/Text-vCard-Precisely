@@ -294,7 +294,7 @@ sub parse_param {
 sub _make_hashref {
     my ( $self, $data ) = @_;
     my $hashref = {};
-    while( my( $name, $values) = each $data->{properties} ){
+    while( my( $name, $values) = each %{$data->{properties}} ){
         next if $name eq 'VERSION';
         foreach my $value (@$values) {
             if( $name eq 'N' ){
