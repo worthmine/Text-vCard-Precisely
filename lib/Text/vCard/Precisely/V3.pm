@@ -52,7 +52,7 @@ coerce 'N'
     } }) };
 coerce 'N'
     => from 'Str'
-    => via { Text::vCard::Precisely::V3::Node::N->new({ value => [split ';', $_] }) };
+    => via { Text::vCard::Precisely::V3::Node::N->new({ value => [split /(?<!\\);/, $_] }) };
 has n => ( is => 'rw', isa => 'N', coerce => 1 );
 
 subtype 'Address' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Address]';
@@ -219,6 +219,9 @@ coerce 'TimeStamp'
         my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
         return sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
     };
+coerce 'TimeStamp'
+    => from 'ArrayRef[HashRef]'
+    => via { $_->[0]{value} };
 has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1  );
 
 subtype 'UID'
