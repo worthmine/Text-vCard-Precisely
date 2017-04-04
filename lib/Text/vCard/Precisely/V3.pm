@@ -12,6 +12,8 @@ use Data::UUID;
 use Encode;
 use Text::LineFold;
 use URI;
+use Text::vFile::asData;
+my $vf = Text::vFile::asData->new;
 
 use Text::vCard::Precisely::V3::Node;
 use Text::vCard::Precisely::V3::Node::N;
@@ -211,7 +213,7 @@ has kind => ( is => 'rw', isa => 'KIND' );
 
 subtype 'TimeStamp'
     => as 'Str'
-    => where { m/^\d{4}-\d{2}-\d{2}(:?T\d{2}:\d{2}:\d{2}Z)?$/is  }
+    => where { m/^\d{4}-?\d{2}-?\d{2}(:?T\d{2}:?\d{2}:?\d{2}Z)?$/is  }
     => message { "The TimeStamp you provided, $_, was not correct" };
 coerce 'TimeStamp'
     => from 'Int'
@@ -280,39 +282,64 @@ sub load_hashref {
     return $self;
 }
 
-use vCard::AddressBook;
-sub load_file {
-    my ( $self, $filename ) = @_;
-
-    my $addressBook = vCard::AddressBook->new({
-        encoding_in  => $self->encoding_in,
-        encoding_out => $self->encoding_out,
-    });
-    my $vcard = $addressBook->load_file($filename)->vcards->[0];
-    $self->load_hashref($vcard->_data);
-
-    return $self;
+sub parse_param {
+    my ( $self, $value ) = @_;
+    my $ref = {};
+    $ref->{types} = [split /,/, $value->{param}{TYPE}] if $value->{param}{TYPE};
+    $ref->{media_type} = $value->{param}{MEDIATYPE} if $value->{param}{MEDIATYPE};
+    $ref->{pref} = $value->{param}{PREF} if $value->{param}{PREF};
+    return $ref;
 }
 
-=head2 load_string($string)
+sub _make_hashref {
+    my ( $self, $data ) = @_;
+    my $hashref = {};
+    while( my( $name, $values) = each $data->{properties} ){
+        next if $name eq 'VERSION';
+        foreach my $value (@$values) {
+            if( $name eq 'N' ){
+                my @names = split /(?<!\\);/, $value->{value};
+                $hashref->{$name} ||= \@names;
+            }elsif( $name eq 'REV' ){
+                $hashref->{$name} ||= $value->{value};
+            }elsif( $name eq 'ADR' ){
+                my $ref = $self->parse_param($value);
+                my @addesses = split /(?<!\\);/, $value->{value};
+                $ref->{pobox}       = $addesses[0];
+                $ref->{extended}    = $addesses[1];
+                $ref->{street}      = $addesses[2];
+                $ref->{city}        = $addesses[3];
+                $ref->{region}      = $addesses[4];
+                $ref->{post_code}   = $addesses[5];
+                $ref->{country}     = $addesses[6];
+                push @{$hashref->{$name}}, $ref;
+            }else{
+                my $ref = $self->parse_param($value);
+                $ref->{value} = $value->{value};
+                push @{$hashref->{$name}}, $ref;
+            }
+        }
+    }
+    return $hashref;
+}
 
- Returns $self in case you feel like chaining.  This method assumes $string is
- decoded (but not MIME decoded).
-=cut
+sub load_file {
+    my ( $self, $filename ) = @_;
+    open my $vcf, "<", $filename or croak "couldn't open vcf: $!";
+    my $data = $vf->parse($vcf)->{objects}[0];
+    close $vcf;
+    croak "$filename is NOT a vCard file." unless $data->{type} eq 'VCARD';
+
+    my $hashref = $self->_make_hashref($data);
+    $self->load_hashref($hashref);
+}
 
 sub load_string {
     my ( $self, $string ) = @_;
-
-    my $addressBook = vCard::AddressBook->new({
-        encoding_in  => $self->encoding_in,
-        encoding_out => $self->encoding_out,
-    });
-
-    my $vcard = $addressBook->load_string($string)->vcards->[0];
-    my $data = $vcard->_data;
-    $self->load_hashref($data);
-
-    return $self;
+    my @lines = split /\r\n/, $string;
+    my $data = $vf->parse_lines(@lines);
+    my $hashref = $self->_make_hashref($data->{objects}[0]);
+    $self->load_hashref($hashref);
 }
 
 my @nodes = qw(

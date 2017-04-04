@@ -12,7 +12,7 @@ has name => (is => 'ro', default => 'TEL', isa => 'Str' );
 
 subtype 'Phone'
     => as 'Str'
-    => where { s/[\(\)]//sg; m/^\d+(:?[ \-]*\d*[ \-]*\d*)$/s }
+    => where { m/^(:?tel:)?(:?[+]?\d{1,2}|\d*)[\(\s\-]?\d{1,3}[\)\s\-]?[\s]?\d{1,3}[\s\-]?\d{3,4}$/s }
     => message { "The Number you provided, $_, was not supported in Phone" };
 has value => (is => 'ro', default => '', isa => 'Phone' );
 
@@ -22,7 +22,7 @@ subtype 'PhoneType'
         m/^(:?work|home)$/is or #common
         m/^(:?text|voice|fax|cell|video|pager|textphone)$/is # for tel
     }
-    => message { "The text you provided, $_, was not supported in 'Type'" };
+    => message { "The text you provided, $_, was not supported in 'PhoneType'" };
 has types => ( is => 'rw', isa => 'ArrayRef[Maybe[PhoneType]]');
 
 override 'as_string' => sub {

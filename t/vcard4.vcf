@@ -2,8 +2,8 @@ BEGIN:VCARD
 VERSION:4.0
 N:Gump;Forrest;;Mr.;
 FN:Forrest Gump
-ADR;TYPE=WORK,PREF=1:;;100 Waters Edge;Baytown;LA;30314;United States of
- America
+ADR;TYPE=WORK;PREF=1:;;100 Waters Edge;Baytown;LA;30314;United States of
+  America
 ADR;TYPE=HOME:;;42 Plantation St.;Baytown;LA;30314;United States of America
 TEL;TYPE=WORK,VOICE;VALUE=uri:tel:+1-111-555-1212
 TEL;TYPE=HOME,VOICE;VALUE=uri:tel:+1-404-555-1212
