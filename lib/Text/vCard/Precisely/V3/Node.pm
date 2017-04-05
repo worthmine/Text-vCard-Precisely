@@ -97,8 +97,8 @@ sub as_string {
 
     my $string = join(';', @lines ) . ':' . (
         ref $self->value eq 'Array'?
-            map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: _escape($_) } @{ $self->value }:
-            $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: _escape( $self->value )
+            map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->value : $self->_escape($_) } @{ $self->value }:
+            $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: $self->_escape( $self->value )
     );
     return $self->fold($string);
 }
@@ -118,6 +118,7 @@ sub fold {
 }
 
 sub _escape {
+    my $self = shift;
     my $txt = shift;
     ( my $r = $txt ) =~ s/([,;\\])/\\$1/sg if $txt;
     return $r || '';

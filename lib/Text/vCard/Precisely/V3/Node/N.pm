@@ -40,7 +40,7 @@ override 'as_string' => sub {
 
     my @values = ();
     my $num = 0;
-    map{ push @values, Text::vCard::Precisely::V3::Node::_escape( $self->$_ || $self->value->[$num++] ) } @order;
+    map{ push @values, $self->_escape( $self->$_ || $self->value->[$num++] ) } @order;
     my $string = join(';', @lines ) . ':' . join ';', @values;
     return $self->fold( $string, -force => 1 );
 };

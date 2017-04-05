@@ -282,7 +282,7 @@ sub load_hashref {
     return $self;
 }
 
-sub parse_param {
+sub _parse_param {
     my ( $self, $value ) = @_;
     my $ref = {};
     $ref->{types} = [split /,/, $value->{param}{TYPE}] if $value->{param}{TYPE};
@@ -303,7 +303,7 @@ sub _make_hashref {
             }elsif( $name eq 'REV' ){
                 $hashref->{$name} ||= $value->{value};
             }elsif( $name eq 'ADR' ){
-                my $ref = $self->parse_param($value);
+                my $ref = $self->_parse_param($value);
                 my @addesses = split /(?<!\\);/, $value->{value};
                 $ref->{pobox}       = $addesses[0];
                 $ref->{extended}    = $addesses[1];
@@ -314,7 +314,7 @@ sub _make_hashref {
                 $ref->{country}     = $addesses[6];
                 push @{$hashref->{$name}}, $ref;
             }else{
-                my $ref = $self->parse_param($value);
+                my $ref = $self->_parse_param($value);
                 $ref->{value} = $value->{value};
                 push @{$hashref->{$name}}, $ref;
             }

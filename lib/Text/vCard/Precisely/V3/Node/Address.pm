@@ -24,7 +24,7 @@ override 'as_string' => sub {
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
     my @values = ();
-    map{ push @values, Text::vCard::Precisely::V3::Node::_escape( $self->$_ ) } @order;
+    map{ push @values, $self->_escape( $self->$_ ) } @order;
     my $string = join(';', @lines ) . ':' . join ';', @values;
     return $self->fold($string);
 
