@@ -197,7 +197,7 @@ has [qw|fn nickname org impp lang title role categories note key geo label|]
 
 subtype 'TimeStamp'
     => as 'Str'
-    => where { m/^\d{4}-?\d{2}-?\d{2}(:?T\d{2}:?\d{2}:?\d{2}Z)?$/is  }
+    => where { m/^\d{4}-?\d{2}-?\d{2}(:?T\d{2}:?\d{2}:?\d{2}Z)?$/is }
     => message { "The TimeStamp you provided, $_, was not correct" };
 coerce 'TimeStamp'
     => from 'Int'
