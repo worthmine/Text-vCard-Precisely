@@ -1,5 +1,4 @@
 package Text::vCard::Precisely::V3::Node::Address;
-$VERSION = 0.01;
 
 use Carp;
 use Moose;

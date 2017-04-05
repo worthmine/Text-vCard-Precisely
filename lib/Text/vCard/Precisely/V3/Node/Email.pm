@@ -1,5 +1,4 @@
 package Text::vCard::Precisely::V3::Node::Email;
-$VERSION = 0.01;
 
 use Carp;
 

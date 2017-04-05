@@ -1,5 +1,4 @@
 package Text::vCard::Precisely::V3::Node;
-$VERSION = 0.01;
 
 use Carp;
 use Encode;
