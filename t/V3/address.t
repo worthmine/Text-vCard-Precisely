@@ -10,7 +10,7 @@ use Text::vCard::Precisely::V3;
 
 my $vc = Text::vCard::Precisely::V3->new();
 
-my $in_file = path( 't', 'address', 'base.vcf' );
+my $in_file = path( 't', 'V3', 'address', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
 $vc->adr({
@@ -24,7 +24,7 @@ $vc->adr({
 });
 is $vc->as_string, $expected_content, 'adr(HashRef)';                   # 1
 
-$in_file = path( 't', 'address', 'maltiple.vcf' );
+$in_file = path( 't', 'V3', 'address', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->adr([{
@@ -46,7 +46,7 @@ $vc->adr([{
 }]);
 is $vc->as_string, $expected_content, 'adr(ArrayRef of HashRef)';       # 2
 
-$in_file = path( 't', 'address', 'utf8.vcf' );
+$in_file = path( 't', 'V3', 'address', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->adr({
@@ -61,7 +61,7 @@ $vc->adr({
 });
 is $vc->as_string, $expected_content, 'adr(HashRef with utf8)';         # 3
 
-$in_file = path( 't', 'address', 'long_ascii.vcf' );
+$in_file = path( 't', 'V3', 'address', 'long_ascii.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->adr({
@@ -76,7 +76,7 @@ $vc->adr({
 });
 is $vc->as_string, $expected_content, 'adr(HashRef with long ascii)';   # 4
 
-$in_file = path( 't', 'address', 'long_utf8.vcf' );
+$in_file = path( 't', 'V3', 'address', 'long_utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->adr({

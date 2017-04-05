@@ -23,7 +23,6 @@ use Text::vCard::Precisely::V3::Node::Email;
 use Text::vCard::Precisely::V3::Node::Photo;
 use Text::vCard::Precisely::V3::Node::URL;
 use Text::vCard::Precisely::V3::Node::SocialProfile;
-use Text::vCard::Precisely::V3::Node::Related;
 
 has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
@@ -166,15 +165,6 @@ coerce 'SocialProfile'
     => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
 has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
 
-subtype 'Related' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Related]';
-coerce 'Related'
-    => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node::Related->new($_) ] };
-    coerce 'Related'
-    => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node::Related->new($_) } @$_ ] };
-has related => ( is => 'rw', isa => 'Related', coerce => 1 );
-
 subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
 coerce 'Node'
     => from 'Str'
@@ -202,14 +192,8 @@ coerce 'Node'
             value => $_->{'value'} || croak "No value in HashRef!",
         }) } @$_ ]
     };
-has [qw|fn nickname org impp lang title role categories note xml key geo label|]
+has [qw|fn nickname org impp lang title role categories note key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
-
-subtype 'KIND'
-    => as 'Str'
-    => where { m/^(:?individual|group|org|location|[a-z0-9\-]+|X-[a-z0-9\-]+)$/s }
-    => message { "The KIND you provided, $_, was not supported" };
-has kind => ( is => 'rw', isa => 'KIND' );
 
 subtype 'TimeStamp'
     => as 'Str'
@@ -232,24 +216,6 @@ subtype 'UID'
     => message { "The UID you provided, $_, was not correct" };
 has uid => ( is => 'rw', isa => 'UID' );
 
-subtype 'MEMBER'
-    => as 'ArrayRef[UID]';
-coerce 'MEMBER'
-    => from 'UID'
-    => via { [$_] };
-has member => ( is => 'rw', isa => 'MEMBER', coerce => 1 );
-
-subtype 'CLIENTPIDMAP'
-    => as 'Str'
-    => where { m/^\d+;urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is }
-    => message { "The CLIENTPIDMAP you provided, $_, was not correct" };
-subtype 'CLIENTPIDMAPs'
-    => as 'ArrayRef[CLIENTPIDMAP]';
-coerce 'CLIENTPIDMAPs'
-    => from 'Str'
-    => via { [$_] };
-has clientpidmap => ( is => 'rw', isa => 'CLIENTPIDMAPs', coerce => 1 );
-
 subtype 'TimeZones' => as 'ArrayRef[DateTime::TimeZone]';
 coerce 'TimeZones'
     => from 'ArrayRef'
@@ -261,7 +227,7 @@ has tz =>  ( is => 'rw', isa => 'TimeZones', coerce => 1 );
 # utc-offset format is NOT RECOMMENDED in vCard 4.0
 # tz can be a URL, but there is no document in RFC2426 and RFC6350
 
-has [qw|bday anniversary gender prodid sort_string|] => ( is => 'rw', isa => 'Str' );
+has [qw|bday prodid sort_string|] => ( is => 'rw', isa => 'Str' );
 
 with 'vCard::Role::FileIO';
 
@@ -344,10 +310,10 @@ sub load_string {
 
 my @nodes = qw(
     FN N NICKNAME
-    ADR LABEL TEL EMAIL IMPP LANG GEO
-    ORG TITLE ROLE CATEGORIES RELATED
-    NOTE SOUND UID URL FBURL CALADRURI CALURI
-    XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
+    ADR LABEL TEL EMAIL IMPP GEO
+    ORG TITLE ROLE CATEGORIES
+    NOTE SOUND UID URL KEY
+    SOCIALPROFILE PHOTO LOGO SOURCE
 );
 
 sub as_string {
@@ -356,7 +322,6 @@ sub as_string {
     my $string = "BEGIN:VCARD" . $cr;
     $string .= 'VERSION:' . $self->version . $cr;
     $string .= 'PRODID:' . $self->prodid . $cr if $self->prodid;
-    $string .= 'KIND:' . $self->kind . $cr if $self->kind;
     foreach my $node ( @nodes ) {
         my $method = $self->can( lc $node );
         croak "the Method you provided, $node is not supported." unless $method;
@@ -376,11 +341,7 @@ sub as_string {
      $string .= 'SORT-STRING:' . $self->sort_string . $cr
     if $self->version ne '4.0' and $self->sort_string;
     $string .= 'BDAY:' . $self->bday . $cr if $self->bday;
-    $string .= 'ANNIVERSARY:' . $self->anniversary . $cr if $self->anniversary;
-    $string .= 'GENDER:' . $self->gender . $cr if $self->gender;
     $string .= 'UID:' . $self->uid . $cr if $self->uid;
-    map { $string .= "MEMBER:$_" . $cr } @{ $self->member || [] } if $self->member;
-    map { $string .= "CLIENTPIDMAP:$_" . $cr } @{ $self->clientpidmap || [] } if $self->clientpidmap;
     map { $string .= "TZ:" . $_->name . $cr } @{ $self->tz || [] } if $self->tz;
     $string .= 'REV:' . $self->rev . $cr if $self->rev;
     $string .= "END:VCARD";

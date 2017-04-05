@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Path::Tiny;
 
-use Test::More tests => 7;
+use Test::More tests => 6;
 use Data::Section::Simple qw(get_data_section);
 
 use lib qw(./lib);
@@ -60,23 +60,13 @@ $data =~ s/\n/\r\n/g;
 my $string = $vc->load_hashref($hashref)->as_string();
 is $string, $data, 'as_string()';                       #4
 
-my $in_file = path( 't', 'expected.vcf' );
+my $in_file = path( 't', 'V3', 'expected.vcf' );
 $string = $vc->load_file($in_file)->as_string();
 my $expected_content = $in_file->slurp_utf8;
 is $string, $expected_content, 'load_file()';           #5
 
 my $load_s = $vc->load_string($data);
 is $load_s->as_string(), $data, 'load_string()';        #6
-
-TODO: {
-    local $TODO = "it doesn't support parsing vCard4.0 yet";
-    my $in_file = path( 't', 'vcard4.vcf' );
-    $vc->load_file($in_file);
-    $vc->version('4.0');
-    $string = $vc->as_string();
-    my $expected_content = $in_file->slurp_utf8;
-    is $string, $expected_content, 'parsing vCard4';    #7
-}
 
 done_testing;
 

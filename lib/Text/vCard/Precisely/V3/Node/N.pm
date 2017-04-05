@@ -35,7 +35,6 @@ override 'as_string' => sub {
     push @lines, $self->name || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
-    push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as;
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
     my @values = ();

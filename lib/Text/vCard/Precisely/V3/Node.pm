@@ -14,16 +14,18 @@ use Moose::Util::TypeConstraints;
 
 enum 'Name' => [qw( FN
     ADR LABEL TEL EMAIL PHOTO LOGO URL
-    TZ GEO NICKNAME IMPP LANG XML KEY NOTE
+    TZ GEO NICKNAME IMPP KEY NOTE
     ORG TITLE ROLE CATEGORIES
-    SOURCE SOUND FBURL CALADRURI CALURI
-    RELATED X-SOCIALPROFILE SORT_STRING
+    SOURCE SOUND
+    X-SOCIALPROFILE
+    SORT_STRING NAME PROFILE MAILER CLASS AGENT
 )];
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
 subtype 'VALUE'
     => as 'Str'
-    => where { use utf8; decode_utf8($_) =~  m|^[\w\W\s]*$|s }   # it needs to be more strictly
+    => where { use utf8; decode_utf8($_) =~  m|^[\w\p{ascii}\s]*$|s }
+    # Does it need to be more strictly?
     => message { "The VALUE you provided, $_, was not supported" };
 has value => ( is => 'rw', required => 1, isa => 'VALUE' );
 
@@ -67,12 +69,6 @@ has media_type => ( is => 'rw', isa => subtype 'MediaType'
     => message { "The MediaType you provided, $_, was not supported" }
 );
 
-has sort_as => ( is => 'rw', isa => subtype 'SortAs' # from vCard 4.0
-    => as 'Str'
-    => where { use utf8; decode_utf8($_) =~  m|^[\w\s\W]+$|s }   # does everything pass?
-    => message { "The SortAs you provided, $_, was not supported" }
-);
-
 has charset => ( is => 'rw', isa => subtype 'Charset' # not recommend for vCard 4.0
     => as 'Str'
     => where { m|^[\w-]+$|s }    # does everything pass?
@@ -93,7 +89,6 @@ sub as_string {
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
-    push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as and $self->name eq 'ORG';
 
     my $string = join(';', @lines ) . ':' . (
         ref $self->value eq 'Array'?

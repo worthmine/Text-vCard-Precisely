@@ -2,8 +2,5 @@ BEGIN:VCARD
 VERSION:3.0
 URL;TYPE=HOME:https://www.example.com
 URL;TYPE=WORK:https://blog.example.com
-FBURL:https://www.example.com
-CALADRURI:https://www.example.com
-CALURI:https://www.example.com
 SOURCE:https://www.example.com
 END:VCARD

@@ -11,13 +11,13 @@ use Text::vCard::Precisely::V3;
 
 my $vc = Text::vCard::Precisely::V3->new();
 
-my $in_file = path( 't', 'Social', 'base.vcf' );
+my $in_file = path( 't', 'V3', 'Social', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
 $vc->socialprofile({ types => 'GitHub', value => 'https://github.com/worthmine' });
 is $vc->as_string, $expected_content, 'socialprofile(HashRef)';                 # 1
 
-$in_file = path( 't', 'Social', 'maltiple.vcf' );
+$in_file = path( 't', 'V3', 'Social', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->socialprofile([

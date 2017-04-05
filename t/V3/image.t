@@ -18,21 +18,21 @@ AAAAASUVORK5CYII=
 EOL
 $img =~ s/\s//g;
 
-my $in_file = path( 't', 'Image', 'base.vcf' );
+my $in_file = path( 't', 'V3', 'Image', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
 $vc->photo($img);
 $vc->logo($img);
 is $vc->as_string, $expected_content, 'photo(Base64)';                  # 1
 
-$in_file = path( 't', 'Image', 'uri.vcf' );
+$in_file = path( 't', 'V3', 'Image', 'uri.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $uri = URI->new('https://www.example.com/image.png');
 $vc->photo($uri);
 is $vc->as_string, $expected_content, 'photo(URL)';                     # 2
 
-$in_file = path( 't', 'Image', 'hash.vcf' );
+$in_file = path( 't', 'V3', 'Image', 'hash.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->photo( { media_type => 'image/png', value => $img } );
@@ -40,7 +40,7 @@ $vc->logo( { media_type => 'image/png', value => $img } );
 is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';       # 3
 
 
-$in_file = path( 't', 'Image', 'maltiple.vcf' );
+$in_file = path( 't', 'V3', 'Image', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $img2 = <<'EOL';
@@ -66,7 +66,7 @@ $img2 =~ s/\s//g;
 $vc->photo([ $img, $img2 ]);
 is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';      # 4
 
-$in_file = path( 't', 'Image', 'maltiple_base64.vcf' );
+$in_file = path( 't', 'V3', 'Image', 'maltiple_base64.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->photo([
@@ -84,7 +84,7 @@ SKIP: {
     $gd->rectangle(0,0,99,99,$black);
     my $raw = $gd->png;
 
-    $in_file = path( 't', 'Image', 'base.vcf' );
+    $in_file = path( 't', 'V3', 'Image', 'base.vcf' );
     $expected_content = $in_file->slurp_utf8;
 
     $vc->photo($raw);
@@ -95,7 +95,7 @@ SKIP: {
     $gd->fill(50,50,$red);
     my $raw2 = $gd->jpeg;
 
-    $in_file = path( 't', 'Image', 'maltiple_base64.vcf' );
+    $in_file = path( 't', 'V3', 'Image', 'maltiple_base64.vcf' );
     $expected_content = $in_file->slurp_utf8;
 
     $vc->photo([
