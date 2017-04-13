@@ -7,22 +7,9 @@ Text::vCard::Precisely::V4 - Read, Write and Edit vCards **4.0**
 my $vc = Text::vCard::Precisely::V4->new();
 $vc->n([ 'Gump', 'Forrest', , 'Mr', '' ]);
 $vc->fn( 'Forrest Gump' );
-
-my $img = GD->new( ... some param ... )->plot->png;
-my $base64 = MIME::Base64::encode($img);
-
-$vc->photo([
-  { value => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
-  { value => $img, media_type => 'image/png' }, # Now you can set a binary image directly
-  { value => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
-]);
-
 $vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!
-
 $vc->tel({ value => '+1-111-555-1212', types => ['work'], pref => 1 });
-
 $vc->email({ value => 'forrestgump@example.com', types => ['work'] });
-
 $vc->adr( {
   types => ['work'],
   pobox     => '109',
@@ -33,29 +20,7 @@ $vc->adr( {
   post_code => '30314,
   country   => 'United States of America',
 });
-
 $vc->url({ value => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
-
-use Facebook::Graph;
-use Encode;
-
-my $fb = Facebook::Graph->new(
-  app_id => 'your app id',
-  secret => 'your secret key',
-);
-$fb->authorize;
-$fb->access_token( $fb->{'app_id'} . '|' . $fb->{'secret'} );
-my $q = $fb->query->find( 'some facebookID' )
-  ->select_fields(qw( id name ))
-  ->request
-  ->as_hashref;
-
-$vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
-  value => 'https://www.facebook/' . 'some facebookID',
-  types => 'facebook',
-  displayname => encode_utf8( $q->{'name'} ),
-  userid => $q->{'id'},
-});
 
 print $vc->as_string();
 ```
@@ -64,7 +29,7 @@ print $vc->as_string();
 
 This module is an additional version for reading/writing for vCard 4.0. it's just a wrapper from V3 with Moose.
 
-**Caution!** It's NOT be recommended because some reason bellow: 
+**Caution!** It's NOT be recommended because some reasons bellow: 
 - Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely.
 - Android 4.4.x can't parse vCard4.0.
 
@@ -95,7 +60,7 @@ Version number of the vcard.  Defaults to **'4.0'**
 ### rev()
 
 To specify revision information about the current vCard.
-The format is **different from 3.0.**.
+The format in as_string() is **different from 3.0.**, but the interface is same.
 
 ### kind()
 
@@ -117,16 +82,8 @@ Read source if you were confused.
 The format is SAME as 3.0.
 
 ### tel()
-The format is **different from 3.0.**, but supported
 
-Accepts/returns an arrayref that looks like:
-
-```
-    [
-      { type => ['work'], value => '651-290-1234', preferred => 1 },
-      { type => ['home'], value => '651-290-1111' },
-    ]
-```
+The format in as_string() is **different from 3.0.**, but the interface is same.
 
 ### adr(), address()
 
@@ -211,6 +168,7 @@ And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't sup
 
 - [README.md](https://github.com/worthmine/Text-vCard-Precisely/blob/master/README.md)
 - [RFC 6350](https://tools.ietf.org/html/rfc6350)
+- [Wikipedia](https://en.wikipedia.org/wiki/VCard)
 
 ## AUTHOR
 
