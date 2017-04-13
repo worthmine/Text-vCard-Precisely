@@ -26,7 +26,7 @@ $vc->xml('<b>Not an xCard XML element</b>');
 $vc->geo('39.95;-75.1667');
 is $vc->as_string, $expected_content, 'Node(Str)';                      # 1
 
-$in_file = path( 't', 'V4', 'Node', 'hash.vcf' );
+$in_file = path( 't', 'V4', 'node', 'hash.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->label({
