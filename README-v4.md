@@ -113,7 +113,7 @@ Read source if you were confused.
 
 ### n()
 
-To specify the components of the name of the object the vCard represents.
+The format is SAME as 3.0.
 
 ### tel()
 The format is **different from 3.0.**, but supported
@@ -201,7 +201,6 @@ They are the new methods from 4.0.
 If you want to send precisely the vCard with UTF-8 characters to the **ALMOST** of smartphones, Use 3.0.
 It seems to be TOO EARLY to use 4.0.
 
-```
 ## for under perl-5.12.5
 This module uses \P{ascii} in regexp so You have to use 5.12.5 and later.  
 And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.  
