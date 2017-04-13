@@ -103,6 +103,7 @@ To specify the kind of object the vCard represents.
 It's the new method from 4.0.
 
 ### ~~sort_string()~~
+
 **It's DEPRECATED from 4.0** Use SORT-AS param instead of it.
 
 ## COMPLEX GETTERS/SETTERS
@@ -202,12 +203,15 @@ If you want to send precisely the vCard with UTF-8 characters to the **ALMOST** 
 It seems to be TOO EARLY to use 4.0.
 
 ## for under perl-5.12.5
+
 This module uses \P{ascii} in regexp so You have to use 5.12.5 and later.  
 And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.  
 
 ## SEE ALOSO
-[README.md](https://github.com/worthmine/Text-vCard-Precisely/blob/master/README.md)
-[RFC 6350](https://tools.ietf.org/html/rfc6350)
+
+- [README.md](https://github.com/worthmine/Text-vCard-Precisely/blob/master/README.md)
+- [RFC 6350](https://tools.ietf.org/html/rfc6350)
+
 ## AUTHOR
 
 [Yuki Yoshida (worthmine)](https://github.com/worthmine)
