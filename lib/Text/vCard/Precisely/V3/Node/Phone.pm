@@ -11,7 +11,7 @@ has name => (is => 'ro', default => 'TEL', isa => 'Str' );
 
 subtype 'Phone'
     => as 'Str'
-    => where { m/^(:?tel:)?(:?[+]?\d{1,2}|\d*)[\(\s\-]?\d{1,3}[\)\s\-]?[\s]?\d{1,3}[\s\-]?\d{3,4}$/s }
+    => where { m/^(:?[+]?\d{1,2}|\d*)[\(\s\-]?\d{1,3}[\)\s\-]?[\s]?\d{1,3}[\s\-]?\d{3,4}$/s }
     => message { "The Number you provided, $_, was not supported in Phone" };
 has value => (is => 'ro', default => '', isa => 'Phone' );
 
