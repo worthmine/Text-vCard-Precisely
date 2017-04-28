@@ -1,12 +1,15 @@
 # NAME
-Text::vCard::Precisely::V3 - Read, Write and Edit vCards 3.0 **not 4.0**
+Text::vCard::Precisely - Read, Write and Edit vCards 3.0 and 4.0 precisely
 
 ## SYNOPSIS
 
 ```
-my $vc = Text::vCard::Precisely::V3->new();
+my $vc = Text::vCard::Precisely::V3->new(); # You can choise Text::vCard::Precisely::V4 instead of V3 if you wanna use vCard4.0 
 $vc->n([ 'Gump', 'Forrest', , 'Mr', '' ]);
 $vc->fn( 'Forrest Gump' );
+
+use GD;
+use MIME::Base64;
 
 my $img = GD->new( ... some param ... )->plot->png;
 my $base64 = MIME::Base64::encode($img);
@@ -62,14 +65,14 @@ print $vc->as_string();
 
 ## DESCRIPTION
 
-A vCard is a digital business card. vCard and [vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) provide an API for parsing, editing, and creating vCards.
+A vCard is a digital business card. vCard and [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata) provide an API for parsing vCards.
 
-This module is rebuilt from [Text::vCard](https://github.com/ranguard/text-vcard) because some reason bellow:
+This module is forked from [Text::vCard](https://github.com/ranguard/text-vcard) because some reason bellow:
 
-- Text::vCard doesn't provides some methods.
-- Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely.
-- Android 4.4.x can't parse vCard4.0.
-- I want to learn about Moose, of course. 
+- Text::vCard **doesn't provide** full methods based on [RFC2426](https://tools.ietf.org/html/rfc2426)  
+- Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely. they cause some Mojibake
+- Android 4.4.x can't parse vCard4.0
+- I wanted to learn Moose, of course 
 
 To handle an address book with several vCard entries in it, start with
 [vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) and then come back to this module.
@@ -77,45 +80,90 @@ To handle an address book with several vCard entries in it, start with
 Note that the vCard RFC requires version() and full_name().  This module does
 not check or warn if these conditions have not been met.
 
+## Constructors
+
+### load_hashref($HashRef)
+
+Accepts an HashRef that looks like below:
+
+
+```
+my $hashref = {
+  N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
+  FN  => 'Forrest Gump',
+  SORT_STRING => 'Forrest Gump',
+  ORG => 'Bubba Gump Shrimp Co.',
+  TITLE => 'Shrimp Man',
+  PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
+  TEL => [
+    { types => ['WORK','VOICE'], value => '(111) 555-1212' },
+    { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+  ],
+  ADR =>[{
+    types       => ['work'],
+    pref        => 1,
+    extended    => 100,
+    street      => 'Waters Edge',
+    city        => 'Baytown',
+    region      => 'LA',
+    post_code   => '30314',
+    country     => 'United States of America'
+  },{
+    types       => ['home'],
+    extended    => 42,
+    street      => 'Plantation St.',
+    city        => 'Baytown',
+    region      => 'LA',
+    post_code   => '30314',
+    country     => 'United States of America'
+  }],
+  URL => 'http://www.example.com/dir_photos/my_photo.gif',
+  EMAIL => 'forrestgump@example.com',
+  REV => '2008-04-24T19:52:43Z',
+};
+```
+
+### load_file($file_name)
+
+Accepts a file name 
+
+### load_string($vCard)
+
+Accepts a vCard string
+
 ## METHODS
 
 ### as_string()
 
 Returns the vCard as a string.
-You have to use encode_utf8() if your vCard is written in utf8
+You have to use Encode::encode_utf8() if your vCard is written in utf8
 
 ### as_file($filename)
 
 Write data in vCard format to $filename.
-
 Dies if not successful.
 
 ## SIMPLE GETTERS/SETTERS
 
-These methods accept and return strings.  
+These methods accept and return strings
 
 ### version()
 
-Version number of the vcard.  Defaults to **'3.0'**
+returns Version number of the vcard.  Defaults to **'3.0'** and this method is **READONLY** 
 
 ### rev()
 
-To specify revision information about the current vCard.
-
-### kind()
-
-To specify the kind of object the vCard represents.
-It's the new method from vCard4.0 but I don't care!
+To specify revision information about the current vCard3.0
 
 ### sort_string()
 
-To specify the family name or given name text to be used for national-language-specific sorting of the FN and N types.
-**It's DEPRECATED from vCard4.0** Use SORT-AS param instead of it. The both are supported.
+To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
+**This method will be DEPRECATED in vCard4.0** Use SORT-AS param instead of it. (Text::vCard::Precisely::V4 supports it)
 
 ## COMPLEX GETTERS/SETTERS
 
 They are based on Moose with coercion.
-So these methods accept not only Arrrayref[HashRef] but also ArrayRef[Str], HashRef or Str.
+So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str.
 Read source if you were confused.
 
 ### n()
@@ -124,7 +172,7 @@ To specify the components of the name of the object the vCard represents.
 
 ### tel()
 
-Accepts/returns an arrayref that looks like:
+Accepts/returns an ArrayRef that looks like:
 
 ```
     [
@@ -135,7 +183,7 @@ Accepts/returns an arrayref that looks like:
 
 ### adr(), address()
 
-Accepts/returns an arrayref that looks like:
+Accepts/returns an ArrayRef that looks like:
 
 ```
     [
@@ -155,7 +203,7 @@ Accepts/returns an arrayref that looks like:
 
 ## email()
 
-Accepts/returns an arrayref that looks like:
+Accepts/returns an ArrayRef that looks like:
 
 ```
     [
@@ -172,7 +220,7 @@ or accept the string as email like bellow
 
 ### url()
 
-Accepts/returns an arrayref that looks like:
+Accepts/returns an ArrayRef that looks like:
 
 ```
     [
@@ -190,71 +238,63 @@ or accept the string as URL like bellow
 
 ### photo(), logo()
 
-Accepts/returns an arrayref of URLs or Images: Whether it is a raw binary data or a text encoded in Base64 does not matter.
+Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary or text encoded in Base64, it does not matter.
 
 Attention! Mac OS X and iOS **ignore** the description beeing URL.  
-use Base64 encoding or raw image if you have to show the image you want.
+use Base64 encoding or raw image binary if you have to show the image you want.
 
 ### note()
 
-To specify supplemental information or a comment that is associated with the vCard.
+To specify supplemental information or a comment that is associated with the vCard
 
 ### org(), title(), role(), categories()
 
-To specify additional information for your jobs.
+To specify additional information for your jobs
 
 ### tz(), timezone()
 
-To specify information related to the time zone of the object the vCard represents.
+To specify information related to the time zone of the object the vCard represents
 
 ### fn(), full_name(), fullname()
 
-A person's entire name as they would like to see it displayed.  
+A person's entire name as they would like to see it displayed
 
 ### nickname()
 
-To specify the text corresponding to the nickname of the object the vCard represents.
+To specify the text corresponding to the nickname of the object the vCard represents
 
 ### bday(), birthday()
 
-To specify the birth date of the object the vCard represents.
-
-### anniversary()
-
-The date of marriage, or equivalent, of the object the vCard represents.
-
-### gender()
-
-To specify the components of the sex and gender identity of the object the vCard represents.
+To specify the birth date of the object the vCard represents
 
 ### source()
   
-To identify the source of directory information contained in the content type.
+To identify the source of directory information contained in the content type
 
-### lang()
-
-To specify the language(s) that may be used for contacting the entity associated with the vCard.
-
-### geo(), impp(), prodid(), xml(), key(), uid(), member(), sound(), fburl(), caladruri(), caluri()
+### geo(), prodid(), key(), uid(), sound()
 
 I don't think they are so popular paramater, but here are the methods!
 
 ## aroud UTF-8
 
-if you want to send precisely the vCard3.0 with UTF-8 characters to the **ALMOST** of smartphones, you have to set Charset param for each values like bellow...
+if you want to send precisely the vCard3.0 with UTF-8 characters to the **ALMOST** of smartphones, you have to set Charset param for each values like bellow:
+
 
 ```
 ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
 
 ```
+
 ## for under perl-5.12.5
+
 This module uses \P{ascii} in regexp so You have to use 5.12.5 and later.  
 And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.  
 
 ## SEE ALOSO
 
-[RFC 6350](https://tools.ietf.org/html/rfc6350), [RFC 2426](https://tools.ietf.org/html/rfc2426)
+- [RFC 2426](https://tools.ietf.org/html/rfc2426)
+- [RFC 2425](https://tools.ietf.org/html/rfc2425)
 
 ## AUTHOR
 
-[Yuki Yoshida (worthmine)](https://github.com/worthmine)
+[Yuki Yoshida(worthmine)](https://github.com/worthmine)

@@ -26,7 +26,7 @@ use Text::vCard::Precisely::V3::Node::SocialProfile;
 
 has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
-has version => ( is => 'rw', isa => 'Str', default => '3.0' );
+has version => ( is => 'ro', isa => 'Str', default => '3.0' );
 
 subtype 'N'
     => as 'Text::vCard::Precisely::V3::Node::N';
@@ -192,7 +192,7 @@ coerce 'Node'
             value => $_->{'value'} || croak "No value in HashRef!",
         }) } @$_ ]
     };
-has [qw|fn nickname org impp lang title role categories note key geo label|]
+has [qw|fn nickname org title role categories note key geo label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 subtype 'TimeStamp'
@@ -248,13 +248,23 @@ sub load_hashref {
     return $self;
 }
 
-sub _parse_param {
-    my ( $self, $value ) = @_;
-    my $ref = {};
-    $ref->{types} = [split /,/, $value->{param}{TYPE}] if $value->{param}{TYPE};
-    $ref->{media_type} = $value->{param}{MEDIATYPE} if $value->{param}{MEDIATYPE};
-    $ref->{pref} = $value->{param}{PREF} if $value->{param}{PREF};
-    return $ref;
+sub load_file {
+    my ( $self, $filename ) = @_;
+    open my $vcf, "<", $filename or croak "couldn't open vcf: $!";
+    my $data = $vf->parse($vcf)->{objects}[0];
+    close $vcf;
+    croak "$filename is NOT a vCard file." unless $data->{type} eq 'VCARD';
+
+    my $hashref = $self->_make_hashref($data);
+    $self->load_hashref($hashref);
+}
+
+sub load_string {
+    my ( $self, $string ) = @_;
+    my @lines = split /\r\n/, $string;
+    my $data = $vf->parse_lines(@lines);
+    my $hashref = $self->_make_hashref($data->{objects}[0]);
+    $self->load_hashref($hashref);
 }
 
 sub _make_hashref {
@@ -289,28 +299,18 @@ sub _make_hashref {
     return $hashref;
 }
 
-sub load_file {
-    my ( $self, $filename ) = @_;
-    open my $vcf, "<", $filename or croak "couldn't open vcf: $!";
-    my $data = $vf->parse($vcf)->{objects}[0];
-    close $vcf;
-    croak "$filename is NOT a vCard file." unless $data->{type} eq 'VCARD';
-
-    my $hashref = $self->_make_hashref($data);
-    $self->load_hashref($hashref);
-}
-
-sub load_string {
-    my ( $self, $string ) = @_;
-    my @lines = split /\r\n/, $string;
-    my $data = $vf->parse_lines(@lines);
-    my $hashref = $self->_make_hashref($data->{objects}[0]);
-    $self->load_hashref($hashref);
+sub _parse_param {
+    my ( $self, $value ) = @_;
+    my $ref = {};
+    $ref->{types} = [split /,/, $value->{param}{TYPE}] if $value->{param}{TYPE};
+    $ref->{media_type} = $value->{param}{MEDIATYPE} if $value->{param}{MEDIATYPE};
+    $ref->{pref} = $value->{param}{PREF} if $value->{param}{PREF};
+    return $ref;
 }
 
 my @nodes = qw(
     FN N NICKNAME
-    ADR LABEL TEL EMAIL IMPP GEO
+    ADR LABEL TEL EMAIL GEO
     ORG TITLE ROLE CATEGORIES
     NOTE SOUND UID URL KEY
     SOCIALPROFILE PHOTO LOGO SOURCE
