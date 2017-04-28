@@ -16,7 +16,7 @@ use Text::vCard::Precisely::V4::Node;
 use Text::vCard::Precisely::V4::Node::Phone;
 use Text::vCard::Precisely::V4::Node::Related;
 
-has version => ( is => 'rw', isa => 'Str', default => '4.0' );
+has version => ( is => 'ro', isa => 'Str', default => '4.0' );
 
 subtype 'v4Tel' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Phone]';
 coerce 'v4Tel'

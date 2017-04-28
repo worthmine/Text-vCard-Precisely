@@ -36,6 +36,20 @@ This module is an additional version for reading/writing for vCard 4.0. it's jus
 Note that the vCard RFC requires version() and full_name().  This module does
 not check or warn if these conditions have not been met.
 
+## Constructors
+
+### load_hashref($HashRef)
+
+SAME as 3.0
+
+### load_file($file_name)
+
+SAME as 3.0
+
+### load_string($vCard)
+
+SAME as 3.0
+
 ## METHODS
 
 ### as_string()
@@ -55,7 +69,8 @@ These methods accept and return strings.
 
 ### version()
 
-Version number of the vcard.  Defaults to **'4.0'**
+Version number of the vcard.  Defaults to **'4.0'** 
+It is READONLY method so you can NOT downgrade to 3.0 
 
 ### rev()
 
@@ -74,7 +89,7 @@ It's the new method from 4.0.
 ## COMPLEX GETTERS/SETTERS
 
 They are based on Moose with coercion.
-So these methods accept not only Arrrayref[HashRef] but also ArrayRef[Str], HashRef or Str.
+So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str.
 Read source if you were confused.
 
 ### n()
@@ -172,4 +187,4 @@ And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't sup
 
 ## AUTHOR
 
-[Yuki Yoshida (worthmine)](https://github.com/worthmine)
+[Yuki Yoshida(worthmine)](https://github.com/worthmine)
