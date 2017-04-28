@@ -75,7 +75,7 @@ This module is forked from [Text::vCard](https://github.com/ranguard/text-vcard)
 - I wanted to learn Moose, of course 
 
 To handle an address book with several vCard entries in it, start with
-[vCard::AddressBook](https://metacpan.org/pod/vCard::AddressBook) and then come back to this module.
+[Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata) and then come back to this module.
 
 Note that the vCard RFC requires version() and full_name().  This module does
 not check or warn if these conditions have not been met.
@@ -294,6 +294,8 @@ And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't sup
 
 - [RFC 2426](https://tools.ietf.org/html/rfc2426)
 - [RFC 2425](https://tools.ietf.org/html/rfc2425)
+- [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata)
+- [README-v4.md](https://github.com/worthmine/Text-vCard-Precisely/blob/master/README-v4.md)
 
 ## AUTHOR
 
