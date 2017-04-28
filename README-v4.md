@@ -5,6 +5,9 @@ Text::vCard::Precisely::V4 - Read, Write and Edit vCards **4.0**
 
 ```
 my $vc = Text::vCard::Precisely::V4->new();
+# or now you can write like bellow:
+#my $vc = Text::vCard::Precisely->new( version => '4.0' );
+
 $vc->n([ 'Gump', 'Forrest', , 'Mr', '' ]);
 $vc->fn( 'Forrest Gump' );
 $vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!

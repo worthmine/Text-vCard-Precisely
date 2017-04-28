@@ -1,10 +1,13 @@
 # NAME
-Text::vCard::Precisely - Read, Write and Edit vCards 3.0 and 4.0 precisely
+Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisely
 
 ## SYNOPSIS
 
 ```
-my $vc = Text::vCard::Precisely::V3->new(); # You can choise Text::vCard::Precisely::V4 instead of V3 if you wanna use vCard4.0 
+my $vc = Text::vCard::Precisely->new();
+# or now you can write like bellow if you want to use 4.0:
+#my $vc = Text::vCard::Precisely->new( version => '4.0' );
+
 $vc->n([ 'Gump', 'Forrest', , 'Mr', '' ]);
 $vc->fn( 'Forrest Gump' );
 
