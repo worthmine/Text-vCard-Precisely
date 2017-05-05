@@ -1,32 +1,22 @@
 language: perl
-bundler_args: --deployment
+bundler_args: "--deployment"
 cache: bundler
-
 perl:
-  - "5.24"
-  - "5.22"
-  - "5.20"
-  - "5.18"
-  - "5.16"
-  - "5.14"
-  - "5.12"
-#  - "5.10"
-
+- '5.24'
+- '5.22'
+- '5.20'
+- '5.18'
+- '5.16'
+- '5.14'
+- '5.12'
 install:
-   - cpanm --quiet --notest --skip-satisfied Dist::Zilla
-#   - cpanm Test::NoTabs
-   - cpanm Test::Pod
-   - "dzil authordeps | grep -vP '[^\\w:]' | cpanm --verbose --notest --skip-satisfied"
-   - "dzil listdeps   | grep -vP '[^\\w:]' | grep -vP '^GD' | cpanm --verbose --skip-satisfied"
-
+- cpanm --quiet --notest --skip-satisfied Dist::Zilla
+- cpanm Test::Pod
+- dzil authordeps | grep -vP '[^\w:]' | cpanm --verbose --notest --skip-satisfied
+- dzil listdeps   | grep -vP '[^\w:]' | grep -vP '^GD' | cpanm --verbose --skip-satisfied
 script:
-  - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
-  - dzil smoke --release --author
-
+- dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
+- dzil smoke --release --author
 notifications:
-  slack: worthmine:zlj4sZW1OcOEUTDadjPezM3V
-#  email:
-#    recipients:
-#      - worthmine@gmail.com
-#    on_success: change
-#    on_failure: never
+  slack:
+    secure: dTrsb6DjbXy/6+BKtpClaV2PQUz+x31UfFXAb4kUYwClHQk9XqstOYqknKUJtykXRvDtv4ELWfTr/YSHwQH/U2cRIjT4E7eTugblUs7S6KXYpEgIdmSOzDXqBKL8cJZ3YINphUSdqXKiiQceFEfUgy7lW7bUx4EuOvDGJQ9+oM5gH6icmk4t31djrJTFlMZr/tE4Lglv8swipIPivNUCIT/jT67Qc1vWtmsnE6dv79Ttg1obtOmsbSb1SXlMW6tsEvQp2Bbu+IdiugXwHUcinSugDXIsMolTsXomZGt0/xUBuAgKKgVsKu0jtWnHbdRuVSvFkY+kZD77z9wqwicsYZRf9WDBqz0h+khqxbsv/T/92ENAOcKaROBAcxt8LLd64eDNiU24viYr5rNnjzLABoJyuNlxrlvAqQmWOMDGZJX6MoQ8wrsdZdfem2Rqwba634l41OfX+miKGpOHIgyXs77wMN2h1p7Jyej0LsPDD+kobCGsI1+Bscy2DMHAm/UZtcEqHlQGVndIWtqHg/fJBV4dqKXkEHTh0sbz369kNEVmMuMF2g3fvKEHwoEw1AeXx9yx1/3KD7l4Cu2a8WIoIG3qIxYFdbHBlYcPZlTRp64IZSuqK6f+ZZ/5N4aTEqncxc2RN+kTI/ENWgr78Oy8JA4Jb1qtB8nXKwH5CnGsW7o=
