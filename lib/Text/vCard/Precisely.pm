@@ -1,6 +1,6 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely;
-$VERSION = 0.01;
+$VERSION = 0.02;
 
 use 5.12.5;
 use Moose;
@@ -125,8 +125,7 @@ I wanted to learn Moose, of course
 To handle an address book with several vCard entries in it, start with
  L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> and then come back to this module.
 
-Note that the vCard RFC requires version() and full_name().  This module does
- not check or warn if these conditions have not been met.
+Note that the vCard RFC requires version() and full_name().  This module does not check or warn if these conditions have not been met.
 
 =head2 Constructors
 
@@ -168,7 +167,7 @@ Accepts an HashRef that looks like below:
     REV => '2008-04-24T19:52:43Z',
  };
 
-=head3 loadI<file($file>name)
+=head3 load_file($file_name)
 
 Accepts a file name
 

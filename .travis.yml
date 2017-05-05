@@ -24,8 +24,9 @@ script:
   - dzil smoke --release --author
 
 notifications:
-  email:
-    recipients:
-      - worthmine@gmail.com
-    on_success: change
-    on_failure: never
+  slack: worthmine:zlj4sZW1OcOEUTDadjPezM3V
+#  email:
+#    recipients:
+#      - worthmine@gmail.com
+#    on_success: change
+#    on_failure: never

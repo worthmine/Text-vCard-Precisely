@@ -1,6 +1,5 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely::V4;
-$VERSION = 0.01;
 
 use 5.12.5;
 use Moose;
@@ -12,11 +11,66 @@ extends 'Text::vCard::Precisely::V3';
 use Carp;
 use Encode;
 
+=encoding utf8
+
+=head1 NAME
+
+Text::vCard::Precisely::V4 - Read, Write and Edit B<vCards 4.0>
+
+=head2 SYNOPSIS
+ 
+You can unlock types that will be available from vCard 4.0
+
+ my $vc = Text::vCard::Precisely->new( version => '4.0' );
+ # Or you can write like bellow:
+ #my $vc = Text::vCard::Precisely::V4->new();
+
+The Usage is same with L<Text::vCard::Precisely::V3|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm>
+
+=head2 DESCRIPTION
+
+This module is an additional version for reading/writing for vCard 4.0. it's just a wrapper of L<Text::vCard::Precisely::V3|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm> with Moose.
+
+B<Caution!> It's NOT be recommended because some reasons bellow:
+
+=over
+
+=item
+
+Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely.
+
+=item
+
+Android 4.4.x can't parse vCard4.0.
+
+=back
+
+Note that the vCard RFC requires FN type.
+And this module does not check or warn if these conditions have not been met.
+
+=cut
+
 use Text::vCard::Precisely::V4::Node;
 use Text::vCard::Precisely::V4::Node::Phone;
 use Text::vCard::Precisely::V4::Node::Related;
 
 has version => ( is => 'ro', isa => 'Str', default => '4.0' );
+
+=head2 Constructors
+
+=head3 load_hashref($HashRef)
+
+SAME as 3.0
+
+=head3 loadI<file($file>name)
+
+SAME as 3.0
+
+=head3 load_string($vCard)
+
+SAME as 3.0
+ 
+=cut
 
 subtype 'v4Tel' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Phone]';
 coerce 'v4Tel'
@@ -129,6 +183,21 @@ my @nodes = qw(
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
 
+=head2 METHODS
+
+=head3 as_string()
+
+Returns the vCard as a string.
+You HAVE TO use encode_utf8() if your vCard is written in utf8
+
+
+=head3 as_file($filename)
+
+Write data in vCard format to $filename.
+Dies if not successful.
+
+=cut
+
 sub as_string {
     my ($self) = @_;
     my $cr = "\x0D\x0A";
@@ -176,3 +245,140 @@ sub as_string {
 }
 
 1;
+
+=head2 SIMPLE GETTERS/SETTERS
+
+These methods accept and return strings.
+
+=head3 version()
+
+Returns Version number of the vcard. Defaults to B<'3.0'>
+It is B<READONLY> method so you can NOT downgrade to 3.0
+
+=head3 rev()
+
+To specify revision information about the current vCard.
+The format in as_string() is B<different from 3.0>, but the interface is SAME
+
+=head3 kind()
+
+To specify the kind of object the vCard represents
+It's the B<new method from 4.0>
+
+=head3 sort_string()
+
+B<It's DEPRECATED from 4.0> Use SORT-AS param instead of it
+
+=head2 COMPLEX GETTERS/SETTERS
+
+They are based on Moose with coercion
+So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str
+Read source if you were confused
+
+=head3 n()
+
+The format is SAME as 3.0
+
+=head3 tel()
+
+The format in as_string() is B<different from 3.0>, but the interface is SAME
+
+=head3 adr(), address()
+
+The format is SAME as 3.0
+
+=head2 email()
+
+The format is SAME as 3.0
+
+=head3 url()
+
+The format is SAME as 3.0
+
+=head3 photo(), logo()
+
+The format is SAME as 3.0
+
+=head3 note()
+
+The format is SAME as 3.0
+
+=head3 org(), title(), role(), categories()
+
+The format is SAME as 3.0
+
+=head3 tz(), timezone()
+
+The format is SAME as 3.0
+
+=head3 fn(), full_name(), fullname()
+
+The format is SAME as 3.0
+
+=head3 nickname()
+
+The format is SAME as 3.0
+
+=head3 bday(), birthday()
+
+The format is SAME as 3.0
+
+=head3 anniversary()
+
+The date of marriage, or equivalent, of the object the vCard represents
+It's the B<new method from 4.0>
+
+=head3 gender()
+
+To specify the components of the sex and gender identity of the object the vCard represents
+It's the B<new method from 4.0>
+
+=head3 source()
+
+The format is SAME as 3.0
+
+=head3 lang()
+
+ To specify the language(s) that may be used for contacting the entity associated with the vCard
+ It's the new method from 4.0
+
+=head3 geo(), prodid(), key(), uid(), sound()
+
+The format is SAME as 3.0
+
+=head3 impp(), xml(), member(), fburl(), caladruri(), caluri()
+
+I don't think they are so popular paramater, but here are the methods!
+They are the B<new method from 4.0>
+
+=head2 aroud UTF-8
+
+If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> of smartphones, Use 3.0
+It seems to be TOO EARLY to use 4.0
+
+=head2 for under perl-5.12.5
+
+This module uses \P{ascii} in regexp so You have to use 5.12.5 and later
+And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them
+
+=head2 SEE ALOSO
+
+=over
+
+=item
+
+L<Text::vCard::Precisely::V3|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm>
+
+=item
+
+L<RFC 6350|https://tools.ietf.org/html/rfc6350>
+ 
+=item
+
+L<Wikipedia|https://en.wikipedia.org/wiki/VCard>
+ 
+=back
+ 
+=head2 AUTHOR
+ 
+L<Yuki Yoshida(worthmine)|https://github.com/worthmine>
