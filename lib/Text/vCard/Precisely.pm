@@ -29,7 +29,7 @@ __END__
 
 =head1 NAME
 
- Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisely
+Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisely
 
 =for html <a href="https://travis-ci.org/worthmine/Text-vCard-Precisely"><img src="https://travis-ci.org/worthmine/Text-vCard-Precisely.svg?branch=master"></a>
 
@@ -98,9 +98,10 @@ __END__
 
 =head2 DESCRIPTION
 
-A vCard is a digital business card. vCard and L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> provide an API for parsing vCards.
-
-This module is forked from L<Text::vCard|https://github.com/ranguard/text-vcard> because some reason bellow:
+A vCard is a digital business card. vCard and L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
+ provide an API for parsing vCards
+This module is forked from L<Text::vCard|https://github.com/ranguard/text-vcard>
+ because some reason bellow:
 
 =over
 
@@ -126,7 +127,7 @@ I wanted to learn Moose, of course
 To handle an address book with several vCard entries in it, start with
  L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> and then come back to this module.
 
-Note that the vCard RFC requires version() and full_name().  This module does not check or warn if these conditions have not been met.
+Note that the vCard RFC requires version() and full_name().  This module does not check or warn yet if these conditions have not been met
 
 =head2 Constructors
 
@@ -186,7 +187,7 @@ You have to use Encode::encode_utf8() if your vCard is written in utf8
 =head3 as_file($filename)
 
 Write data in vCard format to $filename.
-Dies if not successful.
+Dies if not successful
 
 =head2 SIMPLE GETTERS/SETTERS
 
@@ -194,7 +195,8 @@ These methods accept and return strings
 
 =head3 version()
 
-returns Version number of the vcard.  Defaults to B<'3.0'> and this method is B<READONLY>
+returns Version number of the vcard.
+Defaults to B<'3.0'> and this method is B<READONLY>
 
 =head3 rev()
 
@@ -202,18 +204,21 @@ To specify revision information about the current vCard3.0
 
 =head3 sort_string()
 
-To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm> supports it)
+To specify the family name, given name or organization text to be used for
+ national-language-specific sorting of the FN, N and ORG.
+
+B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it.
 
 =head2 COMPLEX GETTERS/SETTERS
 
 They are based on Moose with coercion.
-So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str.
-Read source if you were confused.
+So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef
+ or single Str.
+Read source if you were confused
 
 =head3 n()
 
-To specify the components of the name of the object the vCard represents.
+To specify the components of the name of the object the vCard represents
 
 =head3 tel()
 
@@ -270,8 +275,10 @@ or accept the string as URL like bellow
 
 =head3 photo(), logo()
 
-Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary or text encoded in Base64, it does not matter.
-Attention! Mac OS X and iOS B<ignore> the description beeing URL.
+Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary
+ or text encoded in Base64, it does not matter.
+
+B<Attention!> Mac OS X and iOS B<ignore> the description beeing URL.
 use Base64 encoding or raw image binary if you have to show the image you want.
 
 =head3 note()
@@ -292,12 +299,14 @@ To specify the text corresponding to the nickname of the object the vCard repres
 
 =head3 lang()
 
-To specify the language(s) that may be used for contacting the entity associated with the vCard
+To specify the language(s) that may be used for contacting the entity associated with the vCard.
+
 It's the B<new method from 4.0>
 
 =head3 impp(), xml()
 
-I don't think they are so popular paramater, but here are the methods!
+I don't think they are so popular types, but here are the methods!
+
 They are the B<new method from 4.0>
 
 =head3 geo()
@@ -309,49 +318,61 @@ To specify information related to the global positioning of the object the vCard
 To specify a public key or authentication certificate associated with the object that the vCard represents
 
 =head3 label()
+
 ToDo: because B<It's DEPRECATED from 4.0>
+
 To specify the formatted text corresponding to delivery address of the object the vCard represents
 
 =head3 uid()
 
-To specify a value that represents a globally unique identifier corresponding to the individual or resource associated with the vCard
+To specify a value that represents a globally unique identifier corresponding to the individual
+ or resource associated with the vCard
 
 =head3 fburl(), caladruri(), caluri()
 
 I don't think they are so popular types, but here are the methods!
+
 They are the B<new method from 4.0>
 
 =head3 kind()
 
 To specify the kind of object the vCard represents
+
 It's the B<new method from 4.0>
 
 =head3 member(), clientpidmap()
 
 I don't think they are so popular types, but here are the methods!
+
 It's the B<new method from 4.0>
 
 =head3 tz(), timezone()
 
 Both are same method with Alias
+
 To specify information related to the time zone of the object the vCard represents
 utc-offset format is NOT RECOMMENDED in vCard 4.0
-TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426> or L<RFC6350|https://tools.ietf.org/html/rfc6350>
+
+TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426>
+ or L<RFC6350|https://tools.ietf.org/html/rfc6350>
 So it just supports some text values
  
 =head3 bday(), birthday()
 
 Both are same method with Alias
+
 To specify the birth date of the object the vCard represents
 
 =head3 anniversary()
 
 The date of marriage, or equivalent, of the object the vCard represents
+
 It's the B<new method from 4.0>
 
 =head3 gender()
 
 To specify the components of the sex and gender identity of the object the vCard represents
+
 It's the B<new method from 4.0>
 
 =head3 prodid()
@@ -365,7 +386,8 @@ To identify the source of directory information contained in the content type
 =head3 sound()
 
 To specify a digital sound content information that annotates some aspect of the vCard
-This property is often used to specify the proper pronunciation of the name property value of the vCard
+This property is often used to specify the proper pronunciation of the name property value
+ of the vCard
 
 =head3 socialprofile()
 
@@ -385,7 +407,7 @@ B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
 
 =item
 
-SORT-AS param in N,FN,ORG is NOT available
+SORT-AS param in N,FN,ORG is NOT available completely
 
 =item
 
@@ -395,7 +417,8 @@ LABEL param in ADR is NOT available
 
 =head2 aroud UTF-8
 
-if you want to send precisely the vCard3.0 with UTF-8 characters to the B<ALMOST> of smartphones, you have to set Charset param for each values like bellow:
+if you want to send precisely the vCard3.0 with UTF-8 characters to the B<ALMOST>
+ of smartphones, you have to set Charset param for each values like bellow:
 
  ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
 
