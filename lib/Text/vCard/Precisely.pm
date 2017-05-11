@@ -1,6 +1,5 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely;
-$VERSION = 0.02;
 
 use 5.12.5;
 use Moose;
@@ -23,6 +22,8 @@ sub BUILD {
 }
 
 1;
+
+__END__
 
 =encoding UTF8
 
@@ -202,7 +203,7 @@ To specify revision information about the current vCard3.0
 =head3 sort_string()
 
 To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (Text::vCard::Precisely::V4 supports it)
+B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm> supports it)
 
 =head2 COMPLEX GETTERS/SETTERS
 
@@ -281,10 +282,6 @@ To specify supplemental information or a comment that is associated with the vCa
 
 To specify additional information for your jobs
 
-=head3 tz(), timezone()
-
-To specify information related to the time zone of the object the vCard represents
-
 =head3 fn(), full_name(), fullname()
 
 A person's entire name as they would like to see it displayed
@@ -293,17 +290,108 @@ A person's entire name as they would like to see it displayed
 
 To specify the text corresponding to the nickname of the object the vCard represents
 
+=head3 lang()
+
+To specify the language(s) that may be used for contacting the entity associated with the vCard
+It's the B<new method from 4.0>
+
+=head3 impp(), xml()
+
+I don't think they are so popular paramater, but here are the methods!
+They are the B<new method from 4.0>
+
+=head3 geo()
+
+To specify information related to the global positioning of the object the vCard represents
+
+=head3 key()
+
+To specify a public key or authentication certificate associated with the object that the vCard represents
+
+=head3 label()
+ToDo: because B<It's DEPRECATED from 4.0>
+To specify the formatted text corresponding to delivery address of the object the vCard represents
+
+=head3 uid()
+
+To specify a value that represents a globally unique identifier corresponding to the individual or resource associated with the vCard
+
+=head3 fburl(), caladruri(), caluri()
+
+I don't think they are so popular types, but here are the methods!
+They are the B<new method from 4.0>
+
+=head3 kind()
+
+To specify the kind of object the vCard represents
+It's the B<new method from 4.0>
+
+=head3 member(), clientpidmap()
+
+I don't think they are so popular types, but here are the methods!
+It's the B<new method from 4.0>
+
+=head3 tz(), timezone()
+
+Both are same method with Alias
+To specify information related to the time zone of the object the vCard represents
+utc-offset format is NOT RECOMMENDED in vCard 4.0
+TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426> or L<RFC6350|https://tools.ietf.org/html/rfc6350>
+So it just supports some text values
+ 
 =head3 bday(), birthday()
 
+Both are same method with Alias
 To specify the birth date of the object the vCard represents
 
+=head3 anniversary()
+
+The date of marriage, or equivalent, of the object the vCard represents
+It's the B<new method from 4.0>
+
+=head3 gender()
+
+To specify the components of the sex and gender identity of the object the vCard represents
+It's the B<new method from 4.0>
+
+=head3 prodid()
+
+To specify the identifier for the product that created the vCard object
+ 
 =head3 source()
 
 To identify the source of directory information contained in the content type
 
-=head3 geo(), prodid(), key(), uid(), sound()
+=head3 sound()
 
-I don't think they are so popular paramater, but here are the methods!
+To specify a digital sound content information that annotates some aspect of the vCard
+This property is often used to specify the proper pronunciation of the name property value of the vCard
+
+=head3 socialprofile()
+
+There is no documents about X-SOCIALPROFILE in RFC but it works!
+ 
+=head3 sort_string()
+
+B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
+ 
+=head3 label()
+
+B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
+
+=head2 TODO
+
+=over
+
+=item
+
+SORT-AS param in N,FN,ORG is NOT available
+
+=item
+
+LABEL param in ADR is NOT available
+
+=back
 
 =head2 aroud UTF-8
 
@@ -330,11 +418,11 @@ L<RFC 2425|https://tools.ietf.org/html/rfc2425>
 
 =item
 
-L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
+L<RFC 6350|https://tools.ietf.org/html/rfc6350>
 
 =item
 
-L<README-v4.md|https://github.com/worthmine/Text-vCard-Precisely/blob/master/README-v4.md>
+L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
 
 =back
 

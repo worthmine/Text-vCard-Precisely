@@ -132,213 +132,6 @@ use Text::vCard::Precisely::V3::Node::SocialProfile;
 
 has encoding_in  => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
-has version => ( is => 'ro', isa => 'Str', default => '3.0' );
-
-subtype 'N'
-    => as 'Text::vCard::Precisely::V3::Node::N';
-coerce 'N'
-    => from 'HashRef[Maybe[Ref]|Maybe[Str]]'
-    => via {
-        my %param;
-        while( my ($key, $value) = each %$_ ) {
-            $param{$key} = $value if $value;
-        }
-        return Text::vCard::Precisely::V3::Node::N->new(\%param);
-    };
-coerce 'N'
-    => from 'HashRef[Maybe[Str]]'
-    => via { Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) };
-coerce 'N'
-    => from 'ArrayRef[Maybe[Str]]'
-    => via { Text::vCard::Precisely::V3::Node::N->new({ value => {
-        family      => $_->[0] || '',
-        given       => $_->[1] || '',
-        additional  => $_->[2] || '',
-        prefixes    => $_->[3] || '',
-        suffixes    => $_->[4] || '',
-    } }) };
-coerce 'N'
-    => from 'Str'
-    => via { Text::vCard::Precisely::V3::Node::N->new({ value => [split /(?<!\\);/, $_] }) };
-has n => ( is => 'rw', isa => 'N', coerce => 1 );
-
-subtype 'Address' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Address]';
-coerce 'Address'
-    => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node::Address->new($_) ] };
-coerce 'Address'
-    => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node::Address->new($_) } @$_ ] };
-has adr => ( is => 'rw', isa => 'Address', coerce => 1 );
-
-subtype 'Tel' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Phone]';
-coerce 'Tel'
-    => from 'Str'
-    => via { [ Text::vCard::Precisely::V3::Node::Phone->new({ value => $_ }) ] };
-coerce 'Tel'
-    => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node::Phone->new($_) ] };
-coerce 'Tel'
-    => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node::Phone->new($_) } @$_ ] };
-has tel => ( is => 'rw', isa => 'Tel', coerce => 1 );
-
-subtype 'Email' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Email]';
-coerce 'Email'
-    => from 'Str'
-    => via { [ Text::vCard::Precisely::V3::Node::Email->new({ value => $_ }) ] };
-coerce 'Email'
-    => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node::Email->new($_) ] };
-coerce 'Email'
-    => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node::Email->new($_) } @$_ ] };
-has email => ( is => 'rw', isa => 'Email', coerce => 1 );
-
-subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
-coerce 'URLs'
-    => from 'Str'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [Text::vCard::Precisely::V3::Node::URL->new({ name => $name, value => $_ })]
-    };
-coerce 'URLs'
-    => from 'HashRef[Str]'
-    => via  {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node::URL->new({
-            name => $name,
-            value => $_->{'value'}
-        }) ]
-    };
-coerce 'URLs'
-    => from 'Object'    # Can't asign 'URI' or 'Object[URI]'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [Text::vCard::Precisely::V3::Node::URL->new({
-            name => $name,
-            value => $_->as_string,
-        })]
-    };
-coerce 'URLs'
-    => from 'ArrayRef[HashRef]'
-    => via  { [ map{ Text::vCard::Precisely::V3::Node::URL->new($_) } @$_ ] };
-has [qw|source sound url fburl caladruri caluri|]
-    => ( is => 'rw', isa => 'URLs', coerce => 1 );
-
-subtype 'Image' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Photo]';
-coerce 'Image'
-    => from 'HashRef'
-    => via  {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node::Photo->new({
-            name => $name,
-            media_type => $_->{'media_type'},
-            value => $_->{'value'},
-        }) ] };
-coerce 'Image'
-    => from 'ArrayRef[HashRef]'
-    => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new($_) } @$_ ] };
-coerce 'Image'
-    => from 'Object'   # when parse from vCard::Addressbook, URI->new is called.
-    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
-coerce 'Image'
-    => from 'Str'   # when parse BASE64 encoded strings
-    => via  {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node::Photo->new({
-            name => $name,
-            value => $_,
-        } ) ]
-    };
-coerce 'Image'
-    => from 'ArrayRef[Str]'   # when parse BASE64 encoded strings
-    => via  {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ map{ Text::vCard::Precisely::V3::Node::Photo->new({
-            name => $name,
-            value => $_,
-        }) } @$_ ]
-    };
-has [qw| photo logo |] => ( is => 'rw', isa => 'Image', coerce => 1 );
-
-subtype 'SocialProfile' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::SocialProfile]';
-coerce 'SocialProfile'
-    => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node::SocialProfile->new($_) ] };
-coerce 'SocialProfile'
-    => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
-has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
-
-subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
-coerce 'Node'
-    => from 'Str'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
-    };
-coerce 'Node'
-    => from 'HashRef'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node->new({
-            name => $_->{'name'} || $name,
-            types => $_->{'types'} || [],
-            value => $_->{'value'} || croak "No value in HashRef!",
-        }) ]
-    };
-coerce 'Node'
-    => from 'ArrayRef[HashRef]'
-    => via {
-        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ map { Text::vCard::Precisely::V3::Node->new({
-            name => $_->{'name'} || $name,
-            types => $_->{'types'} || [],
-            value => $_->{'value'} || croak "No value in HashRef!",
-        }) } @$_ ]
-    };
-has [qw|fn nickname org title role categories note key geo label|]
-    => ( is => 'rw', isa => 'Node', coerce => 1 );
-
-subtype 'TimeStamp'
-    => as 'Str'
-    => where { m/^\d{4}-?\d{2}-?\d{2}(:?T\d{2}:?\d{2}:?\d{2}Z)?$/is }
-    => message { "The TimeStamp you provided, $_, was not correct" };
-coerce 'TimeStamp'
-    => from 'Int'
-    => via {
-        my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
-        return sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
-    };
-coerce 'TimeStamp'
-    => from 'ArrayRef[HashRef]'
-    => via { $_->[0]{value} };
-has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1  );
-
-subtype 'UID'
-    => as 'Str'
-    => where { m/^urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is }
-    => message { "The UID you provided, $_, was not correct" };
-has uid => ( is => 'rw', isa => 'UID' );
-
-subtype 'TimeZones' => as 'ArrayRef[DateTime::TimeZone]';
-coerce 'TimeZones'
-    => from 'ArrayRef'
-    => via {[ map{ DateTime::TimeZone->new( name => $_ ) } @$_ ]};
-coerce 'TimeZones'
-    => from 'Str'
-    => via {[ DateTime::TimeZone->new( name => $_ ) ]};
-has tz =>  ( is => 'rw', isa => 'TimeZones', coerce => 1 );
-# utc-offset format is NOT RECOMMENDED in vCard 4.0
-# tz can be a URL, but there is no document in RFC2426 and RFC6350
-
-has [qw|bday prodid sort_string|] => ( is => 'rw', isa => 'Str' );
-
-with 'vCard::Role::FileIO';
-
-__PACKAGE__->meta->make_immutable;
-no Moose;
 
 =head2 Constructors
 
@@ -354,26 +147,26 @@ Accepts an HashRef that looks like below:
     TITLE => 'Shrimp Man',
     PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
     TEL => [
-    { types => ['WORK','VOICE'], value => '(111) 555-1212' },
-    { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+        { types => ['WORK','VOICE'], value => '(111) 555-1212' },
+        { types => ['HOME','VOICE'], value => '(404) 555-1212' },
     ],
     ADR =>[{
-    types       => ['work'],
-    pref        => 1,
-    extended    => 100,
-    street      => 'Waters Edge',
-    city        => 'Baytown',
-    region      => 'LA',
-    post_code   => '30314',
-    country     => 'United States of America'
+        types       => ['work'],
+        pref        => 1,
+        extended    => 100,
+        street      => 'Waters Edge',
+        city        => 'Baytown',
+        region      => 'LA',
+        post_code   => '30314',
+        country     => 'United States of America'
     },{
-    types       => ['home'],
-    extended    => 42,
-    street      => 'Plantation St.',
-    city        => 'Baytown',
-    region      => 'LA',
-    post_code   => '30314',
-    country     => 'United States of America'
+        types       => ['home'],
+        extended    => 42,
+        street      => 'Plantation St.',
+        city        => 'Baytown',
+        region      => 'LA',
+        post_code   => '30314',
+        country     => 'United States of America'
     }],
     URL => 'http://www.example.com/dir_photos/my_photo.gif',
     EMAIL => 'forrestgump@example.com',
@@ -420,8 +213,8 @@ Accepts a vCard string
 =cut
 
 sub load_string {
-    my ( $self, $string ) = @_;
-    my @lines = split /\r\n/, $string;
+    my ( $self, $str ) = @_;
+    my @lines = split /\r\n/, $str;
     my $data = $vf->parse_lines(@lines);
     my $hashref = $self->_make_hashref($data->{objects}[0]);
     $self->load_hashref($hashref);
@@ -468,62 +261,88 @@ sub _parse_param {
     return $ref;
 }
 
-my @nodes = qw(
-    FN N NICKNAME
-    ADR LABEL TEL EMAIL GEO
-    ORG TITLE ROLE CATEGORIES
-    NOTE SOUND UID URL KEY
-    SOCIALPROFILE PHOTO LOGO SOURCE
-);
-
 =head2 METHODS
 
 =head3 as_string()
 
 Returns the vCard as a string.
 You have to use Encode::encode_utf8() if your vCard is written in utf8
- 
+
 =cut
+
+my $cr = "\x0D\x0A";
+my @nodes = qw(
+FN N NICKNAME
+ADR LABEL TEL EMAIL GEO
+ORG TITLE ROLE CATEGORIES
+NOTE SOUND UID URL KEY
+SOCIALPROFILE PHOTO LOGO SOURCE
+);
 
 sub as_string {
     my ($self) = @_;
-    my $cr = "\x0D\x0A";
-    my $string = "BEGIN:VCARD" . $cr;
-    $string .= 'VERSION:' . $self->version . $cr;
-    $string .= 'PRODID:' . $self->prodid . $cr if $self->prodid;
-    foreach my $node ( @nodes ) {
+    my $str = $self->_header();
+    $str .= $self->_make_nodes(@nodes);
+
+    $str .= 'SORT-STRING:' . $self->sort_string . $cr if $self->sort_string;
+    $str .= 'BDAY:' . $self->bday . $cr if $self->bday;
+    $str .= 'UID:' . $self->uid . $cr if $self->uid;
+
+    $str .= $self->_footer();
+    $str = $self->_fold($str);
+    return decode( $self->encoding_out, $str ) unless $self->encoding_out eq 'none';
+    return $str;
+}
+
+sub _header {
+    my ($self) = @_;
+    my $str = "BEGIN:VCARD" . $cr;
+    $str .= 'VERSION:' . $self->version . $cr;
+    $str .= 'PRODID:' . $self->prodid . $cr if $self->prodid;
+    return $str;
+}
+
+sub _make_nodes {
+    my $self = shift;
+    my $str = '';
+    foreach my $node (@_) {
         my $method = $self->can( lc $node );
         croak "the Method you provided, $node is not supported." unless $method;
         if ( ref $self->$method eq 'ARRAY' ) {
             foreach my $item ( @{ $self->$method } ){
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ){
-                    $string .= $item->as_string;
+                    $str .= $item->as_string;
                 }elsif($item) {
-                    $string .= uc($node) . ":" . $item . $cr;
+                    $str .= uc($node) . ":" . $item . $cr;
                 }
             }
         }elsif( $self->$method and $self->$method->isa('Text::vCard::Precisely::V3::Node') ) {
-            $string .= $self->$method->as_string;
+            $str .= $self->$method->as_string;
         }
     }
+    return $str;
+}
 
-     $string .= 'SORT-STRING:' . $self->sort_string . $cr
-    if $self->version ne '4.0' and $self->sort_string;
-    $string .= 'BDAY:' . $self->bday . $cr if $self->bday;
-    $string .= 'UID:' . $self->uid . $cr if $self->uid;
-    map { $string .= "TZ:" . $_->name . $cr } @{ $self->tz || [] } if $self->tz;
-    $string .= 'REV:' . $self->rev . $cr if $self->rev;
-    $string .= "END:VCARD";
-
+sub _fold {
+    my $self = shift;
+    my $str = shift or croak "Can't fold empty strings!";
     my $lf = Text::LineFold->new(   # line break with 75bytes
-        CharMax => 74,
-        Charset => $self->encoding_in,
-        OutputCharset => $self->encoding_out,
-        Newline => $cr,
+    CharMax => 74,
+    Charset => $self->encoding_in,
+    OutputCharset => $self->encoding_out,
+    Newline => $cr,
     );
-    $string = $lf->fold( "", "  ", $string );
-    return decode( $self->encoding_out, $string ) unless $self->encoding_out eq 'none';
-    return $string;
+    $str = $lf->fold( "", "  ", $str );
+    return $str;
+}
+
+sub _footer {
+    my $self = shift;
+    my $str = '';
+    map { $str .= "TZ:" . $_->name . $cr } @{ $self->tz || [] } if $self->tz;
+    $str .= 'REV:' . $self->rev . $cr if $self->rev;
+    $str .= "END:VCARD";
+    return $str;
 }
 
 =head3 as_file($filename)
@@ -539,6 +358,397 @@ sub as_file {
     $file->spew( $self->_iomode_out, $self->as_string );
     return $file;
 }
+
+=head2 SIMPLE GETTERS/SETTERS
+
+These methods accept and return strings
+
+=head3 version()
+
+returns Version number of the vcard. Defaults to B<'3.0'> and this method is B<READONLY>
+=cut
+
+has version => ( is => 'ro', isa => 'Str', default => '3.0' );
+
+=head3 rev()
+
+To specify revision information about the current vCard3.0
+
+=cut
+
+subtype 'TimeStamp'
+    => as 'Str'
+    => where { m/^\d{4}-?\d{2}-?\d{2}(:?T\d{2}:?\d{2}:?\d{2}Z)?$/is }
+    => message { "The TimeStamp you provided, $_, was not correct" };
+coerce 'TimeStamp'
+    => from 'Int'
+    => via {
+        my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
+        return sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
+    };
+coerce 'TimeStamp'
+    => from 'ArrayRef[HashRef]'
+    => via { $_->[0]{value} };
+has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1  );
+
+=head3 sort_string()
+
+To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
+B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm> supports it)
+ 
+=cut
+
+has sort_string => ( is => 'rw', isa => 'Str' );
+
+=head2 COMPLEX GETTERS/SETTERS
+
+They are based on Moose with coercion.
+So, these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str.
+Read source if you were confused.
+
+=head3 n()
+
+To specify the components of the name of the object the vCard represents.
+
+=cut
+
+subtype 'N'
+    => as 'Text::vCard::Precisely::V3::Node::N';
+coerce 'N'
+    => from 'HashRef[Maybe[Ref]|Maybe[Str]]'
+    => via {
+        my %param;
+        while( my ($key, $value) = each %$_ ) {
+            $param{$key} = $value if $value;
+        }
+        return Text::vCard::Precisely::V3::Node::N->new(\%param);
+    };
+coerce 'N'
+    => from 'HashRef[Maybe[Str]]'
+    => via { Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) };
+coerce 'N'
+    => from 'ArrayRef[Maybe[Str]]'
+    => via { Text::vCard::Precisely::V3::Node::N->new({ value => {
+        family      => $_->[0] || '',
+        given       => $_->[1] || '',
+        additional  => $_->[2] || '',
+        prefixes    => $_->[3] || '',
+        suffixes    => $_->[4] || '',
+    } }) };
+coerce 'N'
+    => from 'Str'
+    => via { Text::vCard::Precisely::V3::Node::N->new({ value => [split /(?<!\\);/, $_] }) };
+has n => ( is => 'rw', isa => 'N', coerce => 1 );
+
+=head3 tel()
+
+ Accepts/returns an ArrayRef that looks like:
+
+ [
+ { type => ['work'], value => '651-290-1234', preferred => 1 },
+ { type => ['home'], value => '651-290-1111' },
+ ]
+ 
+=cut
+
+subtype 'Tel' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Phone]';
+coerce 'Tel'
+    => from 'Str'
+    => via { [ Text::vCard::Precisely::V3::Node::Phone->new({ value => $_ }) ] };
+coerce 'Tel'
+    => from 'HashRef'
+    => via { [ Text::vCard::Precisely::V3::Node::Phone->new($_) ] };
+coerce 'Tel'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V3::Node::Phone->new($_) } @$_ ] };
+has tel => ( is => 'rw', isa => 'Tel', coerce => 1 );
+
+=head3 adr(), address()
+
+Accepts/returns an ArrayRef that looks like:
+
+ [
+    { types => ['work'], street => 'Main St', pref => 1 },
+    { types     => ['home'],
+        pobox     => 1234,
+        extended  => 'asdf',
+        street    => 'Army St',
+        city      => 'Desert Base',
+        region    => '',
+        post_code => '',
+        country   => 'USA',
+        pref      => 2,
+    },
+ ]
+
+=cut
+
+subtype 'Address' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Address]';
+coerce 'Address'
+    => from 'HashRef'
+    => via { [ Text::vCard::Precisely::V3::Node::Address->new($_) ] };
+coerce 'Address'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V3::Node::Address->new($_) } @$_ ] };
+has adr => ( is => 'rw', isa => 'Address', coerce => 1 );
+
+=head2 email()
+
+Accepts/returns an ArrayRef that looks like:
+
+ [
+    { type => ['work'], value => 'bbanner@ssh.secret.army.mil' },
+    { type => ['home'], value => 'bbanner@timewarner.com', pref => 1 },
+ ]
+
+or accept the string as email like bellow
+
+ 'bbanner@timewarner.com'
+
+=cut
+
+subtype 'Email' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Email]';
+coerce 'Email'
+    => from 'Str'
+    => via { [ Text::vCard::Precisely::V3::Node::Email->new({ value => $_ }) ] };
+coerce 'Email'
+    => from 'HashRef'
+    => via { [ Text::vCard::Precisely::V3::Node::Email->new($_) ] };
+coerce 'Email'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V3::Node::Email->new($_) } @$_ ] };
+has email => ( is => 'rw', isa => 'Email', coerce => 1 );
+
+=head3 url()
+
+Accepts/returns an ArrayRef that looks like:
+
+ [
+    { value => 'https://twitter.com/worthmine', types => ['twitter'] },
+    { value => 'https://github.com/worthmine' },
+ ]
+
+or accept the string as URL like bellow
+
+ 'https://github.com/worthmine'
+
+=cut
+
+subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
+coerce 'URLs'
+    => from 'Str'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [Text::vCard::Precisely::V3::Node::URL->new({ name => $name, value => $_ })]
+    };
+coerce 'URLs'
+    => from 'HashRef[Str]'
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node::URL->new({
+            name => $name,
+            value => $_->{'value'}
+        }) ]
+    };
+coerce 'URLs'
+    => from 'Object'    # Can't asign 'URI' or 'Object[URI]'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [Text::vCard::Precisely::V3::Node::URL->new({
+            name => $name,
+            value => $_->as_string,
+        })]
+    };
+coerce 'URLs'
+    => from 'ArrayRef[HashRef]'
+    => via  { [ map{ Text::vCard::Precisely::V3::Node::URL->new($_) } @$_ ] };
+has url => ( is => 'rw', isa => 'URLs', coerce => 1 );
+
+=head3 photo(), logo()
+
+Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary or text encoded in Base64, it does not matter
+Attention! Mac OS X and iOS B<ignore> the description beeing URL
+ use Base64 encoding or raw image binary if you have to show the image you want
+
+=cut
+
+subtype 'Image' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Photo]';
+coerce 'Image'
+    => from 'HashRef'
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node::Photo->new({
+            name => $name,
+            media_type => $_->{'media_type'},
+            value => $_->{'value'},
+        }) ] };
+coerce 'Image'
+    => from 'ArrayRef[HashRef]'
+    => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new($_) } @$_ ] };
+coerce 'Image'
+    => from 'Object'   # when parse from vCard::Addressbook, URI->new is called.
+    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
+coerce 'Image'
+    => from 'Str'   # when parse BASE64 encoded strings
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node::Photo->new({
+            name => $name,
+            value => $_,
+        } ) ]
+    };
+coerce 'Image'
+    => from 'ArrayRef[Str]'   # when parse BASE64 encoded strings
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ map{ Text::vCard::Precisely::V3::Node::Photo->new({
+            name => $name,
+            value => $_,
+        }) } @$_ ]
+    };
+has [qw| photo logo |] => ( is => 'rw', isa => 'Image', coerce => 1 );
+
+=head3 note()
+
+To specify supplemental information or a comment that is associated with the vCard
+
+=head3 org(), title(), role(), categories()
+
+To specify additional information for your jobs
+ 
+=head3 fn(), full_name(), fullname()
+
+A person's entire name as they would like to see it displayed
+
+=head3 nickname()
+
+To specify the text corresponding to the nickname of the object the vCard represents
+
+=head3 geo()
+
+To specify information related to the global positioning of the object the vCard represents
+
+=head3 key()
+
+To specify a public key or authentication certificate associated with the object that the vCard represents
+
+=head3 label()
+ToDo: because B<It's DEPRECATED from 4.0>
+To specify the formatted text corresponding to delivery address of the object the vCard represents
+
+=cut
+
+subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
+coerce 'Node'
+    => from 'Str'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
+    };
+coerce 'Node'
+    => from 'HashRef'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V3::Node->new({
+            name => $_->{'name'} || $name,
+            types => $_->{'types'} || [],
+            value => $_->{'value'} || croak "No value in HashRef!",
+        }) ]
+    };
+coerce 'Node'
+    => from 'ArrayRef[HashRef]'
+    => via {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ map { Text::vCard::Precisely::V3::Node->new({
+            name => $_->{'name'} || $name,
+            types => $_->{'types'} || [],
+            value => $_->{'value'} || croak "No value in HashRef!",
+        }) } @$_ ]
+    };
+has [qw|note org title role categories fn nickname geo key label|]
+    => ( is => 'rw', isa => 'Node', coerce => 1 );
+
+=head3 uid()
+
+To specify a value that represents a globally unique identifier corresponding to the individual or resource associated with the vCard
+
+=cut
+
+subtype 'UID'
+    => as 'Str'
+    => where { m/^urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is }
+    => message { "The UID you provided, $_, was not correct" };
+has uid => ( is => 'rw', isa => 'UID' );
+
+=head3 tz(), timezone()
+
+Both are same method with Alias
+To specify information related to the time zone of the object the vCard represents
+utc-offset format is NOT RECOMMENDED in vCard 4.0
+TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426> or L<RFC6350|https://tools.ietf.org/html/rfc6350>
+So it just supports some text values
+
+=cut
+
+subtype 'TimeZones' => as 'ArrayRef[DateTime::TimeZone]';
+coerce 'TimeZones'
+    => from 'ArrayRef'
+    => via {[ map{ DateTime::TimeZone->new( name => $_ ) } @$_ ]};
+coerce 'TimeZones'
+    => from 'Str'
+    => via {[ DateTime::TimeZone->new( name => $_ ) ]};
+has tz =>  ( is => 'rw', isa => 'TimeZones', coerce => 1 );
+
+=head3 bday(), birthday()
+
+Both are same method with Alias
+To specify the birth date of the object the vCard represents
+ 
+=cut
+
+has bday => ( is => 'rw', isa => 'Str' );
+
+=head3 prodid()
+
+To specify the identifier for the product that created the vCard object
+
+=cut
+
+has prodid => ( is => 'rw', isa => 'Str' );
+
+=head3 source()
+
+To identify the source of directory information contained in the content type
+
+=head3 sound()
+
+To specify a digital sound content information that annotates some aspect of the vCard
+This property is often used to specify the proper pronunciation of the name property value of the vCard
+ 
+=cut
+
+has [qw|source sound|] => ( is => 'rw', isa => 'URLs', coerce => 1 );
+
+=head3 socialprofile()
+ 
+There is no documents about X-SOCIALPROFILE in RFC but it works!
+
+=cut
+
+subtype 'SocialProfile' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::SocialProfile]';
+coerce 'SocialProfile'
+    => from 'HashRef'
+    => via { [ Text::vCard::Precisely::V3::Node::SocialProfile->new($_) ] };
+coerce 'SocialProfile'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
+has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
+
+
+with 'vCard::Role::FileIO';
+
+__PACKAGE__->meta->make_immutable;
+no Moose;
 
 #== Alias =================================================================
 sub organization {
@@ -572,124 +782,6 @@ sub timezone {
 }
 
 1;
-
-=head2 SIMPLE GETTERS/SETTERS
-
-These methods accept and return strings
-
-=head3 version()
-
-returns Version number of the vcard. Defaults to B<'3.0'> and this method is B<READONLY>
-
-=head3 rev()
-
-To specify revision information about the current vCard3.0
-
-=head3 sort_string()
-
-To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm> supports it)
-
-=head2 COMPLEX GETTERS/SETTERS
-
-They are based on Moose with coercion.
-So, these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str.
-Read source if you were confused.
-
-=head3 n()
-
-To specify the components of the name of the object the vCard represents.
-
-=head3 tel()
-
-Accepts/returns an ArrayRef that looks like:
-
- [
-    { type => ['work'], value => '651-290-1234', preferred => 1 },
-    { type => ['home'], value => '651-290-1111' },
- ]
-
-=head3 adr(), address()
-
-Accepts/returns an ArrayRef that looks like:
-
- [
-    { types => ['work'], street => 'Main St', pref => 1 },
-    { types     => ['home'],
-    pobox     => 1234,
-    extended  => 'asdf',
-    street    => 'Army St',
-    city      => 'Desert Base',
-    region    => '',
-    post_code => '',
-    country   => 'USA',
-    pref      => 2,
-    },
- ]
-
-=head2 email()
-
-Accepts/returns an ArrayRef that looks like:
-
- [
-    { type => ['work'], value => 'bbanner@ssh.secret.army.mil' },
-    { type => ['home'], value => 'bbanner@timewarner.com', pref => 1 },
- ]
-
-or accept the string as email like bellow
-
- 'bbanner@timewarner.com'
-
-=head3 url()
-
-Accepts/returns an ArrayRef that looks like:
-
- [
-    { value => 'https://twitter.com/worthmine', types => ['twitter'] },
-    { value => 'https://github.com/worthmine' },
- ]
-
-or accept the string as URL like bellow
-
- 'https://github.com/worthmine'
-
-=head3 photo(), logo()
-
-Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary or text encoded in Base64, it does not matter
-Attention! Mac OS X and iOS B<ignore> the description beeing URL
-use Base64 encoding or raw image binary if you have to show the image you want
-
-=head3 note()
-
-To specify supplemental information or a comment that is associated with the vCard
-
-=head3 org(), title(), role(), categories()
-
-To specify additional information for your jobs
-
-=head3 tz(), timezone()
-
-To specify information related to the time zone of the object the vCard represents
-
-=head3 fn(), full_name(), fullname()
-
-A person's entire name as they would like to see it displayed
-
-=head3 nickname()
-
-To specify the text corresponding to the nickname of the object the vCard represents
-
-=head3 bday(), birthday()
-
-To specify the birth date of the object the vCard represents
-
-=head3 source()
-
-To identify the source of directory information contained in the content type
-
-=head3 geo(), prodid(), key(), uid(), sound()
-
-I don't think they are so popular paramater, but here are the methods!
 
 =head2 aroud UTF-8
 

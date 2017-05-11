@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Path::Tiny;
 
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use lib qw(./lib);
 
@@ -29,10 +29,6 @@ is $vc->as_string, $expected_content, 'Node(Str)';                      # 1
 $in_file = path( 't', 'V4', 'node', 'hash.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$vc->label({
-    types => ['home'],
-    value => '123 Main St.\nSpringfield, IL 12345\nUSA'
-}); # DEPRECATED in vCard4.0
 $vc->key({ types => ['PGP'], value => 'http://example.com/key.pgp' });
 is $vc->as_string, $expected_content, 'Node(HashRef)';                  # 2
 
@@ -59,5 +55,15 @@ $expected_content = $in_file->slurp_utf8;
 
 $vc->nickname([{ value => '一期一会' }]);
 is $vc->as_string, $expected_content, 'Node(HashRef with utf8)';        # 4
+
+my $fail = eval { $vc->label({ # DEPRECATED in vCard4.0
+    types => ['home'],
+    value => '123 Main St.\nSpringfield, IL 12345\nUSA'
+})};
+is undef, $fail, "fail to declare 'LABEL' type";                        # 5
+
+
+
+
 
 done_testing;
