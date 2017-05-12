@@ -5,7 +5,7 @@ use Carp;
 use Moose;
 use Moose::Util::TypeConstraints;
 
-extends 'Text::vCard::Precisely::V3::Node::Phone';
+extends qw|Text::vCard::Precisely::V3::Node::Phone Text::vCard::Precisely::V4::Node|;
 
 subtype 'v4Phone'
     => as 'Str'
@@ -17,9 +17,9 @@ override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
     push @lines, $self->name || croak "Empty name";
-    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
+    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'VALUE=uri';
 
     ( my $value = $self->value ) =~ s/[-+()\s]+/ /sg;   # symbols to space

@@ -3,10 +3,6 @@ package Text::vCard::Precisely::V4::Node;
 use Carp;
 use Encode;
 
-use overload (
-    q{""}	=> \&as_string,
-);
-
 use Moose;
 use Moose::Util::TypeConstraints;
 
@@ -17,27 +13,43 @@ enum 'Name' => [qw( FN
     TZ GEO NICKNAME IMPP LANG XML KEY NOTE
     ORG TITLE ROLE CATEGORIES
     SOURCE SOUND FBURL CALADRURI CALURI
-    RELATED X-SOCIALPROFILE SORT_STRING
+    RELATED X-SOCIALPROFILE
 )];
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
-has sort_as => ( is => 'rw', isa => subtype 'SortAs' # from vCard 4.0
+subtype 'SortAs'
     => as 'Str'
-    => where { use utf8; decode_utf8($_) =~  m|^[\w\s\W]+$|s }   # does everything pass?
-    => message { "The SORT-AS you provided, $_, was not supported" }
-);
+    => where { use utf8; decode_utf8($_) =~  m|^[\p{ascii}\w\s]+$|s }   # Does everything pass?
+    => message { "The SORT-AS you provided, $_, was not supported" };
+has sort_as => ( is => 'rw', isa => 'SortAs' );
+
+subtype 'PIDNum'
+    => as 'Num'
+    => where { m/^\d(:?.\d)?$/s }
+    => message { "The PID you provided, $_, was not supported" };
+has pid => ( is => 'rw', isa => subtype 'PID' => as 'ArrayRef[PIDNum]' );
+
+subtype 'ALTID'
+    => as 'Int'
+    => where { $_ > 0 and $_ <= 100 }
+    => message { "The number you provided, $_, was not supported in 'ALTID'" };
+has altID => ( is => 'rw', isa => 'ALTID');
+
+sub charset {    # DEPRECATED from vCard 4.0
+    my $self = shift;
+    croak "'CHARSET' param is DEPRECATED! vCard4.0 will accept just ONLY UTF-8";
+}
 
 sub as_string {
     my ($self) = @_;
     my @lines;
     push @lines, uc( $self->name ) || croak "Empty name";
+    push @lines, 'ALTID=' . $self->altID if $self->altID;
+    push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
-    push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
-    push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
-    push @lines, 'CHARSET=' . $self->charset if $self->charset;
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as and uc($self->name) =~ /^(:?FN|ORG)$/;
 
     my $string = join(';', @lines ) . ':' . (

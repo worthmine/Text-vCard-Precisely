@@ -4,16 +4,12 @@ use Carp;
 use Encode;
 use Text::LineFold;
 
-use overload (
-    q{""}	=> \&as_string,
-);
-
 use Moose;
 use Moose::Util::TypeConstraints;
 
 enum 'Name' => [qw( FN
     ADR LABEL TEL EMAIL PHOTO LOGO URL
-    TZ GEO NICKNAME IMPP KEY NOTE
+    TZ GEO NICKNAME KEY NOTE
     ORG TITLE ROLE CATEGORIES
     SOURCE SOUND
     X-SOCIALPROFILE
@@ -28,11 +24,11 @@ subtype 'VALUE'
     => message { "The VALUE you provided, $_, was not supported" };
 has value => ( is => 'rw', required => 1, isa => 'VALUE' );
 
-has pref => ( is => 'rw', isa => subtype 'Preffered'
+subtype 'Preffered'
     => as 'Int'
     => where { $_ > 0 and $_ <= 100 }
-    => message { "The number you provided, $_, was not supported in 'Preffered'" }
-);
+    => message { "The number you provided, $_, was not supported in 'Preffered'" };
+has pref => ( is => 'rw', isa => 'Preffered' );
 
 subtype 'Type'
     => as 'Str'
@@ -43,36 +39,24 @@ subtype 'Type'
     => message { "The text you provided, $_, was not supported in 'Type'" };
 has types => ( is => 'rw', isa => 'ArrayRef[Type]', default => sub{[]} );
 
-subtype 'PIDNum'
-    => as 'Num'
-    => where { m/^\d(:?.\d)?$/s }
-    => message { "The PID you provided, $_, was not supported" };
-has pid => ( is => 'rw', isa => subtype 'PID' => as 'ArrayRef[PIDNum]' );
-
-has altID => ( is => 'rw', isa => subtype 'ALTID'
-    => as 'Int'
-    => where { $_ > 0 and $_ <= 100 }
-    => message { "The number you provided, $_, was not supported in 'ALTID'" }
-);
-
-
-has language => ( is => 'rw', isa => subtype 'Language'
+subtype 'Language'
     => as 'Str'
     => where { m|^[a-z]{2}(:?-[a-z]{2})?$|s }  # does it need something strictly?
-    => message { "The Language you provided, $_, was not supported" }
-);
+    => message { "The Language you provided, $_, was not supported" };
+has language => ( is => 'rw', isa =>'Language' );
 
-has media_type => ( is => 'rw', isa => subtype 'MediaType'
+subtype 'MediaType'
     => as 'Str'
     => where { m{^(:?application|audio|example|image|message|model|multipart|text|video)/[\w+\-\.]+$}is }
-    => message { "The MediaType you provided, $_, was not supported" }
-);
+    => message { "The MediaType you provided, $_, was not supported" };
+has media_type => ( is => 'rw', isa => 'MediaType' );
 
-has charset => ( is => 'rw', isa => subtype 'Charset' # not recommend for vCard 4.0
+subtype 'Charset'
     => as 'Str'
     => where { m|^[\w-]+$|s }    # does everything pass?
-    => message { "The Charset you provided, $_, was not supported" }
-);
+    => message { "The Charset you provided, $_, was not supported" };
+has charset => ( is => 'rw', isa => 'Charset' );
+# NOT RECOMMENDED parameter. but Android 4.4.x requires when there are UTF-8 characters
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
@@ -84,15 +68,13 @@ sub as_string {
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
-    push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
-    push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
     my $string = join(';', @lines ) . ':' . (
         ref $self->value eq 'Array'?
-            map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->value : $self->_escape($_) } @{ $self->value }:
-            $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: $self->_escape( $self->value )
+        map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->value : $self->_escape($_) } @{ $self->value }:
+        $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: $self->_escape( $self->value )
     );
     return $self->fold($string);
 }
@@ -102,13 +84,13 @@ sub fold {
     my $string = shift;
     my %arg = @_;
     my $lf = Text::LineFold->new(   # line break with 75bytes
-        CharMax => 74,
-        Newline => "\x0D\x0A",
+    CharMax => 74,
+    Newline => "\x0D\x0A",
     );
     my $decoded = decode_utf8($string);
     return $decoded =~ /\P{ascii}+/ || $arg{-force}?
-        $lf->fold( "", " ", $string ):
-        $lf->fold( "", "  ", $string );
+    $lf->fold( "", " ", $string ):
+    $lf->fold( "", "  ", $string );
 }
 
 sub _escape {

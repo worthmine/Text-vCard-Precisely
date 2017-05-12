@@ -2,10 +2,10 @@ package Text::vCard::Precisely::V4::Node::N;
 
 use Carp;
 use Moose;
-#use Moose::Util::TypeConstraints;
+
 my @order = qw( family given additional prefixes suffixes );
 
-extends 'Text::vCard::Precisely::V3::Node::N';
+extends qw|Text::vCard::Precisely::V3::Node::N Text::vCard::Precisely::V4::Node|;
 
 has sort_as => ( is => 'rw', isa => 'Str' );
 
@@ -14,6 +14,7 @@ override 'as_string' => sub {
     my @lines;
     push @lines, $self->name || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID if $self->altID;
+    push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'CHARSET=' . $self->charset if $self->charset;
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as;

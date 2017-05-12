@@ -43,11 +43,6 @@ my $hashref = {
         post_code   => '30314',
         country     => 'United States of America'
     }],
-#    LABEL => {
-#        types => ['WORK'],
-#        pref  => 1,
-#        value => "100 Waters Edge\nBaytown\, LA 30314\nUnited States of America"
-#    },
     URL => 'http://www.example.com/dir_photos/my_photo.gif',
     EMAIL => 'forrestgump@example.com',
     REV => '20080424T195243Z',

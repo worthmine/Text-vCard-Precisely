@@ -1,5 +1,4 @@
 package Text::vCard::Precisely::V4::Node::Related;
-$VERSION = 0.01;
 
 use Carp;
 use URI;
@@ -24,10 +23,10 @@ override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
     push @lines, $self->name || croak "Empty name";
-    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
-    push @lines, "MEDIATYPE=" . $self->media_type if defined $self->media_type;
     push @lines, 'ALTID=' . $self->altID if $self->altID;
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->pid;
+    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
+    push @lines, "MEDIATYPE=" . $self->media_type if defined $self->media_type;
 
     my $string = join(';', @lines ) . ':' . $self->value;
     return $self->fold( $string, -force => 1 );

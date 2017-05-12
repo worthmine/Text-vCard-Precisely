@@ -391,7 +391,8 @@ This property is often used to specify the proper pronunciation of the name prop
 
 =head3 socialprofile()
 
-There is no documents about X-SOCIALPROFILE in RFC but it works!
+There is no documents about X-SOCIALPROFILE in RFC but it works in iOS and Mac OS X!
+I don't know well about in Android or Windows. Somebody please feedback me
  
 =head3 sort_string()
 

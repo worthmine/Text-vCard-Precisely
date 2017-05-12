@@ -380,7 +380,6 @@ has [qw|bday anniversary gender prodid|] => ( is => 'rw', isa => 'Str' );
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
-
 =head3 sort_string()
 
 B<It's DEPRECATED from 4.0> Use SORT-AS param instead of it
