@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use Test::More tests => 5;
+use Test::More tests => 4;
 
 use lib qw(./lib);
 
@@ -54,11 +54,5 @@ $expected_content = $in_file->slurp_utf8;
 
 $vc->nickname([{ value => '一期一会' }]);
 is $vc->as_string, $expected_content, 'Node(HashRef with utf8)';        # 4
-
-my $fail = eval { $vc->label({ # DEPRECATED in vCard4.0
-    types => ['home'],
-    value => '123 Main St.\nSpringfield, IL 12345\nUSA',
-})};
-is $fail, undef, "fail to declare 'LABEL' type";                        # 5
 
 done_testing;

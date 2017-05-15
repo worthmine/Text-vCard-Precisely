@@ -311,7 +311,6 @@ sub _make_types {
     foreach my $node (@_) {
         $node =~ tr/-/_/;
         my $method = $self->can( lc $node );
-        warn $method; # Debug
         croak "the Method you provided, $node is not supported." unless $method;
         if ( ref $self->$method eq 'ARRAY' ) {
             foreach my $item ( @{ $self->$method } ){
