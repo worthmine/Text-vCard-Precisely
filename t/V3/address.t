@@ -83,7 +83,7 @@ $vc->adr({
     types       => [qw(home work)],
     pobox       => '201号室',
     extended    => '必要以上に長い名前のマンション',
-    street      => '冗長課された通り',
+    street      => '冗長化された通り',
     city        => '八王子市',
     region      => '都道府県',
     post_code   => '郵便番号',

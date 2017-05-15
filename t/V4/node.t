@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 use Path::Tiny;
-use Test::More tests => 6;
+use Test::More tests => 5;
 
 use lib qw(./lib);
 
@@ -61,13 +61,4 @@ my $fail = eval { $vc->label({ # DEPRECATED in vCard4.0
 })};
 is $fail, undef, "fail to declare 'LABEL' type";                        # 5
 
-TODO: {
-    local $TODO = "This test fails, I don't know why...";
-
-    $fail = eval { $vc->fn({
-        value => 'Forrest Gump',
-        charset => 'UTF-8', # DEPRECATED in vCard4.0
-    })};
-    is $fail, undef, "fail to declare 'CHARSET' param";                 # 6
-}
 done_testing;

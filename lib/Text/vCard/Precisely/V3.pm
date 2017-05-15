@@ -271,18 +271,21 @@ You have to use Encode::encode_utf8() if your vCard is written in utf8
 =cut
 
 my $cr = "\x0D\x0A";
-my @nodes = qw(
-FN N NICKNAME
-ADR LABEL TEL EMAIL GEO
-ORG TITLE ROLE CATEGORIES
-NOTE SOUND UID URL KEY
-SOCIALPROFILE PHOTO LOGO SOURCE
-);
+our $will_be_deprecated = [qw(name profile mailer agent class)];
+
+my @types = ( qw(
+    FN N NICKNAME
+    ADR LABEL TEL EMAIL GEO
+    ORG TITLE ROLE CATEGORIES
+    NOTE SOUND UID URL KEY
+    SOCIALPROFILE PHOTO LOGO SOURCE
+    SORT-STRING
+), map{uc} @$will_be_deprecated );
 
 sub as_string {
     my ($self) = @_;
     my $str = $self->_header();
-    $str .= $self->_make_nodes(@nodes);
+    $str .= $self->_make_types(@types);
 
     $str .= 'SORT-STRING:' . $self->sort_string . $cr if $self->sort_string;
     $str .= 'BDAY:' . $self->bday . $cr if $self->bday;
@@ -302,10 +305,11 @@ sub _header {
     return $str;
 }
 
-sub _make_nodes {
+sub _make_types {
     my $self = shift;
     my $str = '';
     foreach my $node (@_) {
+        $node =~ s/\-/\_/g;
         my $method = $self->can( lc $node );
         croak "the Method you provided, $node is not supported." unless $method;
         if ( ref $self->$method eq 'ARRAY' ) {
@@ -399,6 +403,15 @@ B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (
 =cut
 
 has sort_string => ( is => 'rw', isa => 'Str' );
+
+=head3 name(), profile(), mailer(), agent(), class();
+
+These Types will be DEPRECATED in vCard 4.0 and it seems they are useless
+So just sapport as B<READONLY> methods
+ 
+=cut
+
+has $will_be_deprecated => ( is => 'ro', isa => 'Str' );
 
 =head2 COMPLEX GETTERS/SETTERS
 
@@ -633,7 +646,7 @@ To specify information related to the global positioning of the object the vCard
 To specify a public key or authentication certificate associated with the object that the vCard represents
 
 =head3 label()
-ToDo: because B<It's DEPRECATED from 4.0>
+ToDo: because B<It's DEPRECATED in 4.0>
 To specify the formatted text corresponding to delivery address of the object the vCard represents
 
 =cut
@@ -785,7 +798,7 @@ sub timezone {
 
 =head2 aroud UTF-8
 
-if you want to send precisely the vCard3.0 with UTF-8 characters to the B<ALMOST> of smartphones, you have to set Charset param for each values like bellow:
+if you want to send precisely the vCard3.0 with UTF-8 characters to the B<Android4.4.x or before>, you have to set Charset param for each values like bellow:
 
  ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
 

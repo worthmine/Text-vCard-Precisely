@@ -20,7 +20,6 @@ override 'as_string' => sub {
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
-    push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
     my @values = ();
     map{ push @values, $self->_escape( $self->$_ ) } @order;

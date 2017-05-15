@@ -7,6 +7,9 @@ use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
 
 extends 'Text::vCard::Precisely::V3';
+with "MooseX::Deprecated" => {
+    attributes => [ @$Text::vCard::Precisely::V3::will_be_deprecated, 'label' ],
+};
 
 use Carp;
 use Encode;
@@ -19,7 +22,7 @@ Text::vCard::Precisely::V4 - Read, Write and Edit B<vCards 4.0>
 
 =head2 SYNOPSIS
  
-You can unlock types that will be available from vCard 4.0
+You can unlock types that will be available in vCard 4.0
 
  my $vc = Text::vCard::Precisely->new( version => '4.0' );
  # Or you can write like bellow:
@@ -81,7 +84,7 @@ You HAVE TO use encode_utf8() if your vCard is written in utf8
 =cut
 
 my $cr = "\x0D\x0A";
-my @nodes = qw(
+my @types = qw(
     FN N NICKNAME
     ADR TEL EMAIL IMPP LANG GEO
     ORG TITLE ROLE CATEGORIES RELATED
@@ -94,7 +97,7 @@ my @nodes = qw(
 sub as_string {
     my ($self) = @_;
     my $str = $self->_header();
-    $str .= $self->_make_nodes(@nodes);
+    $str .= $self->_make_types(@types);
 
     $str .= 'KIND:' . $self->kind . $cr if $self->kind;
     $str .= 'BDAY:' . $self->bday . $cr if $self->bday;
@@ -224,12 +227,12 @@ The format is SAME as 3.0
 =head3 lang()
 
 To specify the language(s) that may be used for contacting the entity associated with the vCard
-It's the B<new method from 4.0>
+It's the B<new method in 4.0>
 
 =head3 impp(), xml()
 
 I don't think they are so popular paramater, but here are the methods!
-They are the B<new method from 4.0>
+They are the B<new method in 4.0>
 
 =head3 geo(), key()
 
@@ -274,7 +277,7 @@ The formats are SAME as 3.0
 =head3 fburl(), caladruri(), caluri()
 
 I don't think they are so popular types, but here are the methods!
-They are the B<new method from 4.0>
+They are the B<new method in 4.0>
 
 =cut
 
@@ -293,7 +296,7 @@ has related => ( is => 'rw', isa => 'Related', coerce => 1 );
 =head3 kind()
 
 To specify the kind of object the vCard represents
-It's the B<new method from 4.0>
+It's the B<new method in 4.0>
  
 =cut
 
@@ -327,7 +330,7 @@ has rev => ( is => 'rw', isa => 'v4TimeStamp', coerce => 1  );
 =head3 member(), clientpidmap()
 
 I don't think they are so popular types, but here are the methods!
-It's the B<new method from 4.0>
+It's the B<new method in 4.0>
 
 =cut
 
@@ -362,12 +365,12 @@ The format is SAME as 3.0
 =head3 anniversary()
 
 The date of marriage, or equivalent, of the object the vCard represents
-It's the B<new method from 4.0>
+It's the B<new method in 4.0>
 
 =head3 gender()
 
 To specify the components of the sex and gender identity of the object the vCard represents
-It's the B<new method from 4.0>
+It's the B<new method in 4.0>
 
 =head3 prodid()
 
@@ -382,24 +385,25 @@ no Moose;
 
 =head3 sort_string()
 
-B<It's DEPRECATED from 4.0> Use SORT-AS param instead of it
+B<It's DEPRECATED in 4.0> Use SORT-AS param instead of it
 
 =cut
 
 sub sort_string {
-    my ($self) = @_;
+    my $self = shift;
     croak "'SORT-STRING' type is DEPRECATED! Use 'SORT-AS' param instead of it.";
 }
 
 =head3 label()
 
-B<It's DEPRECATED from 4.0> Use LABEL param in ADR instead of it
+B<It's DEPRECATED in 4.0> Use LABEL param in ADR instead of it
+but I have no method for it yet
 
 =cut
 
-sub label {
-    my ($self) = @_;
-    croak "'LABEL' type is DEPRECATED! Use 'LABEL' param in ADR instead of it.";
+sub label {    # DEPRECATED from vCard 4.0
+    my $self = shift;
+    croak "'LABEL' param is DEPRECATED in vCard4.0!";
 }
 
 1;

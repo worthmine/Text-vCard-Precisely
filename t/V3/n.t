@@ -61,7 +61,7 @@ $expected_content = $in_file->slurp_utf8;
 
 $vc->n({
     value => [ '姓', '名', '', '','様' ],
-    charset => 'UTF-8',
+#    charset => 'UTF-8',
 });
 is $vc->as_string, $expected_content, 'n(HashRef with utf8)';           # 7
 

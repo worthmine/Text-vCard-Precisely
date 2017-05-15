@@ -13,7 +13,6 @@ enum 'Name' => [qw( FN
     ORG TITLE ROLE CATEGORIES
     SOURCE SOUND
     X-SOCIALPROFILE
-    SORT_STRING NAME PROFILE MAILER CLASS AGENT
 )];
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
@@ -51,12 +50,16 @@ subtype 'MediaType'
     => message { "The MediaType you provided, $_, was not supported" };
 has media_type => ( is => 'rw', isa => 'MediaType' );
 
+=cut
+
 subtype 'Charset'
     => as 'Str'
     => where { m|^[\w-]+$|s }    # does everything pass?
     => message { "The Charset you provided, $_, was not supported" };
 has charset => ( is => 'rw', isa => 'Charset' );
 # NOT RECOMMENDED parameter. but Android 4.4.x requires when there are UTF-8 characters
+
+=cut
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
@@ -69,7 +72,7 @@ sub as_string {
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
-    push @lines, 'CHARSET=' . $self->charset if $self->charset;
+#    push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
     my $string = join(';', @lines ) . ':' . (
         ref $self->value eq 'Array'?
