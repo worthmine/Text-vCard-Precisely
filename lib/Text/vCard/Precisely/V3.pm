@@ -309,7 +309,7 @@ sub _make_types {
     my $self = shift;
     my $str = '';
     foreach my $node (@_) {
-        $node =~ s/\-/\_/g;
+        $node =~ tr/-/_/;
         my $method = $self->can( lc $node );
         croak "the Method you provided, $node is not supported." unless $method;
         if ( ref $self->$method eq 'ARRAY' ) {

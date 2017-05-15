@@ -61,7 +61,6 @@ sub as_string {
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
-#    push @lines, 'CHARSET=' . $self->charset if $self->charset;
 
     my $string = join(';', @lines ) . ':' . (
         ref $self->value eq 'Array'?
