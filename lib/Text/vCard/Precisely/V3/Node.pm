@@ -50,17 +50,6 @@ subtype 'MediaType'
     => message { "The MediaType you provided, $_, was not supported" };
 has media_type => ( is => 'rw', isa => 'MediaType' );
 
-=cut
-
-subtype 'Charset'
-    => as 'Str'
-    => where { m|^[\w-]+$|s }    # does everything pass?
-    => message { "The Charset you provided, $_, was not supported" };
-has charset => ( is => 'rw', isa => 'Charset' );
-# NOT RECOMMENDED parameter. but Android 4.4.x requires when there are UTF-8 characters
-
-=cut
-
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
