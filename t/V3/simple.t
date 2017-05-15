@@ -25,7 +25,7 @@ $expected_content = $in_file->slurp_utf8;
 
 $vc->fn('太宰治');
 $vc->n('太宰;治');
-$vc->sort_string('だざいおさむ');
+#$vc->sort_string('だざいおさむ');
 is $vc->as_string, $expected_content, 'simples(Str with utf8 )';        # 2
 
 done_testing;
