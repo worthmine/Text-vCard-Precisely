@@ -8,7 +8,7 @@ use MooseX::Types::DateTime qw(TimeZone);
 
 extends 'Text::vCard::Precisely::V3';
 with "MooseX::Deprecated" => {
-    attributes => [ @$Text::vCard::Precisely::V3::will_be_deprecated, 'label' ],
+    attributes => $Text::vCard::Precisely::V3::will_be_deprecated,
 };
 
 use Carp;
@@ -88,7 +88,7 @@ my @types = qw(
     FN N NICKNAME
     ADR TEL EMAIL IMPP LANG GEO
     ORG TITLE ROLE CATEGORIES RELATED
-    NOTE SOUND UID URL FBURL CALADRURI CALURI
+    NOTE SOUND URL FBURL CALADRURI CALURI
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
 
@@ -104,7 +104,7 @@ sub as_string {
     $str .= 'ANNIVERSARY:' . $self->anniversary . $cr if $self->anniversary;
     $str .= 'GENDER:' . $self->gender . $cr if $self->gender;
     $str .= 'UID:' . $self->uid . $cr if $self->uid;
-    map { $str .= "MEMBER:$_" . $cr } @{ $self->member || [] } if $self->member;
+    $str .= join '', @{ $self->member || [] } if $self->member;
     map { $str .= "CLIENTPIDMAP:$_" . $cr } @{ $self->clientpidmap || [] } if $self->clientpidmap;
 
     $str .= $self->_footer();
@@ -333,12 +333,16 @@ I don't think they are so popular types, but here are the methods!
 It's the B<new method in 4.0>
 
 =cut
+use Text::vCard::Precisely::V4::Node::Member;
 
 subtype 'MEMBER'
-    => as 'ArrayRef[UID]';
+    => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Member]';
 coerce 'MEMBER'
     => from 'UID'
-    => via { [$_] };
+    => via {[ Text::vCard::Precisely::V4::Node::Member->new($_) ]};
+coerce 'MEMBER'
+    => from 'ArrayRef[UID]'
+    => via {[ map{ Text::vCard::Precisely::V4::Node::Member->new({ value => $_ })} @$_ ]};
 has member => ( is => 'rw', isa => 'MEMBER', coerce => 1 );
 
 subtype 'CLIENTPIDMAP'

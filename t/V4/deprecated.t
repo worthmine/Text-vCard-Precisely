@@ -38,6 +38,6 @@ $fail = eval { $vc->sort_string({ # DEPRECATED in vCard4.0
     types => ['home'],
     value => '123 Main St.\nSpringfield, IL 12345\nUSA',
 })};
-is $fail, undef, "fail to declare 'LABEL' type";                        # 7
+is $fail, undef, "fail to declare 'SORT-STRING' type";                        # 7
 
 done_testing;

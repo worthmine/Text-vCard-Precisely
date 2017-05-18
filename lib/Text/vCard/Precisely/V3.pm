@@ -320,8 +320,10 @@ sub _make_types {
                     $str .= uc($node) . ":" . $item->as_string . $cr;
                 }
             }
+        }elsif( $self->$method and $self->$method->isa('Text::vCard::Precisely::V3::Node::N') ){
+            $str .= $self->$method->as_string();
         }elsif( $self->$method ){
-            $str .= $self->$method->as_string;
+            $str .= $self->$method;
         }
     }
     return $str;
@@ -394,15 +396,6 @@ coerce 'TimeStamp'
     => from 'ArrayRef[HashRef]'
     => via { $_->[0]{value} };
 has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1 );
-
-=head3 sort_string()
-
-To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm> supports it)
- 
-=cut
-
-#has sort_string => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 =head3 name(), profile(), mailer(), agent(), class();
 
@@ -680,6 +673,13 @@ coerce 'Node'
     };
 has [qw|note org title role categories fn nickname geo key label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
+
+=head3 sort_string()
+
+To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
+B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm> supports it)
+
+=cut
 
 has sort_string => ( is => 'rw', isa => 'Node', coerce => 1 );
 

@@ -27,8 +27,7 @@ override 'as_string' => sub {
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
 
-    my $value = $self->_escape( $self->value );
-    my $string = join(';', @lines ) . ':' . $value;
+    my $string = join(';', @lines ) . ':' . $self->_escape( $self->value );;
     return $self->fold($string);
 
 };
