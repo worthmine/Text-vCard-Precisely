@@ -287,7 +287,7 @@ sub as_string {
     my $str = $self->_header();
     $str .= $self->_make_types(@types);
 
-    $str .= 'SORT-STRING:' . $self->sort_string . $cr if $self->sort_string;
+#    $str .= 'SORT-STRING:' . $self->sort_string . $cr if $self->sort_string;
     $str .= 'BDAY:' . $self->bday . $cr if $self->bday;
     $str .= 'UID:' . $self->uid . $cr if $self->uid;
 
@@ -317,10 +317,10 @@ sub _make_types {
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ){
                     $str .= $item->as_string;
                 }elsif($item) {
-                    $str .= uc($node) . ":" . $item . $cr;
+                    $str .= uc($node) . ":" . $item->as_string . $cr;
                 }
             }
-        }elsif( $self->$method and $self->$method->isa('Text::vCard::Precisely::V3::Node') ) {
+        }elsif( $self->$method ){
             $str .= $self->$method->as_string;
         }
     }
@@ -393,7 +393,7 @@ coerce 'TimeStamp'
 coerce 'TimeStamp'
     => from 'ArrayRef[HashRef]'
     => via { $_->[0]{value} };
-has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1  );
+has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1 );
 
 =head3 sort_string()
 
@@ -402,7 +402,7 @@ B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (
  
 =cut
 
-has sort_string => ( is => 'rw', isa => 'Str' );
+#has sort_string => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 =head3 name(), profile(), mailer(), agent(), class();
 
@@ -438,16 +438,16 @@ coerce 'N'
     };
 coerce 'N'
     => from 'HashRef[Maybe[Str]]'
-    => via { Text::vCard::Precisely::V3::Node::N->new({ value => $_ }) };
+    => via { Text::vCard::Precisely::V3::Node::N->new($_) };
 coerce 'N'
     => from 'ArrayRef[Maybe[Str]]'
-    => via { Text::vCard::Precisely::V3::Node::N->new({ value => {
+    => via { Text::vCard::Precisely::V3::Node::N->new({
         family      => $_->[0] || '',
         given       => $_->[1] || '',
         additional  => $_->[2] || '',
         prefixes    => $_->[3] || '',
         suffixes    => $_->[4] || '',
-    } }) };
+    }) };
 coerce 'N'
     => from 'Str'
     => via { Text::vCard::Precisely::V3::Node::N->new({ value => [split /(?<!\\);/, $_] }) };
@@ -680,6 +680,8 @@ coerce 'Node'
     };
 has [qw|note org title role categories fn nickname geo key label|]
     => ( is => 'rw', isa => 'Node', coerce => 1 );
+
+has sort_string => ( is => 'rw', isa => 'Node', coerce => 1 );
 
 =head3 uid()
 

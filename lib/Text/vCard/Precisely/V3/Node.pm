@@ -4,10 +4,14 @@ use Carp;
 use Encode;
 use Text::LineFold;
 
+use overload(
+    '""' => \&as_string
+);
+
 use Moose;
 use Moose::Util::TypeConstraints;
 
-enum 'Name' => [qw( FN
+enum 'Name' => [qw( FN N SORT_STRING
     ADR LABEL TEL EMAIL PHOTO LOGO URL
     TZ GEO NICKNAME KEY NOTE
     ORG TITLE ROLE CATEGORIES
@@ -56,7 +60,10 @@ no Moose;
 sub as_string {
     my ($self) = @_;
     my @lines;
-    push @lines, uc( $self->name ) || croak "Empty name";
+    my $node = $self->name();
+    $node =~ tr/_/-/;
+
+    push @lines, uc($node) || croak "Empty name";
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;

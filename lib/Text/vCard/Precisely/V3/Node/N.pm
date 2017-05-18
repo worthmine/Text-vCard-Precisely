@@ -11,22 +11,22 @@ my @order = qw( family given additional prefixes suffixes );
 has name => (is => 'ro', default => 'N', isa => 'Str' );
 has \@order => ( is => 'rw', isa => 'Str|Undef', default => undef );
 
-subtype 'Values'
-    => as 'ArrayRef[Maybe[Str]]'
-    => where { scalar @$_ == 5 }
-    => message {
-        my $length = ref $_ eq'Array'? scalar @$_ : return ref $_;
-        return "Unvalid length. the length of N->value must be 5. you provided:$length" };
+subtype 'Values' => as 'HashRef[Maybe[Str]]';
 coerce 'Values'
     => from 'ArrayRef[Maybe[Str]]'
-    => via { my @value = @$_; $value[4] ||= ''; return \@value };
-coerce 'Values'
-    => from 'HashRef[Maybe[Str]]'
-    => via {my @value = @$_{@order}; $value[4] ||= ''; return \@value };
+    => via {
+        my @value = @$_; $value[4] ||= ''; my $hash = {};
+        map { $hash->{$order[$_]} = $value[$_] } 0..4;
+        return $hash;
+    };
 coerce 'Values'
     => from 'Str'
-    => via { my @value = split( /;/, $_ ); $value[4] ||= ''; return \@value };
-has value => ( is => 'rw', default => sub{[ (undef) x 5 ]}, isa => 'Values', coerce => 1 );
+    => via {
+        my @value = split( /(?<!\\);/, $_ ); $value[4] ||= ''; my $hash = {};
+        map { $hash->{$order[$_]} = $value[$_] } 0..4;
+        return $hash;
+    };
+has value => ( is => 'rw', isa => 'Values', coerce => 1 );
 
 override 'as_string' => sub {
     my ($self) = @_;
@@ -34,10 +34,9 @@ override 'as_string' => sub {
     push @lines, $self->name || croak "Empty name";
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
 
-    my @values = ();
-    my $num = 0;
-    map{ push @values, $self->_escape( $self->$_ || $self->value->[$num++] ) } @order;
-    my $string = join(';', @lines ) . ':' . join ';', @values;
+    my @values = map{ $self->_escape($_) } map{ $self->$_ or  $self->value && $self->value()->{$_} } @order;
+
+    my $string = join(';', @lines ) . ':' . join( ';', @values );
     return $self->fold( $string, -force => 1 );
 };
 
