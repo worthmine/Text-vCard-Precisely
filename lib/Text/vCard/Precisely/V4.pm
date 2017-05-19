@@ -1,7 +1,6 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely::V4;
 
-use 5.12.5;
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);

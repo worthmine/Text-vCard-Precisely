@@ -1,7 +1,9 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely::V3;
 
-use 5.12.5;
+#use 5.12.5;
+use 5.8.9;
+
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
@@ -758,9 +760,6 @@ coerce 'SocialProfile'
     => from 'ArrayRef[HashRef]'
     => via { [ map { Text::vCard::Precisely::V3::Node::SocialProfile->new($_) } @$_ ] };
 has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
-
-
-with 'vCard::Role::FileIO';
 
 __PACKAGE__->meta->make_immutable;
 no Moose;

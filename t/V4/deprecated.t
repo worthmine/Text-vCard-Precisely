@@ -34,10 +34,7 @@ is $fail, undef, "fail to declare 'AGENT' type";                        # 5
 $fail = eval { $vc->class('some classes') };
 is $fail, undef, "fail to declare 'CLASS' type";                        # 6
 
-$fail = eval { $vc->sort_string({ # DEPRECATED in vCard4.0
-    types => ['home'],
-    value => '123 Main St.\nSpringfield, IL 12345\nUSA',
-})};
-is $fail, undef, "fail to declare 'SORT-STRING' type";                        # 7
+$fail = eval { $vc->sort_string('SORT-STRING') }; # DEPRECATED in vCard4.0
+is $fail, undef, "fail to declare 'SORT-STRING' type";                  # 7
 
 done_testing;
