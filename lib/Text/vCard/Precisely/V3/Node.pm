@@ -2,6 +2,8 @@ package Text::vCard::Precisely::V3::Node;
 
 use Carp;
 use Encode;
+
+use 5.12.5;
 use charnames ':full';
 use Text::LineFold;
 
