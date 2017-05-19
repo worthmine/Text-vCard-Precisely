@@ -11,13 +11,13 @@ perl:
 - '5.16'
 - '5.14'
 - '5.12'
-- '5.10'
-- '5.8'
-
-matrix:
-  allow_failures:
-    - perl: 5.10
-    - perl: 5.8
+#- '5.10'
+#- '5.8'
+#
+#matrix:
+#  allow_failures:
+#    - perl: 5.10
+#    - perl: 5.8
     
 install:
 - cpanm --quiet --notest --skip-satisfied Dist::Zilla
