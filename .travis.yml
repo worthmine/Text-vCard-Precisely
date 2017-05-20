@@ -20,8 +20,8 @@ matrix:
     - perl: 5.8
       env: COVERAGE=1
       
-before_install:
-  - eval $(curl https://travis-perl.github.io/init) --auto
+#before_install:
+#  - eval $(curl https://travis-perl.github.io/init) --auto
  
 install:
 - cpanm --quiet --notest --skip-satisfied Dist::Zilla
@@ -32,7 +32,7 @@ install:
 
 script:
 - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
-#- dzil smoke --release --author
+- dzil smoke --release --author
 
 notifications:
   slack:
