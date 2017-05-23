@@ -24,8 +24,9 @@ matrix:
 
 install:
 - cpanm --quiet --notest --skip-satisfied Dist::Zilla
+- cpanm --quiet --notest --skip-satisfied Dist::Zilla::Role::TestRunner
 - cpanm Test::Pod
-- cpanm Data::Validate::URI --force
+#- cpanm Data::Validate::URI --force
 - dzil authordeps | grep -vP '[^\w:]' | cpanm --verbose --notest --skip-satisfied
 - dzil listdeps   | grep -vP '[^\w:]' | grep -vP '^GD' | cpanm --verbose --skip-satisfied
 
