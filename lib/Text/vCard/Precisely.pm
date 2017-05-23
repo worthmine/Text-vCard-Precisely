@@ -1,38 +1,12 @@
-# ABSTRACT: turns baubles into trinkets
-package Text::vCard::Precisely;
-
-use Moose;
-use Moose::Util::TypeConstraints;
-
-extends 'Text::vCard::Precisely::V3';
-
-enum 'Version' => [qw( 3.0 4.0 )];
-has version => ( is => 'ro', isa => 'Version', default => '3.0', required => 1 );
-
-__PACKAGE__->meta->make_immutable;
-no Moose;
-
-sub BUILD {
-    my $self = shift;
-    return Text::vCard::Precisely::V3->new(@_) unless $self->version eq '4.0';
-
-    require Text::vCard::Precisely::V4;
-    return Text::vCard::Precisely::V4->new(@_);
-}
-
-1;
-
-__END__
-
-=encoding UTF8
-
-=head1 NAME
+# NAME
 
 Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisely
 
-=for html <a href="https://travis-ci.org/worthmine/Text-vCard-Precisely"><img src="https://travis-ci.org/worthmine/Text-vCard-Precisely.svg?branch=master"></a>
+<div>
+    <a href="https://travis-ci.org/worthmine/Text-vCard-Precisely"><img src="https://travis-ci.org/worthmine/Text-vCard-Precisely.svg?branch=master"></a>
+</div>
 
-=head2 SYNOPSIS
+## SYNOPSIS
 
     my $vc = Text::vCard::Precisely->new();
     # or now you can write like bellow if you want to use 4.0:
@@ -95,360 +69,320 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
 
     print $vc->as_string();
 
-=head2 DESCRIPTION
+## DESCRIPTION
 
-A vCard is a digital business card. vCard and L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
+A vCard is a digital business card. vCard and [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata)
  provide an API for parsing vCards
-This module is forked from L<Text::vCard|https://github.com/ranguard/text-vcard>
+This module is forked from [Text::vCard](https://github.com/ranguard/text-vcard)
  because some reason bellow:
 
-=over
-
-=item
-
-Text::vCard B<doesn't provide> full methods based on L<RFC2426|https://tools.ietf.org/html/rfc2426>
-
-=item
-
-Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely. they cause some Mojibake
-
-=item
-
-Android 4.4.x can't parse vCard4.0
-
-
-=item
-
-I wanted to learn Moose, of course
-
-=back
+- Text::vCard **doesn't provide** full methods based on [RFC2426](https://tools.ietf.org/html/rfc2426)
+- Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely. they cause some Mojibake
+- Android 4.4.x can't parse vCard4.0
+- I wanted to learn Moose, of course
 
 To handle an address book with several vCard entries in it, start with
- L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> and then come back to this module.
+ [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata) and then come back to this module.
 
-Note that the vCard RFC requires version() and full_name().  This module does not check or warn yet if these conditions have not been met
+Note that the vCard RFC requires version() and full\_name().  This module does not check or warn yet if these conditions have not been met
 
-=head2 Constructors
+## Constructors
 
-=head3 load_hashref($HashRef)
+### load\_hashref($HashRef)
 
 Accepts an HashRef that looks like below:
 
- my $hashref = {
-    N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
-    FN  => 'Forrest Gump',
-    SORT_STRING => 'Forrest Gump',
-    ORG => 'Bubba Gump Shrimp Co.',
-    TITLE => 'Shrimp Man',
-    PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
-    TEL => [
-        { types => ['WORK','VOICE'], value => '(111) 555-1212' },
-        { types => ['HOME','VOICE'], value => '(404) 555-1212' },
-    ],
-    ADR =>[{
-        types       => ['work'],
-        pref        => 1,
-        extended    => 100,
-        street      => 'Waters Edge',
-        city        => 'Baytown',
-        region      => 'LA',
-        post_code   => '30314',
-        country     => 'United States of America'
-    },{
-        types       => ['home'],
-        extended    => 42,
-        street      => 'Plantation St.',
-        city        => 'Baytown',
-        region      => 'LA',
-        post_code   => '30314',
-        country     => 'United States of America'
-    }],
-    URL => 'http://www.example.com/dir_photos/my_photo.gif',
-    EMAIL => 'forrestgump@example.com',
-    REV => '2008-04-24T19:52:43Z',
- };
+    my $hashref = {
+       N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
+       FN  => 'Forrest Gump',
+       SORT_STRING => 'Forrest Gump',
+       ORG => 'Bubba Gump Shrimp Co.',
+       TITLE => 'Shrimp Man',
+       PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
+       TEL => [
+           { types => ['WORK','VOICE'], value => '(111) 555-1212' },
+           { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+       ],
+       ADR =>[{
+           types       => ['work'],
+           pref        => 1,
+           extended    => 100,
+           street      => 'Waters Edge',
+           city        => 'Baytown',
+           region      => 'LA',
+           post_code   => '30314',
+           country     => 'United States of America'
+       },{
+           types       => ['home'],
+           extended    => 42,
+           street      => 'Plantation St.',
+           city        => 'Baytown',
+           region      => 'LA',
+           post_code   => '30314',
+           country     => 'United States of America'
+       }],
+       URL => 'http://www.example.com/dir_photos/my_photo.gif',
+       EMAIL => 'forrestgump@example.com',
+       REV => '2008-04-24T19:52:43Z',
+    };
 
-=head3 load_file($file_name)
+### load\_file($file\_name)
 
 Accepts a file name
 
-=head3 load_string($vCard)
+### load\_string($vCard)
 
 Accepts a vCard string
 
-=head2 METHODS
+## METHODS
 
-=head3 as_string()
+### as\_string()
 
 Returns the vCard as a string.
-You have to use Encode::encode_utf8() if your vCard is written in utf8
+You have to use Encode::encode\_utf8() if your vCard is written in utf8
 
-=head3 as_file($filename)
+### as\_file($filename)
 
 Write data in vCard format to $filename.
 Dies if not successful
 
-=head2 SIMPLE GETTERS/SETTERS
+## SIMPLE GETTERS/SETTERS
 
 These methods accept and return strings
 
-=head3 version()
+### version()
 
 returns Version number of the vcard.
-Defaults to B<'3.0'> and this method is B<READONLY>
+Defaults to **'3.0'** and this method is **READONLY**
 
-=head3 rev()
+### rev()
 
 To specify revision information about the current vCard3.0
 
-=head3 sort_string()
+### sort\_string()
 
 To specify the family name, given name or organization text to be used for
  national-language-specific sorting of the FN, N and ORG.
 
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it.
+**This method will be DEPRECATED in vCard4.0** Use SORT-AS param instead of it.
 
-=head2 COMPLEX GETTERS/SETTERS
+## COMPLEX GETTERS/SETTERS
 
 They are based on Moose with coercion.
-So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef
+So these methods accept not only ArrayRef\[HashRef\] but also ArrayRef\[Str\], single HashRef
  or single Str.
 Read source if you were confused
 
-=head3 n()
+### n()
 
 To specify the components of the name of the object the vCard represents
 
-=head3 tel()
+### tel()
 
 Accepts/returns an ArrayRef that looks like:
 
- [
-    { type => ['work'], value => '651-290-1234', preferred => 1 },
-    { type => ['home'], value => '651-290-1111' },
- ]
+    [
+       { type => ['work'], value => '651-290-1234', preferred => 1 },
+       { type => ['home'], value => '651-290-1111' },
+    ]
 
-=head3 adr(), address()
-
-Accepts/returns an ArrayRef that looks like:
-
- [
-    { types => ['work'], street => 'Main St', pref => 1 },
-    { types     => ['home'],
-    pobox     => 1234,
-    extended  => 'asdf',
-    street    => 'Army St',
-    city      => 'Desert Base',
-    region    => '',
-    post_code => '',
-    country   => 'USA',
-    pref      => 2,
-    },
- ]
-
-=head2 email()
+### adr(), address()
 
 Accepts/returns an ArrayRef that looks like:
 
- [
-    { type => ['work'], value => 'bbanner@ssh.secret.army.mil' },
-    { type => ['home'], value => 'bbanner@timewarner.com', pref => 1 },
- ]
+    [
+       { types => ['work'], street => 'Main St', pref => 1 },
+       { types     => ['home'],
+       pobox     => 1234,
+       extended  => 'asdf',
+       street    => 'Army St',
+       city      => 'Desert Base',
+       region    => '',
+       post_code => '',
+       country   => 'USA',
+       pref      => 2,
+       },
+    ]
+
+## email()
+
+Accepts/returns an ArrayRef that looks like:
+
+    [
+       { type => ['work'], value => 'bbanner@ssh.secret.army.mil' },
+       { type => ['home'], value => 'bbanner@timewarner.com', pref => 1 },
+    ]
 
 or accept the string as email like bellow
 
- 'bbanner@timewarner.com'
+    'bbanner@timewarner.com'
 
-=head3 url()
+### url()
 
 Accepts/returns an ArrayRef that looks like:
 
- [
-    { value => 'https://twitter.com/worthmine', types => ['twitter'] },
-    { value => 'https://github.com/worthmine' },
- ]
+    [
+       { value => 'https://twitter.com/worthmine', types => ['twitter'] },
+       { value => 'https://github.com/worthmine' },
+    ]
 
 or accept the string as URL like bellow
 
- 'https://github.com/worthmine'
+    'https://github.com/worthmine'
 
-=head3 photo(), logo()
+### photo(), logo()
 
 Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary
  or text encoded in Base64, it does not matter.
 
-B<Attention!> Mac OS X and iOS B<ignore> the description beeing URL.
+**Attention!** Mac OS X and iOS **ignore** the description beeing URL.
 use Base64 encoding or raw image binary if you have to show the image you want.
 
-=head3 note()
+### note()
 
 To specify supplemental information or a comment that is associated with the vCard
 
-=head3 org(), title(), role(), categories()
+### org(), title(), role(), categories()
 
 To specify additional information for your jobs
 
-=head3 fn(), full_name(), fullname()
+### fn(), full\_name(), fullname()
 
 A person's entire name as they would like to see it displayed
 
-=head3 nickname()
+### nickname()
 
 To specify the text corresponding to the nickname of the object the vCard represents
 
-=head3 lang()
+### lang()
 
 To specify the language(s) that may be used for contacting the entity associated with the vCard.
 
-It's the B<new method from 4.0>
+It's the **new method from 4.0**
 
-=head3 impp(), xml()
+### impp(), xml()
 
 I don't think they are so popular types, but here are the methods!
 
-They are the B<new method from 4.0>
+They are the **new method from 4.0**
 
-=head3 geo()
+### geo()
 
 To specify information related to the global positioning of the object the vCard represents
 
-=head3 key()
+### key()
 
 To specify a public key or authentication certificate associated with the object that the vCard represents
 
-=head3 label()
+### label()
 
-ToDo: because B<It's DEPRECATED from 4.0>
+ToDo: because **It's DEPRECATED from 4.0**
 
 To specify the formatted text corresponding to delivery address of the object the vCard represents
 
-=head3 uid()
+### uid()
 
 To specify a value that represents a globally unique identifier corresponding to the individual
  or resource associated with the vCard
 
-=head3 fburl(), caladruri(), caluri()
+### fburl(), caladruri(), caluri()
 
 I don't think they are so popular types, but here are the methods!
 
-They are the B<new method from 4.0>
+They are the **new method from 4.0**
 
-=head3 kind()
+### kind()
 
 To specify the kind of object the vCard represents
 
-It's the B<new method from 4.0>
+It's the **new method from 4.0**
 
-=head3 member(), clientpidmap()
+### member(), clientpidmap()
 
 I don't think they are so popular types, but here are the methods!
 
-It's the B<new method from 4.0>
+It's the **new method from 4.0**
 
-=head3 tz(), timezone()
+### tz(), timezone()
 
 Both are same method with Alias
 
 To specify information related to the time zone of the object the vCard represents
 utc-offset format is NOT RECOMMENDED in vCard 4.0
 
-TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426>
- or L<RFC6350|https://tools.ietf.org/html/rfc6350>
+TZ can be a URL, but there is no document in [RFC2426](https://tools.ietf.org/html/rfc2426)
+ or [RFC6350](https://tools.ietf.org/html/rfc6350)
 So it just supports some text values
- 
-=head3 bday(), birthday()
+
+### bday(), birthday()
 
 Both are same method with Alias
 
 To specify the birth date of the object the vCard represents
 
-=head3 anniversary()
+### anniversary()
 
 The date of marriage, or equivalent, of the object the vCard represents
 
-It's the B<new method from 4.0>
+It's the **new method from 4.0**
 
-=head3 gender()
+### gender()
 
 To specify the components of the sex and gender identity of the object the vCard represents
 
-It's the B<new method from 4.0>
+It's the **new method from 4.0**
 
-=head3 prodid()
+### prodid()
 
 To specify the identifier for the product that created the vCard object
- 
-=head3 source()
+
+### source()
 
 To identify the source of directory information contained in the content type
 
-=head3 sound()
+### sound()
 
 To specify a digital sound content information that annotates some aspect of the vCard
 This property is often used to specify the proper pronunciation of the name property value
  of the vCard
 
-=head3 socialprofile()
+### socialprofile()
 
 There is no documents about X-SOCIALPROFILE in RFC but it works in iOS and Mac OS X!
 I don't know well about in Android or Windows. Somebody please feedback me
- 
-=head3 sort_string()
 
-B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
- 
-=head3 label()
+### sort\_string()
 
-B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
+**It's DEPRECATED from 4.0** You can use this method Just ONLY in vCard3.0
 
-=head2 TODO
+### label()
 
-=over
+**It's DEPRECATED from 4.0** You can use this method Just ONLY in vCard3.0
 
-=item
+## TODO
 
-SORT-AS param in N,FN,ORG is NOT available completely
+- SORT-AS param in N,FN,ORG is NOT available completely
+- LABEL param in ADR is NOT available
 
-=item
+## aroud UTF-8
 
-LABEL param in ADR is NOT available
-
-=back
-
-=head2 aroud UTF-8
-
-if you want to send precisely the vCard3.0 with UTF-8 characters to the B<ALMOST>
+if you want to send precisely the vCard3.0 with UTF-8 characters to the **ALMOST**
  of smartphones, you have to set Charset param for each values like bellow:
 
- ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
+    ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
 
-=head2 for under perl-5.12.5
+## for under perl-5.12.5
 
-This module uses C<\P{ascii}> in regexp so You have to use 5.12.5 and later.
+This module uses `\P{ascii}` in regexp so You have to use 5.12.5 and later.
 And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.
 
-=head2 SEE ALOSO
+## SEE ALOSO
 
-=over
+- [RFC 2426](https://tools.ietf.org/html/rfc2426)
+- [RFC 2425](https://tools.ietf.org/html/rfc2425)
+- [RFC 6350](https://tools.ietf.org/html/rfc6350)
+- [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata)
 
-=item
+## AUTHOR
 
-L<RFC 2426|https://tools.ietf.org/html/rfc2426>
-
-=item
-
-L<RFC 2425|https://tools.ietf.org/html/rfc2425>
-
-=item
-
-L<RFC 6350|https://tools.ietf.org/html/rfc6350>
-
-=item
-
-L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
-
-=back
-
-=head2 AUTHOR
-
-L<Yuki Yoshida(worthmine)|https://github.com/worthmine>
+[Yuki Yoshida(worthmine)](https://github.com/worthmine)

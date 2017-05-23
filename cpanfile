@@ -17,7 +17,6 @@ requires 'utf8';
 
 on build => sub {
     requires 'Data::Section::Simple';
-#   requires 'GD';
     requires 'Path::Tiny';
     requires 'Test::More';
     requires 'lib';
