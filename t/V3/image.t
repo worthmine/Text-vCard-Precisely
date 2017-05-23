@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+
 use Path::Tiny;
 use MIME::Base64;
 use URI;
@@ -76,11 +77,11 @@ $vc->photo([
 is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)';     # 5
 
 SKIP: {
-    eval { require GD } or skip "GD is not installed", 2;
+    eval { require GD::Image } or skip "GD is not installed", 2;
 
-    my $gd = GD::Image(100,100)->new unless $@;
-    my $black = $gd->colorAllocate(0,0,0);
-    $gd->rectangle(0,0,99,99,$black);
+    my $gd = GD::Image( 100, 100 )->new unless $@;
+    my $black = $gd->colorAllocate( 0, 0, 0 );
+    $gd->rectangle( 0, 0, 99, 99, $black );
     my $raw = $gd->png;
 
     $in_file = path( 't', 'V3', 'Image', 'base.vcf' );
@@ -90,8 +91,8 @@ SKIP: {
     $vc->logo($raw);
     is $vc->as_string, $expected_content, 'photo(raw)';                 # 6
 
-    my $red = $gd->colorAllocate(255,0,0);
-    $gd->fill(50,50,$red);
+    my $red = $gd->colorAllocate( 255, 0, 0 );
+    $gd->fill( 50, 50, $red );
     my $raw2 = $gd->jpeg;
 
     $in_file = path( 't', 'V3', 'Image', 'maltiple_base64.vcf' );
