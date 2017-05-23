@@ -14,7 +14,6 @@ perl:
 - '5.12'
 
 install:
-#- cpanm --quiet --notest --skip-satisfied Dist::Zilla
 - dzil authordeps | grep -vP '[^\w:]' | cpanm -v --notest --skip-satisfied
 - dzil listdeps   | grep -vP '[^\w:]' | grep -vP '^GD' | cpanm -v --skip-satisfied
 
