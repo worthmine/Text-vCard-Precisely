@@ -4,6 +4,8 @@
 /Build
 /Build.bat
 !Build/
-!LICENSE
-!META.json
+LICENSE
+META.json
 !README.pod
+*.DS_Store
+
