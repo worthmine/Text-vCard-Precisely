@@ -1,5 +1,6 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely;
+
 our $VERSION = '0.04';
 
 use Moose;
@@ -49,9 +50,9 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
  my $base64 = MIME::Base64::encode($img);
 
  $vc->photo([
- { value => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
- { value => $img, media_type => 'image/png' }, # Now you can set a binary image directly
- { value => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
+    { value => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
+    { value => $img, media_type => 'image/png' }, # Now you can set a binary image directly
+    { value => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
  ]);
 
  $vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!
@@ -61,14 +62,14 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
  $vc->email({ value => 'forrestgump@example.com', types => ['work'] });
 
  $vc->adr( {
-     types => ['work'],
-     pobox     => '109',
-     extended  => 'Shrimp Bld.',
-     street    => 'Waters Edge',
-     city      => 'Baytown',
-     region    => 'LA',
-     post_code => '30314,
-     country   => 'United States of America',
+    types => ['work'],
+    pobox     => '109',
+    extended  => 'Shrimp Bld.',
+    street    => 'Waters Edge',
+    city      => 'Baytown',
+    region    => 'LA',
+    post_code => '30314,
+    country   => 'United States of America',
  });
 
  $vc->url({ value => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
@@ -77,8 +78,8 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
  use Encode;
 
  my $fb = Facebook::Graph->new(
-     app_id => 'your app id',
-     secret => 'your secret key',
+    app_id => 'your app id',
+    secret => 'your secret key',
  );
  $fb->authorize;
  $fb->access>token( $fb->{'app_id'} . '|' . $fb->{'secret'} );
@@ -88,10 +89,10 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
  ->as_hashref;
 
  $vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
- value => 'https://www.facebook/' . 'some facebookID',
- types => 'facebook',
- displayname => encode_utf8( $q->{'name'} ),
- userid => $q->{'id'},
+    value => 'https://www.facebook/' . 'some facebookID',
+    types => 'facebook',
+    displayname => encode_utf8( $q->{'name'} ),
+    userid => $q->{'id'},
  });
 
  print $vc->as_string();
@@ -99,9 +100,9 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
 =head2 DESCRIPTION
 
 A vCard is a digital business card. vCard and L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
- provide an API for parsing vCards
+provide an API for parsing vCards
 This module is forked from L<Text::vCard|https://github.com/ranguard/text-vcard>
- because some reason bellow:
+because some reason bellow:
 
 =over
 
@@ -117,6 +118,7 @@ Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely. they cause some Moji
 
 Android 4.4.x can't parse vCard4.0
 
+
 =item
 
 I wanted to learn Moose, of course
@@ -124,7 +126,7 @@ I wanted to learn Moose, of course
 =back
 
 To handle an address book with several vCard entries in it, start with
- L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> and then come back to this module.
+L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> and then come back to this module.
 
 Note that the vCard RFC requires version() and full_name().  This module does not check or warn yet if these conditions have not been met
 
@@ -135,33 +137,33 @@ Note that the vCard RFC requires version() and full_name().  This module does no
 Accepts an HashRef that looks like below:
 
  my $hashref = {
-     N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
-     FN  => 'Forrest Gump',
-     SORT_STRING => 'Forrest Gump',
-     ORG => 'Bubba Gump Shrimp Co.',
-     TITLE => 'Shrimp Man',
-     PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
-     TEL => [
-     { types => ['WORK','VOICE'], value => '(111) 555-1212' },
-     { types => ['HOME','VOICE'], value => '(404) 555-1212' },
-     ],
-     ADR =>[{
-         types       => ['work'],
-         pref        => 1,
-         extended    => 100,
-         street      => 'Waters Edge',
-         city        => 'Baytown',
-         region      => 'LA',
-         post_code   => '30314',
-         country     => 'United States of America'
-     },{
-         types       => ['home'],
-         extended    => 42,
-         street      => 'Plantation St.',
-         city        => 'Baytown',
-         region      => 'LA',
-         post_code   => '30314',
-         country     => 'United States of America'
+    N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
+    FN  => 'Forrest Gump',
+    SORT_STRING => 'Forrest Gump',
+    ORG => 'Bubba Gump Shrimp Co.',
+    TITLE => 'Shrimp Man',
+    PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
+    TEL => [
+        { types => ['WORK','VOICE'], value => '(111) 555-1212' },
+        { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+    ],
+    ADR =>[{
+        types       => ['work'],
+        pref        => 1,
+        extended    => 100,
+        street      => 'Waters Edge',
+        city        => 'Baytown',
+        region      => 'LA',
+        post_code   => '30314',
+        country     => 'United States of America'
+    },{
+        types       => ['home'],
+        extended    => 42,
+        street      => 'Plantation St.',
+        city        => 'Baytown',
+        region      => 'LA',
+        post_code   => '30314',
+        country     => 'United States of America'
     }],
     URL => 'http://www.example.com/dir_photos/my_photo.gif',
     EMAIL => 'forrestgump@example.com',
@@ -199,12 +201,12 @@ Defaults to B<'3.0'> and this method is B<READONLY>
 
 =head3 rev()
 
-To specify revision information about the current vCard3.0
+To specify revision information about the current vCard
 
 =head3 sort_string()
 
 To specify the family name, given name or organization text to be used for
- national-language-specific sorting of the FN, N and ORG.
+national-language-specific sorting of the FN, N and ORG.
 
 B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it.
 
@@ -212,7 +214,7 @@ B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it.
 
 They are based on Moose with coercion.
 So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef
- or single Str.
+or single Str.
 Read source if you were confused
 
 =head3 n()
@@ -233,17 +235,17 @@ Accepts/returns an ArrayRef that looks like:
 Accepts/returns an ArrayRef that looks like:
 
  [
-     { types => ['work'], street => 'Main St', pref => 1 },
-     {   types     => ['home'],
-         pobox     => 1234,
-         extended  => 'asdf',
-         street    => 'Army St',
-         city      => 'Desert Base',
-         region    => '',
-         post_code => '',
-         country   => 'USA',
-         pref      => 2,
-     },
+    { types => ['work'], street => 'Main St', pref => 1 },
+    {   types     => ['home'],
+        pobox     => 1234,
+        extended  => 'asdf',
+        street    => 'Army St',
+        city      => 'Desert Base',
+        region    => '',
+        post_code => '',
+        country   => 'USA',
+        pref      => 2,
+    },
  ]
 
 =head2 email()
@@ -275,10 +277,10 @@ or accept the string as URL like bellow
 =head3 photo(), logo()
 
 Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary
- or text encoded in Base64, it does not matter.
+ or text encoded in Base64, it does not matter
 
-B<Attention!> Mac OS X and iOS B<ignore> the description beeing URL.
-use Base64 encoding or raw image binary if you have to show the image you want.
+B<Attention!> Mac OS X and iOS B<ignore> the description beeing URL
+use Base64 encoding or raw image binary if you have to show the image you want
 
 =head3 note()
 
@@ -286,7 +288,7 @@ To specify supplemental information or a comment that is associated with the vCa
 
 =head3 org(), title(), role(), categories()
 
- To specify additional information for your jobs
+To specify additional information for your jobs
 
 =head3 fn(), full_name(), fullname()
 
@@ -325,7 +327,7 @@ To specify the formatted text corresponding to delivery address of the object th
 =head3 uid()
 
 To specify a value that represents a globally unique identifier corresponding to the individual
- or resource associated with the vCard
+or resource associated with the vCard
 
 =head3 fburl(), caladruri(), caluri()
 
@@ -336,6 +338,7 @@ They are the B<new method from 4.0>
 =head3 kind()
 
 To specify the kind of object the vCard represents
+
 It's the B<new method from 4.0>
 
 =head3 member(), clientpidmap()
@@ -349,10 +352,10 @@ It's the B<new method from 4.0>
 Both are same method with Alias
 
 To specify information related to the time zone of the object the vCard represents
- utc-offset format is NOT RECOMMENDED in vCard 4.0
+utc-offset format is NOT RECOMMENDED in vCard 4.0
 
 TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426>
- or L<RFC6350|https://tools.ietf.org/html/rfc6350>
+or L<RFC6350|https://tools.ietf.org/html/rfc6350>
 So it just supports some text values
 
 =head3 bday(), birthday()
@@ -417,12 +420,13 @@ LABEL param in ADR is NOT available
 =head2 aroud UTF-8
 
 If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> of smartphones, Use 3.0
-It seems to be TOO EARLY to use 4.0
- 
-=head2 for under perl-5.12.5
 
-This module uses C<\P{ascii}> in regexp so You have to use 5.12.5 and later.
-And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them.
+It seems to be TOO EARLY to use 4.0
+
+ =head2 for under perl-5.12.5
+
+This module uses C<\P{ascii}> in regexp so You have to use 5.12.5 and later
+And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them
 
 =head2 SEE ALOSO
 
