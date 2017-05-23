@@ -76,8 +76,7 @@ $vc->photo([
 is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)';     # 5
 
 SKIP: {
-    eval { require GD };
-    skip "GD not installed", 2 if $@;
+    eval { require GD } or skip "GD is not installed", 2;
 
     my $gd = GD::Image(100,100)->new unless $@;
     my $black = $gd->colorAllocate(0,0,0);

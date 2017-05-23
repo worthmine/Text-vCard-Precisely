@@ -31,7 +31,7 @@ install:
 
 script:
 - dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
-#- dzil smoke --release --author
+- dzil smoke --release --author
 
 notifications:
   slack:
