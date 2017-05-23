@@ -8,7 +8,7 @@ use URI;
 use lib qw(./lib);
 use Text::vCard::Precisely::V3;
 
-use Test::More tests => 7;
+use Test::More tests => 8;
 
 my $vc = Text::vCard::Precisely::V3->new();
 
@@ -77,8 +77,9 @@ $vc->photo([
 is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)';     # 5
 
 SKIP: {
-    eval { require GD::Image } or skip "GD is not installed", 2;
+    eval{ require GD } or skip "GD is not installed", 3;
 
+    require_ok 'GD::Image';                                             # 6
     my $gd = GD::Image( 100, 100 )->new unless $@;
     my $black = $gd->colorAllocate( 0, 0, 0 );
     $gd->rectangle( 0, 0, 99, 99, $black );
@@ -89,7 +90,7 @@ SKIP: {
 
     $vc->photo($raw);
     $vc->logo($raw);
-    is $vc->as_string, $expected_content, 'photo(raw)';                 # 6
+    is $vc->as_string, $expected_content, 'photo(raw)';                 # 7
 
     my $red = $gd->colorAllocate( 255, 0, 0 );
     $gd->fill( 50, 50, $red );
@@ -103,7 +104,7 @@ SKIP: {
         { media_type => 'image/jpeg', value => $raw2 },
     ]);
     $vc->logo( { media_type => 'image/png', value => $raw } );
-    is $vc->as_string, $expected_content, 'photo(ArrayRef of Hashref of raw)';  # 7
+    is $vc->as_string, $expected_content, 'photo(ArrayRef of Hashref of raw)';  # 8
 }
 
 done_testing;
