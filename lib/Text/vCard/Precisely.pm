@@ -411,10 +411,6 @@ B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
 
 SORT-AS param in N,FN,ORG is NOT available completely
 
-=item
-
-LABEL param in ADR is NOT available
-
 =back
 
 =head2 aroud UTF-8
@@ -423,9 +419,10 @@ If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> o
 
 It seems to be TOO EARLY to use 4.0
 
- =head2 for under perl-5.12.5
+=head2 for under perl-5.12.5
 
 This module uses C<\P{ascii}> in regexp so You have to use 5.12.5 and later
+
 And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them
 
 =head2 SEE ALOSO
