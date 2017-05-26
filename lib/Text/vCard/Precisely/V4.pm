@@ -455,7 +455,7 @@ Use AGENT param in RELATED instead of it
 
 sub agent {
     my $self = shift;
-    croak "'AGENT' Type is DEPRECATED in vCard4.0!";
+    croak "'AGENT' Type is DEPRECATED in vCard4.0! Use AGENT param in RELATED instead of it";
 }
 
 1;
@@ -467,6 +467,10 @@ sub agent {
 =item 
 
 SORT-AS param in N,FN,ORG is NOT available
+
+=item
+
+GEO param in ADR is NOT available
 
 =back
 
