@@ -88,14 +88,18 @@ sub fold {
     my $self = shift;
     my $string = shift;
     my %arg = @_;
-    my $lf = Text::LineFold->new(   # line break with 75bytes
-    CharMax => 74,
-    Newline => "\x0D\x0A",
-    );
+    my $lf = Text::LineFold->new( CharMax => 74, Newline => "\x0D\x0A", TabSize => 1 );   # line break with 75bytes
     my $decoded = decode_utf8($string);
-    return $decoded =~ /\P{ascii}+/ || $arg{-force}?
-    $lf->fold( "", " ", $string ):
-    $lf->fold( "", "  ", $string );
+
+    $string =~ s/(?<!\r)\n/\t/g;
+
+    $string = $decoded =~ /\P{ascii}+/ || $arg{-force}?
+        $lf->fold( "", " ", $string ):
+        $lf->fold( "", "  ", $string );
+
+    $string =~ tr/\t/\n/;
+
+    return $string;
 }
 
 sub _escape {

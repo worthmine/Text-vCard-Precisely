@@ -51,8 +51,10 @@ And this module does not check or warn if these conditions have not been met.
 
 use Text::vCard::Precisely::V4::Node;
 use Text::vCard::Precisely::V4::Node::N;
+use Text::vCard::Precisely::V4::Node::Address;
 use Text::vCard::Precisely::V4::Node::Phone;
 use Text::vCard::Precisely::V4::Node::Related;
+use Text::vCard::Precisely::V4::Node::Member;
 
 has version => ( is => 'ro', isa => 'Str', default => '4.0' );
 
@@ -190,6 +192,17 @@ has tel => ( is => 'rw', isa => 'v4Tel', coerce => 1 );
 
 Both are same method with Alias
 The format is SAME as 3.0
+
+=cut
+
+subtype 'v4Address' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Address]';
+coerce 'v4Address'
+    => from 'HashRef'
+    => via { [ Text::vCard::Precisely::V4::Node::Address->new($_) ] };
+coerce 'v4Address'
+    => from 'ArrayRef[HashRef]'
+    => via { [ map { Text::vCard::Precisely::V4::Node::Address->new($_) } @$_ ] };
+has adr => ( is => 'rw', isa => 'v4Address', coerce => 1 );
 
 =head2 email()
 
@@ -329,7 +342,6 @@ I don't think they are so popular types, but here are the methods!
 It's the B<new method in 4.0>
 
 =cut
-use Text::vCard::Precisely::V4::Node::Member;
 
 subtype 'MEMBER'
     => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Member]';
@@ -402,8 +414,6 @@ sub sort_string {
 
 Use LABEL param in ADR instead of it
 
-######but I have no method for it yet########
-
 =cut
 
 sub label {
@@ -457,10 +467,6 @@ sub agent {
 =item 
 
 SORT-AS param in N,FN,ORG is NOT available
-
-=item
- 
-LABEL param in ADR is NOT available
 
 =back
 

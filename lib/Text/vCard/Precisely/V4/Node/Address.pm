@@ -1,23 +1,27 @@
-package Text::vCard::Precisely::V3::Node::Address;
+package Text::vCard::Precisely::V4::Node::Address;
 
 use Carp;
 use Moose;
 
-extends 'Text::vCard::Precisely::V3::Node';
+extends qw|Text::vCard::Precisely::V3::Node::Address Text::vCard::Precisely::V4::Node|;
 
 has name => (is => 'ro', default => 'ADR', isa => 'Str' );
 has value => (is => 'ro', default => '', isa => 'Str' );
 
-our @order = qw( pobox extended street city region post_code country );
-has \@order => ( is => 'rw', isa => 'Str' );
+has label => ( is => 'rw', isa => 'Str' );
+
+my @order = @Text::vCard::Precisely::V3::Node::Address::order;
 
 override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
     push @lines, $self->name || croak "Empty name";
+    push @lines, 'ALTID=' . $self->altID if $self->can('altID') and $self->altID;
+    push @lines, 'PID=' . join ',', @{ $self->pid } if $self->can('pid') and $self->pid;
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
+    push @lines, 'LABEL="' . $self->label . '"' if $self->label;
 
     my @values = ();
     map{ push @values, $self->_escape( $self->$_ ) } @order;
