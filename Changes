@@ -1,8 +1,8 @@
 Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
+  - first commit to CPAN
 
 0.04 2017-05-23T12:43:30Z
-
-    - original version
+  - original version
 

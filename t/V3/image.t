@@ -8,7 +8,7 @@ use URI;
 use lib qw(./lib);
 use Text::vCard::Precisely::V3;
 
-use Test::More tests => 8;
+use Test::More tests => 7;
 
 my $vc = Text::vCard::Precisely::V3->new();
 
@@ -45,22 +45,26 @@ $in_file = path( 't', 'V3', 'Image', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $img2 = <<'EOL';
-/9j/4AAQSkZJRgABAQEAYABgAAD//gA+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkc
-gSlBFRyB2ODApLCBkZWZhdWx0IHF1YWxpdHkK/9sAQwAIBgYHBgUIBwcHCQkICgwUDQwLCwwZEh
-MPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ0NB8nOT04MjwuMzQy/9sAQwEJCQkMCwwYDQ0YM
-iEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIy/8AA
-EQgAZABkAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAI
-BAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGB
-kaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk
-5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz
-9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQ
-EAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKS
-o1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZm
-qKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/a
-AAwDAQACEQMRAD8A4uiiivmT9xCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAC
-iiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK
-KKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAo
-oooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/2Q==
+/9j/4AAQSkZJRgABAQEAYABgAAD//gA
++Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBkZWZhdWx0IHF1Y
+WxpdHkK/
+9sAQwAIBgYHBgUIBwcHCQkICgwUDQwLCwwZEhMPFB0aHx4dGhwcICQuJyAiLCMcHCg3KSwwMTQ
+0NB8nOT04MjwuMzQy/
+9sAQwEJCQkMCwwYDQ0YMiEcITIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjI
+yMjIyMjIyMjIyMjIy/8AAEQgAZABkAwEiAAIRAQMRAf/
+EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//
+EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNic
+oIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4S
+FhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5
+ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//
+EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0
+QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoK
+DhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5
+OXm5+jp6vLz9PX29/j5+v/
+aAAwDAQACEQMRAD8A4uiiivmT9xCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKK
+ACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooo
+oAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACii
+igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/2Q==
 EOL
 $img2 =~ s/\s//g;
 
@@ -77,26 +81,27 @@ $vc->photo([
 is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)';     # 5
 
 SKIP: {
-    eval{ require GD } or skip "GD is not installed", 3;
+    eval{ require GD };
+    skip "GD is not installed: $@", 2 if $@;
 
-    require_ok 'GD::Image';                                             # 6
-    my $gd = GD::Image( 100, 100 )->new unless $@;
+    my $gd = new GD::Image( 100, 100 );
     my $black = $gd->colorAllocate( 0, 0, 0 );
     $gd->rectangle( 0, 0, 99, 99, $black );
+
     my $raw = $gd->png;
 
-    $in_file = path( 't', 'V3', 'Image', 'base.vcf' );
+    $in_file = path( 't', 'V3', 'Image', 'gd.vcf' );
     $expected_content = $in_file->slurp_utf8;
 
     $vc->photo($raw);
     $vc->logo($raw);
-    is $vc->as_string, $expected_content, 'photo(raw)';                 # 7
+    is $vc->as_string, $expected_content, 'photo(raw)';                 # 6
 
     my $red = $gd->colorAllocate( 255, 0, 0 );
     $gd->fill( 50, 50, $red );
     my $raw2 = $gd->jpeg;
 
-    $in_file = path( 't', 'V3', 'Image', 'maltiple_base64.vcf' );
+    $in_file = path( 't', 'V3', 'Image', 'maltiple_gd.vcf' );
     $expected_content = $in_file->slurp_utf8;
 
     $vc->photo([
@@ -104,7 +109,7 @@ SKIP: {
         { media_type => 'image/jpeg', value => $raw2 },
     ]);
     $vc->logo( { media_type => 'image/png', value => $raw } );
-    is $vc->as_string, $expected_content, 'photo(ArrayRef of Hashref of raw)';  # 8
+    is $vc->as_string, $expected_content, 'photo(ArrayRef of Hashref of raw)';  # 7
 }
 
 done_testing;
