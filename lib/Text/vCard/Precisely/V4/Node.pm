@@ -35,11 +35,6 @@ subtype 'ALTID'
     => message { "The number you provided, $_, was not supported in 'ALTID'" };
 has altID => ( is => 'rw', isa => 'ALTID');
 
-sub charset {    # DEPRECATED from vCard 4.0
-    my $self = shift;
-    croak "'CHARSET' param is DEPRECATED! vCard4.0 will accept just ONLY UTF-8";
-}
-
 sub as_string {
     my ($self) = @_;
     my @lines;

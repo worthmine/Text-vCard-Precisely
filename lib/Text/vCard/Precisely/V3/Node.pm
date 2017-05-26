@@ -56,6 +56,11 @@ subtype 'MediaType'
     => message { "The MediaType you provided, $_, was not supported" };
 has media_type => ( is => 'rw', isa => 'MediaType' );
 
+sub charset {    # DEPRECATED in vCard 3.0
+    my $self = shift;
+    croak "'CHARSET' param is DEPRECATED! vCard3.0 will accept just ONLY UTF-8";
+}
+
 __PACKAGE__->meta->make_immutable;
 no Moose;
 

@@ -6,9 +6,6 @@ use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
 
 extends 'Text::vCard::Precisely::V3';
-with "MooseX::Deprecated" => {
-    attributes => $Text::vCard::Precisely::V3::will_be_deprecated,
-};
 
 use Carp;
 use Encode;
@@ -386,9 +383,13 @@ has [qw|bday anniversary gender prodid|] => ( is => 'rw', isa => 'Str' );
 __PACKAGE__->meta->make_immutable;
 no Moose;
 
+=head2 DEPRECATED Methods
+
+B<They're DEPRECATED in 4.0>
+
 =head3 sort_string()
 
-B<It's DEPRECATED in 4.0> Use SORT-AS param instead of it
+Use SORT-AS param instead of it
 
 =cut
 
@@ -399,14 +400,52 @@ sub sort_string {
 
 =head3 label()
 
-B<It's DEPRECATED in 4.0> Use LABEL param in ADR instead of it
-but I have no method for it yet
+Use LABEL param in ADR instead of it
+
+######but I have no method for it yet########
 
 =cut
 
-sub label {    # DEPRECATED from vCard 4.0
+sub label {
     my $self = shift;
-    croak "'LABEL' param is DEPRECATED in vCard4.0!";
+    croak "'LABEL' Type is DEPRECATED in vCard4.0!";
+}
+
+=head3 class(), name(), profile(), mailer()
+
+There is no method for these, just warn if you use them
+
+=cut
+
+sub class {
+    my $self = shift;
+    croak "'CLASS' Type is DEPRECATED in vCard4.0!";
+}
+
+sub name {
+    my $self = shift;
+    croak "'NAME' Type is DEPRECATED in vCard4.0!";
+}
+
+sub profile {
+    my $self = shift;
+    croak "'PROFILE' Type is DEPRECATED in vCard4.0!";
+}
+
+sub mailer {
+    my $self = shift;
+    croak "'MAILER' Type is DEPRECATED in vCard4.0!";
+}
+
+=head3 agent()
+
+Use AGENT param in RELATED instead of it
+
+=cut
+
+sub agent {
+    my $self = shift;
+    croak "'AGENT' Type is DEPRECATED in vCard4.0!";
 }
 
 1;
