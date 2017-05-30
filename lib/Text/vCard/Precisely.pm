@@ -353,6 +353,7 @@ It's the B<new method from 4.0>
 Both are same method with Alias
 
 To specify information related to the time zone of the object the vCard represents
+
 utc-offset format is NOT RECOMMENDED in vCard 4.0
 
 TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426>
@@ -388,12 +389,14 @@ To identify the source of directory information contained in the content type
 =head3 sound()
 
 To specify a digital sound content information that annotates some aspect of the vCard
+
 This property is often used to specify the proper pronunciation of the name property value
  of the vCard
 
 =head3 socialprofile()
 
 There is no documents about X-SOCIALPROFILE in RFC but it works in iOS and Mac OS X!
+ 
 I don't know well about in Android or Windows. Somebody please feedback me
 
 =head3 sort_string()
