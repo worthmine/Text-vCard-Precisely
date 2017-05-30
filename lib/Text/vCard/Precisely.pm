@@ -280,6 +280,7 @@ Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary
  or text encoded in Base64, it does not matter
 
 B<Attention!> Mac OS X and iOS B<ignore> the description beeing URL
+
 use Base64 encoding or raw image binary if you have to show the image you want
 
 =head3 note()
