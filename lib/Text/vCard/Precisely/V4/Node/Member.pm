@@ -7,7 +7,7 @@ use Moose::Util::TypeConstraints;
 extends 'Text::vCard::Precisely::V4::Node';
 
 has name => (is => 'ro', default => 'MEMBER', isa => 'Str' );
-has value => (is => 'ro', default => '', isa => 'Str' );
+has content => (is => 'ro', default => '', isa => 'Str' );
 
 subtype 'MemberType'
     => as 'Str'
@@ -27,7 +27,7 @@ override 'as_string' => sub {
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
 
-    my $string = join(';', @lines ) . ':' . $self->_escape( $self->value );;
+    my $string = join(';', @lines ) . ':' . $self->_escape( $self->content );;
     return $self->fold($string);
 
 };

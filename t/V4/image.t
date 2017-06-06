@@ -6,11 +6,11 @@ use MIME::Base64;
 use URI;
 
 use lib qw(./lib);
-use Text::vCard::Precisely::V3;
+use Text::vCard::Precisely::V4;
 
 use Test::More tests => 7;
 
-my $vc = Text::vCard::Precisely::V3->new();
+my $vc = Text::vCard::Precisely::V4->new();
 
 my $img = <<'EOL';
 iVBORw0KGgoAAAANSUhEUgAAAGQAAABkAQMAAABKLAcXAAAABlBMVEUAAAD/AAAb/
@@ -19,21 +19,21 @@ AAAAASUVORK5CYII=
 EOL
 $img =~ s/\s//g;
 
-my $in_file = path( 't', 'V3', 'Image', 'base.vcf' );
+my $in_file = path( 't', 'V4', 'Image', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
 $vc->photo($img);
 $vc->logo($img);
 is $vc->as_string, $expected_content, 'photo(Base64)';                  # 1
 
-$in_file = path( 't', 'V3', 'Image', 'uri.vcf' );
+$in_file = path( 't', 'V4', 'Image', 'uri.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $uri = URI->new('https://www.example.com/image.png');
 $vc->photo($uri);
 is $vc->as_string, $expected_content, 'photo(URL)';                     # 2
 
-$in_file = path( 't', 'V3', 'Image', 'hash.vcf' );
+$in_file = path( 't', 'V4', 'Image', 'hash.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->photo( { media_type => 'image/png', content => $img } );
@@ -41,7 +41,7 @@ $vc->logo(  { media_type => 'image/png', content => $img } );
 is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';       # 3
 
 
-$in_file = path( 't', 'V3', 'Image', 'maltiple.vcf' );
+$in_file = path( 't', 'V4', 'Image', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $img2 = <<'EOL';
@@ -71,7 +71,7 @@ $img2 =~ s/\s//g;
 $vc->photo([ $img, $img2 ]);
 is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';      # 4
 
-$in_file = path( 't', 'V3', 'Image', 'maltiple_base64.vcf' );
+$in_file = path( 't', 'V4', 'Image', 'maltiple_base64.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->photo([
@@ -90,7 +90,7 @@ SKIP: {
 
     my $raw = $gd->png;
 
-    $in_file = path( 't', 'V3', 'Image', 'gd.vcf' );
+    $in_file = path( 't', 'V4', 'Image', 'gd.vcf' );
     $expected_content = $in_file->slurp_utf8;
 
     $vc->photo($raw);
@@ -101,7 +101,7 @@ SKIP: {
     $gd->fill( 50, 50, $red );
     my $raw2 = $gd->jpeg;
 
-    $in_file = path( 't', 'V3', 'Image', 'maltiple_gd.vcf' );
+    $in_file = path( 't', 'V4', 'Image', 'maltiple_gd.vcf' );
     $expected_content = $in_file->slurp_utf8;
 
     $vc->photo([

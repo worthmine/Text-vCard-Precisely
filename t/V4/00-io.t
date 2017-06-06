@@ -20,10 +20,10 @@ my $hashref = {
     FN  => 'Forrest Gump',
     ORG => 'Bubba Gump Shrimp Co.',
     TITLE => 'Shrimp Man',
-    PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
+    PHOTO => { media_type => 'image/gif', content => 'http://www.example.com/dir_photos/my_photo.gif' },
     TEL => [
-        { types => ['WORK','VOICE'], value => '(111) 555-1212' },
-        { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+        { types => ['WORK','VOICE'], content => '(111) 555-1212' },
+        { types => ['HOME','VOICE'], content => '(404) 555-1212' },
     ],
     ADR =>[{
         types       => ['work'],

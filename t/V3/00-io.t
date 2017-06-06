@@ -21,10 +21,10 @@ my $hashref = {
     SORT_STRING => 'Forrest Gump',
     ORG => 'Bubba Gump Shrimp Co.',
     TITLE => 'Shrimp Man',
-    PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
+    PHOTO => { media_type => 'image/gif', content => 'http://www.example.com/dir_photos/my_photo.gif' },
     TEL => [
-        { types => ['WORK','VOICE'], value => '(111) 555-1212' },
-        { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+        { types => ['WORK','VOICE'], content => '(111) 555-1212' },
+        { types => ['HOME','VOICE'], content => '(404) 555-1212' },
     ],
     ADR =>[{
         types       => ['work'],
@@ -44,11 +44,6 @@ my $hashref = {
         post_code   => '30314',
         country     => 'United States of America'
     }],
-#    LABEL => {
-#        types => ['WORK'],
-#        pref  => 1,
-#        value => "100 Waters Edge\nBaytown\, LA 30314\nUnited States of America"
-#    },
     URL => 'http://www.example.com/dir_photos/my_photo.gif',
     EMAIL => 'forrestgump@example.com',
     REV => '2008-04-24T19:52:43Z',
@@ -86,7 +81,7 @@ EMAIL:forrestgump@example.com
 ORG:Bubba Gump Shrimp Co.
 TITLE:Shrimp Man
 URL:http://www.example.com/dir_photos/my_photo.gif
-PHOTO;MEDIATYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
+PHOTO;TYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
 SORT-STRING:Forrest Gump
 REV:2008-04-24T19:52:43Z
 END:VCARD

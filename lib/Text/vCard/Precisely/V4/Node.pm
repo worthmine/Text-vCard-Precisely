@@ -48,9 +48,9 @@ sub as_string {
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as and uc($self->name) =~ /^(:?FN|ORG)$/;
 
     my $string = join(';', @lines ) . ':' . (
-        ref $self->value eq 'Array'?
-            map{ $self->name eq 'GEO'? $self->value : $self->_escape($_) } @{ $self->value }:
-            $self->name eq 'GEO'? $self->value: $self->_escape( $self->value )
+        ref $self->content eq 'Array'?
+            map{ $self->name eq 'GEO'? $self->content : $self->_escape($_) } @{ $self->content }:
+            $self->name eq 'GEO'? $self->content: $self->_escape( $self->content )
     );
     return $self->fold($string);
 };

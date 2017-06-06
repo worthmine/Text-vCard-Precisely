@@ -28,7 +28,7 @@ override 'as_string' => sub {
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, "MEDIATYPE=" . $self->media_type if defined $self->media_type;
 
-    my $string = join(';', @lines ) . ':' . $self->value;
+    my $string = join(';', @lines ) . ':' . $self->content;
     return $self->fold( $string, -force => 1 );
 };
 

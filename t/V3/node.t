@@ -29,34 +29,34 @@ $expected_content = $in_file->slurp_utf8;
 
 $vc->label({
     types => ['home'],
-    value => '123 Main St.\nSpringfield, IL 12345\nUSA'
+    content => '123 Main St.\nSpringfield, IL 12345\nUSA'
 }); # DEPRECATED in vCard4.0
-$vc->key({ types => ['PGP'], value => 'http://example.com/key.pgp' });
+$vc->key({ types => ['PGP'], content => 'http://example.com/key.pgp' });
 is $vc->as_string, $expected_content, 'Node(HashRef)';                  # 2
 
 $in_file = path( 't', 'V3', 'Node', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$vc->fn([{ value => 'Forrest Gump'}]);
-$vc->nickname([{ value => 'Gumpy' }]);
-$vc->org([{ value => 'Bubba Gump Shrimp Co.' }]);
-$vc->title([{ value => 'Shrimp Man' }]);
-$vc->role([{ value => 'Section 9' }]);
-$vc->categories([{ value => 'fisher' }]);
-$vc->note([{ value => "It's a note!" }]);
-$vc->geo([{ value => '39.95;-75.1667' }]);
+$vc->fn([{ content => 'Forrest Gump'}]);
+$vc->nickname([{ content => 'Gumpy' }]);
+$vc->org([{ content => 'Bubba Gump Shrimp Co.' }]);
+$vc->title([{ content => 'Shrimp Man' }]);
+$vc->role([{ content => 'Section 9' }]);
+$vc->categories([{ content => 'fisher' }]);
+$vc->note([{ content => "It's a note!" }]);
+$vc->geo([{ content => '39.95;-75.1667' }]);
 $vc->label([{
     types => ['home'],
-    value => '123 Main St.\nSpringfield, IL 12345\nUSA'
+    content => '123 Main St.\nSpringfield, IL 12345\nUSA'
 }]); # DEPRECATED in vCard4.0
-$vc->key([{ types => ['PGP'], value => 'http://example.com/key.pgp' }]);
+$vc->key([{ types => ['PGP'], content => 'http://example.com/key.pgp' }]);
 
 is $vc->as_string, $expected_content, 'Node(ArrayRef of HashRef)';      # 3
 
 $in_file = path( 't', 'V3', 'Node', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$vc->nickname([{ value => '一期一会' }]);
+$vc->nickname([{ content => '一期一会' }]);
 is $vc->as_string, $expected_content, 'Node(HashRef with utf8)';        # 4
 
 done_testing;

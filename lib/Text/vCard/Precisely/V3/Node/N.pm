@@ -15,18 +15,18 @@ subtype 'Values' => as 'HashRef[Maybe[Str]]';
 coerce 'Values'
     => from 'ArrayRef[Maybe[Str]]'
     => via {
-        my @value = @$_; $value[4] ||= ''; my $hash = {};
-        map { $hash->{$order[$_]} = $value[$_] } 0..4;
+        my @values = @$_; $values[4] ||= ''; my $hash = {};
+        map { $hash->{$order[$_]} = $values[$_] } 0..4;
         return $hash;
     };
 coerce 'Values'
     => from 'Str'
     => via {
-        my @value = split( /(?<!\\);/, $_ ); $value[4] ||= ''; my $hash = {};
-        map { $hash->{$order[$_]} = $value[$_] } 0..4;
+        my @values = split( /(?<!\\);/, $_ ); $values[4] ||= ''; my $hash = {};
+        map { $hash->{$order[$_]} = $values[$_] } 0..4;
         return $hash;
     };
-has value => ( is => 'rw', isa => 'Values', coerce => 1 );
+has content => ( is => 'rw', isa => 'Values', coerce => 1 );
 
 override 'as_string' => sub {
     my ($self) = @_;
@@ -34,7 +34,7 @@ override 'as_string' => sub {
     push @lines, $self->name || croak "Empty name";
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
 
-    my @values = map{ $self->_escape($_) } map{ $self->$_ or  $self->value && $self->value()->{$_} } @order;
+    my @values = map{ $self->_escape($_) } map{ $self->$_ or  $self->content && $self->content()->{$_} } @order;
 
     my $string = join(';', @lines ) . ':' . join( ';', @values );
     return $self->fold( $string, -force => 1 );
@@ -42,11 +42,6 @@ override 'as_string' => sub {
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
-
-sub _length {
-    my $self = shift;
-    return scalar @{ $self->value };
-}
 
 #Alias
 sub family_name {

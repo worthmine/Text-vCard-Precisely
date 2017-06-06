@@ -9,7 +9,7 @@ use Moose::Util::TypeConstraints;
 extends 'Text::vCard::Precisely::V3::Node';
 
 has name => (is => 'ro', default => 'X-SOCIALPROFILE', isa => 'Str' );
-has value => (is => 'rw', isa => 'Str', required => 1 );
+has content => (is => 'rw', isa => 'Str', required => 1 );
 
 subtype 'SocialProfileType'
     => as 'Str'
@@ -38,7 +38,7 @@ override 'as_string' => sub {
     push @lines, 'X-USERID=' . $self->userid if defined $self->userid and $self->userid;
     push @lines, 'X-DISPLAYNAME=' . $self->displayname if defined $self->displayname and $self->displayname;
 
-    my $string = join(';', @lines ) . ':' . $self->value;
+    my $string = join(';', @lines ) . ':' . $self->content;
     return $self->fold( $string, -force => 1 );
 };
 

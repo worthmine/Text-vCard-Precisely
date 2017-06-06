@@ -22,12 +22,11 @@ enum 'Name' => [qw( FN N SORT_STRING
 )];
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
-subtype 'VALUE'
+subtype 'Content'
     => as 'Str'
-    => where { use utf8; decode_utf8($_) =~  m|^[\w\p{ascii}\s]*$|s }
-    # Does it need to be more strictly?
-    => message { "The VALUE you provided, $_, was not supported" };
-has value => ( is => 'rw', required => 1, isa => 'VALUE' );
+    => where { use utf8; decode_utf8($_) =~  m|^[\w\p{ascii}\s]*$|s }   # Does it need to be more strictly?
+    => message { "The value you provided, $_, was not supported" };
+has content => ( is => 'rw', required => 1, isa => 'Content' );
 
 subtype 'Preffered'
     => as 'Int'
@@ -77,9 +76,9 @@ sub as_string {
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
 
     my $string = join(';', @lines ) . ':' . (
-        ref $self->value eq 'Array'?
-        map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->value : $self->_escape($_) } @{ $self->value }:
-        $self->name =~ /^(:?LABEL|GEO)$/s? $self->value: $self->_escape( $self->value )
+        ref $self->content eq 'Array'?
+        map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->content : $self->_escape($_) } @{ $self->content }:
+        $self->name =~ /^(:?LABEL|GEO)$/s? $self->content: $self->_escape( $self->content )
     );
     return $self->fold($string);
 }

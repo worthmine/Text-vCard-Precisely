@@ -6,7 +6,7 @@ use Moose;
 extends 'Text::vCard::Precisely::V3::Node';
 
 has name => (is => 'ro', default => 'ADR', isa => 'Str' );
-has value => (is => 'ro', default => '', isa => 'Str' );
+has content => (is => 'ro', default => '', isa => 'Str' );
 
 our @order = qw( pobox extended street city region post_code country );
 has \@order => ( is => 'rw', isa => 'Str' );

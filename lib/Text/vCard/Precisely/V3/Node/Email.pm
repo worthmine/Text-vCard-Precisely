@@ -9,7 +9,7 @@ use MooseX::Types::Email qw/EmailAddress/;
 extends 'Text::vCard::Precisely::V3::Node';
 
 has name => (is => 'ro', default => 'EMAIL', isa => 'Str' );
-has value => (is => 'ro', default => '', isa => EmailAddress );
+has content => (is => 'ro', default => '', isa => EmailAddress );
 
 subtype 'EmailType'
     => as 'Str'
@@ -30,7 +30,7 @@ override 'as_string' => sub {
     push @lines, 'PID=' . join ',', @{ $self->pid } if $self->can('pid') and $self->pid;
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
 
-    my $string = join(';', @lines ) . ':' . $self->value;
+    my $string = join(';', @lines ) . ':' . $self->content;
     return $self->fold( $string, -force => 1 );
 };
 

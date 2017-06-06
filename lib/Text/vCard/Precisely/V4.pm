@@ -52,9 +52,10 @@ And this module does not check or warn if these conditions have not been met.
 use Text::vCard::Precisely::V4::Node;
 use Text::vCard::Precisely::V4::Node::N;
 use Text::vCard::Precisely::V4::Node::Address;
-use Text::vCard::Precisely::V4::Node::Phone;
+use Text::vCard::Precisely::V4::Node::Tel;
 use Text::vCard::Precisely::V4::Node::Related;
 use Text::vCard::Precisely::V4::Node::Member;
+use Text::vCard::Precisely::V4::Node::Image;
 
 has version => ( is => 'ro', isa => 'Str', default => '4.0' );
 
@@ -71,7 +72,16 @@ SAME as 3.0
 =head3 load_string($vCard)
 
 SAME as 3.0
- 
+
+=cut
+
+override '_parse_param' => sub {
+    my ( $self, $content ) = @_;
+    my $ref = super($content);
+    $ref->{media_type} = $content->{param}{MEDIATYPE} if $content->{param}{MEDIATYPE};
+    return $ref;
+};
+
 =head2 METHODS
 
 =head3 as_string()
@@ -155,10 +165,10 @@ coerce 'v4N'
     };
 coerce 'v4N'
     => from 'HashRef[Maybe[Str]]'
-    => via { Text::vCard::Precisely::V4::Node::N->new({ value => $_ }) };
+    => via { Text::vCard::Precisely::V4::Node::N->new({ content => $_ }) };
 coerce 'v4N'
     => from 'ArrayRef[Maybe[Str]]'
-    => via { Text::vCard::Precisely::V4::Node::N->new({ value => {
+    => via { Text::vCard::Precisely::V4::Node::N->new({ content => {
         family      => $_->[0] || '',
         given       => $_->[1] || '',
         additional  => $_->[2] || '',
@@ -167,7 +177,7 @@ coerce 'v4N'
 } }) };
 coerce 'v4N'
     => from 'Str'
-    => via { Text::vCard::Precisely::V4::Node::N->new({ value => [split /(?<!\\);/, $_] }) };
+    => via { Text::vCard::Precisely::V4::Node::N->new({ content => [split /(?<!\\);/, $_] }) };
 has n => ( is => 'rw', isa => 'v4N', coerce => 1 );
 
 =head3 tel()
@@ -176,17 +186,17 @@ The format in as_string() is B<different from 3.0>, but the interface is SAME
  
 =cut
 
-subtype 'v4Tel' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Phone]';
-coerce 'v4Tel'
+subtype 'v4Tels' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Tel]';
+coerce 'v4Tels'
     => from 'Str'
-    => via { [ Text::vCard::Precisely::V4::Node::Phone->new({ value => $_ }) ] };
-coerce 'v4Tel'
+    => via { [ Text::vCard::Precisely::V4::Node::Tel->new({ content => $_ }) ] };
+coerce 'v4Tels'
     => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V4::Node::Phone->new($_) ] };
-coerce 'v4Tel'
+    => via { [ Text::vCard::Precisely::V4::Node::Tel->new($_) ] };
+coerce 'v4Tels'
     => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V4::Node::Phone->new($_) } @$_ ] };
-has tel => ( is => 'rw', isa => 'v4Tel', coerce => 1 );
+    => via { [ map { Text::vCard::Precisely::V4::Node::Tel->new($_) } @$_ ] };
+has tel => ( is => 'rw', isa => 'v4Tels', coerce => 1 );
 
 =head3 adr(), address()
 
@@ -215,6 +225,50 @@ The format is SAME as 3.0
 =head3 photo(), logo()
 
 The format is SAME as 3.0
+
+=cut
+
+subtype 'v4Photos' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Image]';
+coerce 'v4Photos'
+    => from 'HashRef'
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V4::Node::Image->new({
+            name => $name,
+            media_type => $_->{media_type} || $_->{type},
+            content => $_->{content},
+        }) ] };
+coerce 'v4Photos'
+    => from 'ArrayRef[HashRef]'
+    => via  { [ map{
+        if( ref $_->{types} eq 'ARRAY' ){
+            ( $_->{media_type} ) = @{$_->{types}};
+            delete $_->{types};
+        }
+        Text::vCard::Precisely::V4::Node::Image->new($_)
+    } @$_ ] };
+coerce 'v4Photos'
+    => from 'Str'   # when parse BASE64 encoded strings
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ Text::vCard::Precisely::V4::Node::Image->new({
+            name => $name,
+            content => $_,
+        } ) ]
+    };
+coerce 'v4Photos'
+    => from 'ArrayRef[Str]'   # when parse BASE64 encoded strings
+    => via  {
+        my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
+        return [ map{ Text::vCard::Precisely::V4::Node::Image->new({
+            name => $name,
+            content => $_,
+        }) } @$_ ]
+    };
+coerce 'v4Photos'
+    => from 'Object'   # when URI.pm is used
+    => via  { [ Text::vCard::Precisely::V4::Node::Image->new( { content => $_->as_string } ) ] };
+has [qw| photo logo |] => ( is => 'rw', isa => 'v4Photos', coerce => 1 );
 
 =head3 note()
 
@@ -254,7 +308,7 @@ coerce 'v4Node'
     => from 'Str'
     => via {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V4::Node->new( { name => $name, value => $_ } ) ]
+        return [ Text::vCard::Precisely::V4::Node->new( { name => $name, content => $_ } ) ]
     };
 coerce 'v4Node'
     => from 'HashRef'
@@ -263,7 +317,7 @@ coerce 'v4Node'
         return [ Text::vCard::Precisely::V4::Node->new({
                 name => $_->{'name'} || $name,
                 types => $_->{'types'} || [],
-                value => $_->{'value'} || croak "No value in HashRef!",
+                content => $_->{'content'} || croak "No value in HashRef!",
         }) ]
  };
 coerce 'v4Node'
@@ -273,7 +327,7 @@ coerce 'v4Node'
          return [ map { Text::vCard::Precisely::V4::Node->new({
          name => $_->{'name'} || $name,
          types => $_->{'types'} || [],
-         value => $_->{'value'} || croak "No value in HashRef!",
+         content => $_->{'content'} || croak "No value in HashRef!",
      }) } @$_ ]
 };
 has [qw|note org title role categories fn nickname lang impp xml geo key|]
@@ -333,7 +387,7 @@ coerce 'v4TimeStamp'
     };
 coerce 'v4TimeStamp'
     => from 'ArrayRef[HashRef]'
-    => via { $_->[0]{value} };
+    => via { $_->[0]{content} };
 has rev => ( is => 'rw', isa => 'v4TimeStamp', coerce => 1  );
 
 =head3 member(), clientpidmap()
@@ -350,7 +404,7 @@ coerce 'MEMBER'
     => via {[ Text::vCard::Precisely::V4::Node::Member->new($_) ]};
 coerce 'MEMBER'
     => from 'ArrayRef[UID]'
-    => via {[ map{ Text::vCard::Precisely::V4::Node::Member->new({ value => $_ })} @$_ ]};
+    => via {[ map{ Text::vCard::Precisely::V4::Node::Member->new({ content => $_ })} @$_ ]};
 has member => ( is => 'rw', isa => 'MEMBER', coerce => 1 );
 
 subtype 'CLIENTPIDMAP'

@@ -15,12 +15,12 @@ $vc->sort_string('Harten');
 $vc->bday('19960415');
 $vc->prodid('-//ONLINE DIRECTORY//NONSGML Version 1//EN');
 
-my $in_file = path( 't', 'V3', 'simple', 'base.vcf' );
+my $in_file = path( 't', 'V3', 'Simple', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
 is $vc->as_string, $expected_content, 'simples(Str)';                   # 1
 
-$in_file = path( 't', 'V3', 'simple', 'utf8.vcf' );
+$in_file = path( 't', 'V3', 'Simple', 'utf8.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->fn('太宰治');

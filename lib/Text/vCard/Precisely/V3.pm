@@ -35,16 +35,16 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
  my $base64 = MIME::Base64::encode($img);
 
  $vc->photo([
-    { value => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
-    { value => $img, media_type => 'image/png' }, # Now you can set a binary image directly
-    { value => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
+    { content => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
+    { content => $img, media_type => 'image/png' }, # Now you can set a binary image directly
+    { content => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
  ]);
 
  $vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!
 
- $vc->tel({ value => '+1-111-555-1212', types => ['work'], pref => 1 });
+ $vc->tel({ content => '+1-111-555-1212', types => ['work'], pref => 1 });
 
- $vc->email({ value => 'forrestgump@example.com', types => ['work'] });
+ $vc->email({ content => 'forrestgump@example.com', types => ['work'] });
 
  $vc->adr( {
     types => ['work'],
@@ -57,7 +57,7 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
     country   => 'United States of America',
  });
 
- $vc->url({ value => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
+ $vc->url({ content => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
 
 And you can use X-SOCIALPROFILE type if you want like bellow:
 
@@ -76,7 +76,7 @@ And you can use X-SOCIALPROFILE type if you want like bellow:
  ->as_hashref;
 
  $vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
-    value => 'https://www.facebook/' . 'some facebookID',
+    content => 'https://www.facebook/' . 'some facebookID',
     types => 'facebook',
     displayname => encode_utf8( $q->{'name'} ),
     userid => $q->{'id'},
@@ -125,9 +125,9 @@ my $vf = Text::vFile::asData->new;
 use Text::vCard::Precisely::V3::Node;
 use Text::vCard::Precisely::V3::Node::N;
 use Text::vCard::Precisely::V3::Node::Address;
-use Text::vCard::Precisely::V3::Node::Phone;
+use Text::vCard::Precisely::V3::Node::Tel;
 use Text::vCard::Precisely::V3::Node::Email;
-use Text::vCard::Precisely::V3::Node::Photo;
+use Text::vCard::Precisely::V3::Node::Image;
 use Text::vCard::Precisely::V3::Node::URL;
 use Text::vCard::Precisely::V3::Node::SocialProfile;
 
@@ -138,7 +138,7 @@ has encoding_out => ( is => 'rw', isa => 'Str', default => 'UTF-8', );
 
 =head3 load_hashref($HashRef)
 
-Accepts an HashRef that looks like below:
+Accepts a HashRef that looks like below:
 
  my $hashref = {
     N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
@@ -146,10 +146,10 @@ Accepts an HashRef that looks like below:
     SORT_STRING => 'Forrest Gump',
     ORG => 'Bubba Gump Shrimp Co.',
     TITLE => 'Shrimp Man',
-    PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
+    PHOTO => { media_type => 'image/gif', content => 'http://www.example.com/dir_photos/my_photo.gif' },
     TEL => [
-        { types => ['WORK','VOICE'], value => '(111) 555-1212' },
-        { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+        { types => ['WORK','VOICE'], content => '(111) 555-1212' },
+        { types => ['HOME','VOICE'], content => '(404) 555-1212' },
     ],
     ADR =>[{
         types       => ['work'],
@@ -178,13 +178,13 @@ Accepts an HashRef that looks like below:
 
 sub load_hashref {
     my ( $self, $hashref ) = @_;
-    while ( my ( $key, $value ) = each %$hashref ) {
+    while ( my ( $key, $content ) = each %$hashref ) {
         my $method = $self->can( lc $key );
-        next unless $method and $value;
-        if ( ref $value eq 'Hash' ) {
-            $self->$method( { name => uc($key), %$value } );
+        next unless $method and $content;
+        if ( ref $content eq 'Hash' ) {
+            $self->$method( { name => uc($key), %$content } );
         }else{
-            $self->$method($value);
+            $self->$method($content);
         }
     }
     return $self;
@@ -224,17 +224,17 @@ sub load_string {
 sub _make_hashref {
     my ( $self, $data ) = @_;
     my $hashref = {};
-    while( my( $name, $values) = each %{$data->{properties}} ){
+    while( my( $name, $content ) = each %{$data->{properties}} ){
         next if $name eq 'VERSION';
-        foreach my $value (@$values) {
+        foreach my $node (@$content) {
             if( $name eq 'N' ){
-                my @names = split /(?<!\\);/, $value->{value};
+                my @names = split /(?<!\\);/, $node->{value};
                 $hashref->{$name} ||= \@names;
             }elsif( $name eq 'REV' ){
-                $hashref->{$name} ||= $value->{value};
+                $hashref->{$name} ||= $node->{value};
             }elsif( $name eq 'ADR' ){
-                my $ref = $self->_parse_param($value);
-                my @addesses = split /(?<!\\);/, $value->{value};
+                my $ref = $self->_parse_param($node);
+                my @addesses = split /(?<!\\);/, $node->{value};
                 $ref->{pobox}       = $addesses[0];
                 $ref->{extended}    = $addesses[1];
                 $ref->{street}      = $addesses[2];
@@ -244,8 +244,8 @@ sub _make_hashref {
                 $ref->{country}     = $addesses[6];
                 push @{$hashref->{$name}}, $ref;
             }else{
-                my $ref = $self->_parse_param($value);
-                $ref->{value} = $value->{value};
+                my $ref = $self->_parse_param($node);
+                $ref->{content} = $node->{value};
                 push @{$hashref->{$name}}, $ref;
             }
         }
@@ -254,11 +254,10 @@ sub _make_hashref {
 }
 
 sub _parse_param {
-    my ( $self, $value ) = @_;
+    my ( $self, $content ) = @_;
     my $ref = {};
-    $ref->{types} = [split /,/, $value->{param}{TYPE}] if $value->{param}{TYPE};
-    $ref->{media_type} = $value->{param}{MEDIATYPE} if $value->{param}{MEDIATYPE};
-    $ref->{pref} = $value->{param}{PREF} if $value->{param}{PREF};
+    $ref->{types} = [split /,/, $content->{param}{TYPE}] if $content->{param}{TYPE};
+    $ref->{pref} = $content->{param}{PREF} if $content->{param}{PREF};
     return $ref;
 }
 
@@ -395,7 +394,7 @@ coerce 'TimeStamp'
     };
 coerce 'TimeStamp'
     => from 'ArrayRef[HashRef]'
-    => via { $_->[0]{value} };
+    => via { $_->[0]{content} };
 has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1 );
 
 =head3 name(), profile(), mailer(), agent(), class();
@@ -425,8 +424,8 @@ coerce 'N'
     => from 'HashRef[Maybe[Ref]|Maybe[Str]]'
     => via {
         my %param;
-        while( my ($key, $value) = each %$_ ) {
-            $param{$key} = $value if $value;
+        while( my ($key, $content) = each %$_ ) {
+            $param{$key} = $content if $content;
         }
         return Text::vCard::Precisely::V3::Node::N->new(\%param);
     };
@@ -444,7 +443,7 @@ coerce 'N'
     }) };
 coerce 'N'
     => from 'Str'
-    => via { Text::vCard::Precisely::V3::Node::N->new({ value => [split /(?<!\\);/, $_] }) };
+    => via { Text::vCard::Precisely::V3::Node::N->new({ content => [split /(?<!\\);/, $_] }) };
 has n => ( is => 'rw', isa => 'N', coerce => 1 );
 
 =head3 tel()
@@ -452,23 +451,23 @@ has n => ( is => 'rw', isa => 'N', coerce => 1 );
  Accepts/returns an ArrayRef that looks like:
 
  [
- { type => ['work'], value => '651-290-1234', preferred => 1 },
- { type => ['home'], value => '651-290-1111' },
+ { type => ['work'], content => '651-290-1234', preferred => 1 },
+ { type => ['home'], content => '651-290-1111' },
  ]
  
 =cut
 
-subtype 'Tel' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Phone]';
-coerce 'Tel'
+subtype 'Tels' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Tel]';
+coerce 'Tels'
     => from 'Str'
-    => via { [ Text::vCard::Precisely::V3::Node::Phone->new({ value => $_ }) ] };
-coerce 'Tel'
+    => via { [ Text::vCard::Precisely::V3::Node::Tel->new({ content => $_ }) ] };
+coerce 'Tels'
     => from 'HashRef'
-    => via { [ Text::vCard::Precisely::V3::Node::Phone->new($_) ] };
-coerce 'Tel'
+    => via { [ Text::vCard::Precisely::V3::Node::Tel->new($_) ] };
+coerce 'Tels'
     => from 'ArrayRef[HashRef]'
-    => via { [ map { Text::vCard::Precisely::V3::Node::Phone->new($_) } @$_ ] };
-has tel => ( is => 'rw', isa => 'Tel', coerce => 1 );
+    => via { [ map { Text::vCard::Precisely::V3::Node::Tel->new($_) } @$_ ] };
+has tel => ( is => 'rw', isa => 'Tels', coerce => 1 );
 
 =head3 adr(), address()
 
@@ -504,8 +503,8 @@ has adr => ( is => 'rw', isa => 'Address', coerce => 1 );
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { type => ['work'], value => 'bbanner@ssh.secret.army.mil' },
-    { type => ['home'], value => 'bbanner@timewarner.com', pref => 1 },
+    { type => ['work'], content => 'bbanner@ssh.secret.army.mil' },
+    { type => ['home'], content => 'bbanner@timewarner.com', pref => 1 },
  ]
 
 or accept the string as email like bellow
@@ -517,7 +516,7 @@ or accept the string as email like bellow
 subtype 'Email' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Email]';
 coerce 'Email'
     => from 'Str'
-    => via { [ Text::vCard::Precisely::V3::Node::Email->new({ value => $_ }) ] };
+    => via { [ Text::vCard::Precisely::V3::Node::Email->new({ content => $_ }) ] };
 coerce 'Email'
     => from 'HashRef'
     => via { [ Text::vCard::Precisely::V3::Node::Email->new($_) ] };
@@ -531,8 +530,8 @@ has email => ( is => 'rw', isa => 'Email', coerce => 1 );
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { value => 'https://twitter.com/worthmine', types => ['twitter'] },
-    { value => 'https://github.com/worthmine' },
+    { content => 'https://twitter.com/worthmine', types => ['twitter'] },
+    { content => 'https://github.com/worthmine' },
  ]
 
 or accept the string as URL like bellow
@@ -546,7 +545,7 @@ coerce 'URLs'
     => from 'Str'
     => via {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [Text::vCard::Precisely::V3::Node::URL->new({ name => $name, value => $_ })]
+        return [Text::vCard::Precisely::V3::Node::URL->new({ name => $name, content => $_ })]
     };
 coerce 'URLs'
     => from 'HashRef[Str]'
@@ -554,7 +553,7 @@ coerce 'URLs'
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
         return [ Text::vCard::Precisely::V3::Node::URL->new({
             name => $name,
-            value => $_->{'value'}
+            content => $_->{'content'}
         }) ]
     };
 coerce 'URLs'
@@ -563,7 +562,7 @@ coerce 'URLs'
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
         return [Text::vCard::Precisely::V3::Node::URL->new({
             name => $name,
-            value => $_->as_string,
+            content => $_->as_string,
         })]
     };
 coerce 'URLs'
@@ -579,41 +578,47 @@ Attention! Mac OS X and iOS B<ignore> the description beeing URL
 
 =cut
 
-subtype 'Image' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Photo]';
-coerce 'Image'
+subtype 'Photos' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Image]';
+coerce 'Photos'
     => from 'HashRef'
     => via  {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node::Photo->new({
+        return [ Text::vCard::Precisely::V3::Node::Image->new({
             name => $name,
-            media_type => $_->{'media_type'},
-            value => $_->{'value'},
+            media_type => $_->{media_type} || $_->{type},
+            content => $_->{content},
         }) ] };
-coerce 'Image'
+coerce 'Photos'
     => from 'ArrayRef[HashRef]'
-    => via  { [ map{ Text::vCard::Precisely::V3::Node::Photo->new($_) } @$_ ] };
-coerce 'Image'
-    => from 'Object'   # when parse from vCard::Addressbook, URI->new is called.
-    => via  { [ Text::vCard::Precisely::V3::Node::Photo->new( { value => $_->as_string } ) ] };
-coerce 'Image'
+    => via  { [ map{
+        if( ref $_->{types} eq 'ARRAY' ){
+            ( $_->{media_type} ) = @{$_->{types}};
+            delete $_->{types};
+        }
+        Text::vCard::Precisely::V3::Node::Image->new($_)
+    } @$_ ] };
+coerce 'Photos'
     => from 'Str'   # when parse BASE64 encoded strings
     => via  {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node::Photo->new({
+        return [ Text::vCard::Precisely::V3::Node::Image->new({
             name => $name,
-            value => $_,
+            content => $_,
         } ) ]
     };
-coerce 'Image'
+coerce 'Photos'
     => from 'ArrayRef[Str]'   # when parse BASE64 encoded strings
     => via  {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ map{ Text::vCard::Precisely::V3::Node::Photo->new({
+        return [ map{ Text::vCard::Precisely::V3::Node::Image->new({
             name => $name,
-            value => $_,
+            content => $_,
         }) } @$_ ]
     };
-has [qw| photo logo |] => ( is => 'rw', isa => 'Image', coerce => 1 );
+coerce 'Photos'
+    => from 'Object'   # when URI.pm is used
+    => via  { [ Text::vCard::Precisely::V3::Node::Image->new( { content => $_->as_string } ) ] };
+has [qw| photo logo |] => ( is => 'rw', isa => 'Photos', coerce => 1 );
 
 =head3 note()
 
@@ -650,7 +655,7 @@ coerce 'Node'
     => from 'Str'
     => via {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
-        return [ Text::vCard::Precisely::V3::Node->new( { name => $name, value => $_ } ) ]
+        return [ Text::vCard::Precisely::V3::Node->new( { name => $name, content => $_ } ) ]
     };
 coerce 'Node'
     => from 'HashRef'
@@ -659,7 +664,7 @@ coerce 'Node'
         return [ Text::vCard::Precisely::V3::Node->new({
             name => $_->{'name'} || $name,
             types => $_->{'types'} || [],
-            value => $_->{'value'} || croak "No value in HashRef!",
+            content => $_->{'content'} || croak "No value in HashRef!",
         }) ]
     };
 coerce 'Node'
@@ -669,7 +674,7 @@ coerce 'Node'
         return [ map { Text::vCard::Precisely::V3::Node->new({
             name => $_->{'name'} || $name,
             types => $_->{'types'} || [],
-            value => $_->{'value'} || croak "No value in HashRef!",
+            content => $_->{'content'} || croak "No value in HashRef!",
         }) } @$_ ]
     };
 has [qw|note org title role categories fn nickname geo key label|]

@@ -6,7 +6,7 @@ use Moose;
 extends qw|Text::vCard::Precisely::V3::Node::Address Text::vCard::Precisely::V4::Node|;
 
 has name => (is => 'ro', default => 'ADR', isa => 'Str' );
-has value => (is => 'ro', default => '', isa => 'Str' );
+has content => (is => 'ro', default => '', isa => 'Str' );
 
 has label => ( is => 'rw', isa => 'Str' );
 

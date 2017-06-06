@@ -17,7 +17,7 @@ $vc->fn('John Smith');
 my $uuidj = $ug->create_from_name_str( NameSpace_URL, 'john@example.com' );
 my $uuidt = $ug->create_from_name_str( NameSpace_URL, 'tim@example.com' );
 $vc->uid("urn:uuid:$uuidj");
-$vc->related({ types => ['co-worker'], value => "urn:uuid:$uuidt" });
+$vc->related({ types => ['co-worker'], content => "urn:uuid:$uuidt" });
 
 my $in_file = path( 't', 'V4', 'related.vcf' );
 my $expected_content = $in_file->slurp_utf8;

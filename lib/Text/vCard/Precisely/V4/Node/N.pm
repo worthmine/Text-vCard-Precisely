@@ -18,7 +18,7 @@ override 'as_string' => sub {
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as;
 
-    my @values = map{ $self->_escape($_) } map{ $self->$_ or  $self->value && $self->value()->{$_} } @order;
+    my @values = map{ $self->_escape($_) } map{ $self->$_ or  $self->content && $self->content()->{$_} } @order;
 
     my $string = join(';', @lines ) . ':' . join( ';', @values );
     return $self->fold( $string, -force => 1 );
