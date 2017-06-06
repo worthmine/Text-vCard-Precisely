@@ -77,7 +77,7 @@ SAME as 3.0
 
 override '_parse_param' => sub {
     my ( $self, $content ) = @_;
-    my $ref = super($content);
+    my $ref = super();
     $ref->{media_type} = $content->{param}{MEDIATYPE} if $content->{param}{MEDIATYPE};
     return $ref;
 };
