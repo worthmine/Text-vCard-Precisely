@@ -50,16 +50,16 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
  my $base64 = MIME::Base64::encode($img);
 
  $vc->photo([
-    { value => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
-    { value => $img, media_type => 'image/png' }, # Now you can set a binary image directly
-    { value => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
+    { content => 'https://avatars2.githubusercontent.com/u/2944869?v=3&s=400',  media_type => 'image/jpeg' },
+    { content => $img, media_type => 'image/png' }, # Now you can set a binary image directly
+    { content => $base64, media_type => 'image/png' }, # Also accept the text encoded in Base64
  ]);
 
  $vc->org('Bubba Gump Shrimp Co.'); # Now you can set/get org!
 
- $vc->tel({ value => '+1-111-555-1212', types => ['work'], pref => 1 });
+ $vc->tel({ content => '+1-111-555-1212', types => ['work'], pref => 1 });
 
- $vc->email({ value => 'forrestgump@example.com', types => ['work'] });
+ $vc->email({ content => 'forrestgump@example.com', types => ['work'] });
 
  $vc->adr( {
     types => ['work'],
@@ -72,7 +72,7 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
     country   => 'United States of America',
  });
 
- $vc->url({ value => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
+ $vc->url({ content => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
 
  use Facebook::Graph;
  use Encode;
@@ -89,7 +89,7 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
  ->as_hashref;
 
  $vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
-    value => 'https://www.facebook/' . 'some facebookID',
+    content => 'https://www.facebook/' . 'some facebookID',
     types => 'facebook',
     displayname => encode_utf8( $q->{'name'} ),
     userid => $q->{'id'},
@@ -142,10 +142,10 @@ Accepts an HashRef that looks like below:
     SORT_STRING => 'Forrest Gump',
     ORG => 'Bubba Gump Shrimp Co.',
     TITLE => 'Shrimp Man',
-    PHOTO => { media_type => 'image/gif', value => 'http://www.example.com/dir_photos/my_photo.gif' },
+    PHOTO => { media_type => 'image/gif', content => 'http://www.example.com/dir_photos/my_photo.gif' },
     TEL => [
-        { types => ['WORK','VOICE'], value => '(111) 555-1212' },
-        { types => ['HOME','VOICE'], value => '(404) 555-1212' },
+        { types => ['WORK','VOICE'], content => '(111) 555-1212' },
+        { types => ['HOME','VOICE'], content => '(404) 555-1212' },
     ],
     ADR =>[{
         types       => ['work'],
@@ -226,8 +226,8 @@ To specify the components of the name of the object the vCard represents
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { type => ['work'], value => '651-290-1234', preferred => 1 },
-    { type => ['home'], value => '651-290-1111' },
+    { type => ['work'], content => '651-290-1234', preferred => 1 },
+    { type => ['home'], content => '651-290-1111' },
  ]
 
 =head3 adr(), address()
@@ -253,8 +253,8 @@ Accepts/returns an ArrayRef that looks like:
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { type => ['work'], value => 'bbanner@ssh.secret.army.mil' },
-    { type => ['home'], value => 'bbanner@timewarner.com', pref => 1 },
+    { type => ['work'], content => 'bbanner@ssh.secret.army.mil' },
+    { type => ['home'], content => 'bbanner@timewarner.com', pref => 1 },
  ]
 
 or accept the string as email like bellow
@@ -266,8 +266,8 @@ or accept the string as email like bellow
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { value => 'https://twitter.com/worthmine', types => ['twitter'] },
-    { value => 'https://github.com/worthmine' },
+    { content => 'https://twitter.com/worthmine', types => ['twitter'] },
+    { content => 'https://github.com/worthmine' },
  ]
 
 or accept the string as URL like bellow
@@ -396,7 +396,7 @@ This property is often used to specify the proper pronunciation of the name prop
 =head3 socialprofile()
 
 There is no documents about X-SOCIALPROFILE in RFC but it works in iOS and Mac OS X!
- 
+
 I don't know well about in Android or Windows. Somebody please feedback me
 
 =head3 sort_string()
