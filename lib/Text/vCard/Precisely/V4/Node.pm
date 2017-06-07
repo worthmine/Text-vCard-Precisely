@@ -35,6 +35,13 @@ subtype 'ALTID'
     => message { "The number you provided, $_, was not supported in 'ALTID'" };
 has altID => ( is => 'rw', isa => 'ALTID');
 
+subtype 'MediaType'
+    => as 'Str'
+    => where { m{^(:?application|audio|example|image|message|model|multipart|text|video)/[\w+\-\.]+$}is }
+    => message { "The MediaType you provided, $_, was not supported" };
+has media_type => ( is => 'rw', isa => 'MediaType' );
+
+
 sub as_string {
     my ($self) = @_;
     my @lines;

@@ -49,12 +49,6 @@ subtype 'Language'
     => message { "The Language you provided, $_, was not supported" };
 has language => ( is => 'rw', isa =>'Language' );
 
-subtype 'MediaType'
-    => as 'Str'
-    => where { m{^(:?application|audio|example|image|message|model|multipart|text|video)/[\w+\-\.]+$}is }
-    => message { "The MediaType you provided, $_, was not supported" };
-has media_type => ( is => 'rw', isa => 'MediaType' );
-
 sub charset {    # DEPRECATED in vCard 3.0
     my $self = shift;
     croak "'CHARSET' param is DEPRECATED! vCard3.0 will accept just ONLY UTF-8";
