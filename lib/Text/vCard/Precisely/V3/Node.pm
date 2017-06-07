@@ -72,13 +72,12 @@ sub as_string {
     push @lines, uc($node) || croak "Empty name";
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
     push @lines, 'PREF=' . $self->pref if $self->pref;
-    push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
 
     my $string = join(';', @lines ) . ':' . (
         ref $self->content eq 'Array'?
-        map{ $self->name =~ /^(:?LABEL|GEO)$/s? $self->content : $self->_escape($_) } @{ $self->content }:
-        $self->name =~ /^(:?LABEL|GEO)$/s? $self->content: $self->_escape( $self->content )
+        map{ $node =~ /^(:?LABEL|GEO)$/s? $self->content : $self->_escape($_) } @{ $self->content }:
+        $node =~ /^(:?LABEL|GEO)$/s? $self->content: $self->_escape( $self->content )
     );
     return $self->fold($string);
 }

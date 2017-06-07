@@ -1,4 +1,4 @@
 BEGIN:VCARD
 VERSION:4.0
-ADR:pobox;extended;street;city;region;post_code;country
+ADR:;;street;city;region;post_code;country
 END:VCARD

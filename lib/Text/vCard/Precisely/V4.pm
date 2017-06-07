@@ -124,6 +124,7 @@ sub as_string {
 =head3 as_file($filename)
 
 Write data in vCard format to $filename.
+
 Dies if not successful.
 
 =head2 SIMPLE GETTERS/SETTERS
@@ -133,17 +134,21 @@ These methods accept and return strings.
 =head3 version()
 
 Returns Version number of the vcard. Defaults to B<'3.0'>
+
 It is B<READONLY> method. So you can NOT downgrade it to 3.0
 
 =head3 rev()
 
 To specify revision information about the current vCard
+
 The format in as_string() is B<different from 3.0>, but the interface is SAME
 
 =head2 COMPLEX GETTERS/SETTERS
 
 They are based on Moose with coercion
+
 So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str
+
 Read source if you were confused
 
 =head3 n()
@@ -201,7 +206,8 @@ has tel => ( is => 'rw', isa => 'v4Tels', coerce => 1 );
 =head3 adr(), address()
 
 Both are same method with Alias
-The format is SAME as 3.0
+
+LABEL param and GEO param are now available
 
 =cut
 
@@ -281,6 +287,7 @@ The format is SAME as 3.0
 =head3 fn(), full_name(), fullname()
 
 They are same method at all with Alias
+
 The format is SAME as 3.0
 
 =head3 nickname()
@@ -290,11 +297,13 @@ The format is SAME as 3.0
 =head3 lang()
 
 To specify the language(s) that may be used for contacting the entity associated with the vCard
+
 It's the B<new method in 4.0>
 
 =head3 impp(), xml()
 
 I don't think they are so popular paramater, but here are the methods!
+
 They are the B<new method in 4.0>
 
 =head3 geo(), key()
@@ -340,6 +349,7 @@ The formats are SAME as 3.0
 =head3 fburl(), caladruri(), caluri()
 
 I don't think they are so popular types, but here are the methods!
+
 They are the B<new method in 4.0>
 
 =cut
@@ -359,6 +369,7 @@ has related => ( is => 'rw', isa => 'Related', coerce => 1 );
 =head3 kind()
 
 To specify the kind of object the vCard represents
+
 It's the B<new method in 4.0>
  
 =cut
@@ -393,6 +404,7 @@ has rev => ( is => 'rw', isa => 'v4TimeStamp', coerce => 1  );
 =head3 member(), clientpidmap()
 
 I don't think they are so popular types, but here are the methods!
+
 It's the B<new method in 4.0>
 
 =cut
@@ -421,21 +433,25 @@ has clientpidmap => ( is => 'rw', isa => 'CLIENTPIDMAPs', coerce => 1 );
 =head3 tz(), timezone()
 
 Both are same method with Alias
+
 The format is SAME as 3.0
  
 =head3 bday(), birthday()
 
 Both are same method with Alias
+
 The format is SAME as 3.0
 
 =head3 anniversary()
 
 The date of marriage, or equivalent, of the object the vCard represents
+ 
 It's the B<new method in 4.0>
 
 =head3 gender()
 
 To specify the components of the sex and gender identity of the object the vCard represents
+
 It's the B<new method in 4.0>
 
 =head3 prodid()
@@ -522,20 +538,18 @@ sub agent {
 
 SORT-AS param in N,FN,ORG is NOT available
 
-=item
-
-GEO param in ADR is NOT available
-
 =back
 
 =head2 aroud UTF-8
 
 If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> of smartphones, Use 3.0
+
 It seems to be TOO EARLY to use 4.0
 
 =head2 for under perl-5.12.5
 
 This module uses \P{ascii} in regexp so You have to use 5.12.5 and later
+
 And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them
 
 =head2 SEE ALOSO

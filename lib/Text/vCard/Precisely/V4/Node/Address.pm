@@ -9,6 +9,7 @@ has name => (is => 'ro', default => 'ADR', isa => 'Str' );
 has content => (is => 'ro', default => '', isa => 'Str' );
 
 has label => ( is => 'rw', isa => 'Str' );
+has geo => ( is => 'rw', isa => 'Str' );
 
 my @order = @Text::vCard::Precisely::V3::Node::Address::order;
 
@@ -22,6 +23,7 @@ override 'as_string' => sub {
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
     push @lines, 'LABEL="' . $self->label . '"' if $self->label;
+    push @lines, 'GEO="' . $self->geo . '"' if $self->geo;
 
     my @values = ();
     map{ push @values, $self->_escape( $self->$_ ) } @order;
