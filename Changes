@@ -1,6 +1,7 @@
 Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
+  - fixed some tests
 
 0.04 2017-08-01T15:19:21Z
   - first cpan publishment

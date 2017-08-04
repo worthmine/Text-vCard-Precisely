@@ -85,8 +85,8 @@
    },
    "version" : "0.04",
    "x_contributors" : [
-      "Yuki Yoshida <worthmine@users.noreply.github.com>",
-      "Yuki Yoshida <worthmine@gmail.com>"
+      "Yuki Yoshida <worthmine@gmail.com>",
+      "Yuki Yoshida <worthmine@users.noreply.github.com>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.93"
 }

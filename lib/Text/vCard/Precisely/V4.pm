@@ -21,7 +21,7 @@ Text::vCard::Precisely::V4 - Read, Write and Edit B<vCards 4.0>
 You can unlock types that will be available in vCard 4.0
 
  my $vc = Text::vCard::Precisely->new( version => '4.0' );
- # Or you can write like bellow:
+ # Or you can write like below:
  #my $vc = Text::vCard::Precisely::V4->new();
 
 The Usage is same with L<Text::vCard::Precisely::V3|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm>
@@ -30,7 +30,7 @@ The Usage is same with L<Text::vCard::Precisely::V3|https://github.com/worthmine
 
 This module is an additional version for reading/writing for vCard 4.0. it's just a wrapper of L<Text::vCard::Precisely::V3|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm> with Moose.
 
-B<Caution!> It's NOT be recommended because some reasons bellow:
+B<Caution!> It's NOT be recommended because some reasons below:
 
 =over
 
