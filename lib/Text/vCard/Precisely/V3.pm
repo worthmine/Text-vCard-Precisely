@@ -830,8 +830,12 @@ L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
 
 =item
 
-L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm>
+L<Text::vCard::Precisely::V4 on GitHub|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm>
 
+=item
+
+L<Text::vCard::Precisely::V4 on CPAN|http://search.cpan.org/~worthmine/Text-vCard-Precisely-0.04/lib/Text/vCard/Precisely/V4.pm>
+ 
 =back
 
 =head2 AUTHOR

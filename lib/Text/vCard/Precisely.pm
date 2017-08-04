@@ -449,6 +449,14 @@ L<RFC 6350|https://tools.ietf.org/html/rfc6350>
 
 L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
 
+=item
+
+L<Text::vCard::Precisely on CPAN|http://search.cpan.org/~worthmine/Text-vCard-Precisely-0.04/lib/Text/vCard/Precisely.pm>
+
+=item
+
+L<Text::vCard::Precisely on GitHub|https://github.com/worthmine/Text-vCard-Precisely>
+
 =back
 
 =head2 AUTHOR
