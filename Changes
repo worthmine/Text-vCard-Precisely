@@ -1,6 +1,7 @@
 Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
+  - migrate Dizil to Minilla
 
 0.05 2017-08-11T11:56:13Z
   - fixed some tests
