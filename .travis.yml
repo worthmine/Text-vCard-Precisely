@@ -18,13 +18,13 @@ perl:
 before_install:
 - sudo apt-get install -qq libgd2-xpm-dev
 
-install:
-- dzil authordeps | grep -vP '[^\w:]' | cpanm -v --notest --skip-satisfied
-- dzil listdeps   | grep -vP '[^\w:]' | cpanm -v --skip-satisfied
-
-script:
-- dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
-- dzil smoke --release --author
+#install:
+#- dzil authordeps | grep -vP '[^\w:]' | cpanm -v --notest --skip-satisfied
+#- dzil listdeps   | grep -vP '[^\w:]' | cpanm -v --skip-satisfied
+#
+#script:
+#- dzil authordeps --missing | cpanm --verbose --notest --skip-satisfied
+#- dzil smoke --release --author
 
 notifications:
   email: false
