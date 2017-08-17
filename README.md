@@ -385,8 +385,8 @@ And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't sup
 - [RFC 2425](https://tools.ietf.org/html/rfc2425)
 - [RFC 6350](https://tools.ietf.org/html/rfc6350)
 - [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata)
-- [Text::vCard::Precisely on CPAN](http://search.cpan.org/~worthmine/Text-vCard-Precisely-0.06/lib/Text/vCard/Precisely.pm)
-- [Text::vCard::Precisely on GitHub](https://github.com/worthmine/Text-vCard-Precisely)
+- [CPAN](http://search.cpan.org/perldoc?Text%3A%3AvCard%3A%3APrecisely)
+- [GitHub](https://github.com/worthmine/Text-vCard-Precisely)
 
 ## AUTHOR
 
