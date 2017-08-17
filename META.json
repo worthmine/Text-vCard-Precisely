@@ -83,7 +83,7 @@
          "web" : "https://github.com/worthmine/Text-vCard-Precisely"
       }
    },
-   "version" : "0.05",
+   "version" : "0.06",
    "x_contributors" : [
       "Yuki Yoshida <worthmine@cpan.org>",
       "Yuki Yoshida <worthmine@gmail.com>",
