@@ -116,6 +116,8 @@ SKIP: {
     push @expected, $in_file->slurp_utf8;
     $in_file = path( 't', 'V4', 'Image', 'maltiple_gd2.vcf' );
     push @expected, $in_file->slurp_utf8;
+    $in_file = path( 't', 'V4', 'Image', 'maltiple_gd3.vcf' );
+    push @expected, $in_file->slurp_utf8;
 
     $vc->photo([
         { media_type => 'image/png',  content => $raw },
