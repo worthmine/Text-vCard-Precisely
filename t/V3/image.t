@@ -129,7 +129,7 @@ SKIP: {
         pass 'photo(ArrayRef of Hashref of raw)';
     }else{
         # this will fail, to have $got & $expect printed out for diagnostics
-        is $got, $expected[1], 'photo(ArrayRef of Hashref of raw)';
+        is $got, $expected[2], 'photo(ArrayRef of Hashref of raw)';
     }
 }
 
