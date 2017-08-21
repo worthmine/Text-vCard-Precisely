@@ -222,7 +222,7 @@ coerce 'v4Address'
     => via { [ map { Text::vCard::Precisely::V4::Node::Address->new($_) } @$_ ] };
 has adr => ( is => 'rw', isa => 'v4Address', coerce => 1 );
 
-=head2 email()
+=head3 email()
 
 The format is SAME as 3.0
 

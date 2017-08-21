@@ -208,7 +208,7 @@ To specify revision information about the current vCard
 To specify the family name, given name or organization text to be used for
 national-language-specific sorting of the FN, N and ORG.
 
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it.
+B<This method is DEPRECATED in vCard4.0> Use SORT-AS param instead of it.
 
 =head2 COMPLEX GETTERS/SETTERS
 
@@ -248,7 +248,7 @@ Accepts/returns an ArrayRef that looks like:
     },
  ]
 
-=head2 email()
+=head3 email()
 
 Accepts/returns an ArrayRef that looks like:
 
@@ -398,10 +398,6 @@ This property is often used to specify the proper pronunciation of the name prop
 There is no documents about X-SOCIALPROFILE in RFC but it works in iOS and Mac OS X!
 
 I don't know well about in Android or Windows. Somebody please feedback me
-
-=head3 sort_string()
-
-B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
 
 =head3 label()
 

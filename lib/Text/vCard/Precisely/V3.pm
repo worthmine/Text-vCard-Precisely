@@ -500,7 +500,7 @@ coerce 'Address'
     => via { [ map { Text::vCard::Precisely::V3::Node::Address->new($_) } @$_ ] };
 has adr => ( is => 'rw', isa => 'Address', coerce => 1 );
 
-=head2 email()
+=head3 email()
 
 Accepts/returns an ArrayRef that looks like:
 
