@@ -403,16 +403,6 @@ I don't know well about in Android or Windows. Somebody please feedback me
 
 B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
 
-=head2 TODO
-
-=over
-
-=item
-
-SORT-AS param in N,FN,ORG is NOT available completely
-
-=back
-
 =head2 aroud UTF-8
 
 If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> of smartphones, Use 3.0

@@ -326,9 +326,10 @@ coerce 'v4Node'
     => via {
         my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
         return [ Text::vCard::Precisely::V4::Node->new({
-                name => $_->{'name'} || $name,
-                types => $_->{'types'} || [],
-                content => $_->{'content'} || croak "No value in HashRef!",
+            name => $_->{'name'} || $name,
+            types => $_->{'types'} || [],
+            sort_as => $_->{'sort_as'},
+            content => $_->{'content'} || croak "No value in HashRef!",
         }) ]
  };
 coerce 'v4Node'
@@ -336,9 +337,10 @@ coerce 'v4Node'
     => via {
      my $name = uc [split( /::/, [caller(2)]->[3] )]->[-1];
          return [ map { Text::vCard::Precisely::V4::Node->new({
-         name => $_->{'name'} || $name,
-         types => $_->{'types'} || [],
-         content => $_->{'content'} || croak "No value in HashRef!",
+             name => $_->{'name'} || $name,
+             types => $_->{'types'} || [],
+             sort_as => $_->{'sort_as'},
+             content => $_->{'content'} || croak "No value in HashRef!",
      }) } @$_ ]
 };
 has [qw|note org title role categories fn nickname lang impp xml geo key|]
@@ -531,16 +533,6 @@ sub agent {
 }
 
 1;
-
-=head2 TODO
- 
-=over
-
-=item 
-
-SORT-AS param in N,FN,ORG is NOT available
-
-=back
 
 =head2 aroud UTF-8
 

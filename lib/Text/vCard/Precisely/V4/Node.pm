@@ -52,7 +52,7 @@ sub as_string {
     push @lines, 'PREF=' . $self->pref if $self->pref;
     push @lines, 'MEDIATYPE=' . $self->media_type if $self->media_type;
     push @lines, 'LANGUAGE=' . $self->language if $self->language;
-    push @lines, 'SORT-AS=' . $self->sort_as if $self->sort_as and uc($self->name) =~ /^(:?FN|ORG)$/;
+    push @lines, 'SORT-AS="' . $self->sort_as .'"' if $self->sort_as and $self->name =~ /^(:?FN|ORG)$/;
 
     my $string = join(';', @lines ) . ':' . (
         ref $self->content eq 'Array'?
