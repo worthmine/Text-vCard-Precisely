@@ -2,6 +2,8 @@ Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
 
+0.12 2017-10-20T22:16:51Z
+  - added supporting Instagram in X-SOCIALPROFILE 
 0.11 2017-10-17T10:42:20Z
   - just optimized around coercing
 
