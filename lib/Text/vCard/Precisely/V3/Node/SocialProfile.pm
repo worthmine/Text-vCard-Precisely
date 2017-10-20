@@ -23,9 +23,9 @@ subtype 'SocialProfileName'
     => as 'Str'
     => where { use utf8; decode_utf8($_) =~ m/^[\w\s]+$/s }
     => message { "The text you provided, $_, was not supported in 'SocialProfileName'" };
-coerce 'SocialProfileName'
-    => from 'Str'
-    => via { encode_utf8($_) };
+coerce 'SocialProfileName',
+    from 'Str',
+    via { encode_utf8($_) };
 has displayname => ( is => 'rw', isa => 'SocialProfileName', coerce => 1 );
 
 override 'as_string' => sub {
