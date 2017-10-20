@@ -388,14 +388,14 @@ subtype 'TimeStamp'
     => as 'Str'
     => where { m/^\d{4}-?\d{2}-?\d{2}(:?T\d{2}:?\d{2}:?\d{2}Z)?$/is }
     => message { "The TimeStamp you provided, $_, was not correct" };
-coerce 'TimeStamp'
-    => from 'Int'
-    => via {
+coerce 'TimeStamp',
+    from 'Int',
+    via {
         my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
         return sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
-    }
-    => from 'ArrayRef[HashRef]'
-    => via { $_->[0]{content} };
+    },
+    from 'ArrayRef[HashRef]',
+    via { $_->[0]{content} };
 has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1 );
 
 =head3 name(), profile(), mailer(), agent(), class();
