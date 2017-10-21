@@ -83,6 +83,12 @@
          "web" : "https://github.com/worthmine/Text-vCard-Precisely"
       }
    },
-   "version" : "0.12",
+   "version" : "0.13",
+   "x_contributors" : [
+      "Mohammad S Anwar <Mohammad.Anwar@yahoo.com>",
+      "Yuki Yoshida <worthmine@cpan.org>",
+      "Yuki Yoshida <worthmine@gmail.com>",
+      "Yuki Yoshida <worthmine@users.noreply.github.com>"
+   ],
    "x_serialization_backend" : "JSON::PP version 2.93"
 }
