@@ -84,10 +84,5 @@
       }
    },
    "version" : "0.12",
-   "x_contributors" : [
-      "Yuki Yoshida <worthmine@cpan.org>",
-      "Yuki Yoshida <worthmine@gmail.com>",
-      "Yuki Yoshida <worthmine@users.noreply.github.com>"
-   ],
    "x_serialization_backend" : "JSON::PP version 2.93"
 }
