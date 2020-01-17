@@ -14,6 +14,7 @@ use Data::UUID;
 use Encode;
 use Text::LineFold;
 use URI;
+use Path::Tiny;
 
 =encoding utf8
 
@@ -360,10 +361,17 @@ Dies if not successful.
 
 =cut
 
+sub _path {
+    my $self = shift;
+    return path($_[0]);
+}
+
 sub as_file {
     my ( $self, $filename ) = @_;
+    croak "No filename was set!" unless $filename;
+    
     my $file = $self->_path($filename);
-    $file->spew( $self->_iomode_out, $self->as_string );
+    $file->spew( {binmode => ":encoding(UTF-8)"}, $self->as_string );
     return $file;
 }
 

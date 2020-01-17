@@ -29,7 +29,7 @@
       "build" : {
          "requires" : {
             "Data::Section::Simple" : "0",
-            "Path::Tiny" : "0",
+            "File::Compare" : "0",
             "Test::More" : "0",
             "lib" : "0",
             "strict" : "0",
@@ -62,6 +62,7 @@
             "MooseX::Deprecated" : "0",
             "MooseX::Types::DateTime" : "0",
             "MooseX::Types::Email" : "0",
+            "Path::Tiny" : "0",
             "Text::LineFold" : "0",
             "Text::vFile::asData" : "0",
             "URI" : "0",
@@ -86,9 +87,9 @@
    "version" : "0.13",
    "x_contributors" : [
       "Mohammad S Anwar <Mohammad.Anwar@yahoo.com>",
-      "Yuki Yoshida <worthmine@cpan.org>",
       "Yuki Yoshida <worthmine@gmail.com>",
-      "Yuki Yoshida <worthmine@users.noreply.github.com>"
+      "Yuki Yoshida <worthmine@users.noreply.github.com>",
+      "worthmine <worthmine@cpan.org>"
    ],
    "x_serialization_backend" : "JSON::PP version 2.27400_02",
    "x_static_install" : 1
