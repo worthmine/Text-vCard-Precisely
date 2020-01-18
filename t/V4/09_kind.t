@@ -10,7 +10,7 @@ use Text::vCard::Precisely::V4;
 
 my $vc = Text::vCard::Precisely::V4->new();
 
-my $in_file = path( 't', 'V4', 'kind.vcf' );
+my $in_file = path( 't', 'V4', 'Expected', 'kind.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
 $vc->kind('individual');

@@ -2,18 +2,13 @@ use strict;
 use warnings;
 use Path::Tiny;
 
-use Test::More tests => 6;
+use Test::More tests => 3;
 use Data::Section::Simple qw(get_data_section);
 
 use lib qw(./lib);
 
-BEGIN { use_ok ('Text::vCard::Precisely::V4') };        #1
-
+use Text::vCard::Precisely::V4;
 my $vc = Text::vCard::Precisely::V4->new();
-is 'Text::vCard::Precisely::V4', ref($vc), 'new()';     #2
-
-$vc = Text::vCard::Precisely::V4->new({});
-is 'Text::vCard::Precisely::V4', ref($vc), 'new({})';   #3
 
 my $hashref = {
     N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
@@ -54,7 +49,7 @@ $data =~ s/\n/\r\n/g;
 my $string = $vc->load_hashref($hashref)->as_string();
 is $string, $data, 'as_string()';                       #4
 
-my $in_file = path( 't', 'V4', 'expected.vcf' );
+my $in_file = path( 't', 'V4', 'Expected', 'unix.vcf' );
 $string = $vc->load_file($in_file)->as_string();
 my $expected_content = $in_file->slurp_utf8;
 is $string, $expected_content, 'load_file()';           #5

@@ -1,16 +1,14 @@
 use strict;
 use warnings;
 use Path::Tiny qw(path);
-use Test::More tests => 8;
+use Test::More tests => 5;
 use Data::Section::Simple qw(get_data_section);
 use File::Compare;
 
 use lib qw(./lib);
 
-BEGIN { use_ok ('Text::vCard::Precisely::V3') };                                    # 1
-
-my $vc = new_ok( 'Text::vCard::Precisely::V3', [] );                                # 2
-$vc = new_ok( 'Text::vCard::Precisely::V3', [{}] );                                 # 3
+use Text::vCard::Precisely::V3;
+my $vc = Text::vCard::Precisely::V3->new();
 
 my $hashref = {
     N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
