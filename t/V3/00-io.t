@@ -1,16 +1,16 @@
 use strict;
 use warnings;
 use Path::Tiny qw(path);
-use Test::More tests => 7;
+use Test::More tests => 8;
 use Data::Section::Simple qw(get_data_section);
 use File::Compare;
 
 use lib qw(./lib);
 
-BEGIN { use_ok ('Text::vCard::Precisely::V3') };        #1
+BEGIN { use_ok ('Text::vCard::Precisely::V3') };                                    # 1
 
-my $vc = new_ok( 'Text::vCard::Precisely::V3', [] );     #2
-$vc = new_ok( 'Text::vCard::Precisely::V3', [{}] );      #3
+my $vc = new_ok( 'Text::vCard::Precisely::V3', [] );                                # 2
+$vc = new_ok( 'Text::vCard::Precisely::V3', [{}] );                                 # 3
 
 my $hashref = {
     N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
@@ -50,21 +50,31 @@ my $data = get_data_section('data.vcf');
 $data =~ s/\n/\r\n/g;
 
 my $string = $vc->load_hashref($hashref)->as_string();
-is $string, $data, 'as_string()';                       #4
+is $string, $data, 'as_string()';                                                   # 4
 
-is compare( $vc->as_file('got.vcf'), path( 't', 'V3', 'expected.vcf' ) ), 0, 'as_file()';  #5
+$vc->as_file('got.vcf');
+my $got = path('got.vcf');
 
-my $in_file = path( 't', 'V3', 'expected.vcf' );
+SKIP: {
+    skip "it's not a Windows PC", 1 unless $^O eq 'MSWin32';
+    is compare( $got, path( 't', 'V3', 'Expected', 'win32.vcf' ) ), 0, 'as_file()'; # 5
+}
+SKIP: {
+    skip "it's a Windows PC", 1 if $^O eq 'MSWin32';
+    is compare( $got, path( 't', 'V3', 'Expected', 'unix.vcf' ) ), 0, 'as_file()';  # 6
+}
+$got->remove();
+
+my $in_file = path( 't', 'V3', 'Expected', 'unix.vcf' );
 $string = $vc->load_file($in_file)->as_string();
 my $expected_content = $in_file->slurp_utf8;
-is $string, $expected_content, 'load_file()';           #6
+is $string, $expected_content, 'load_file()';                                       # 7
 
 my $load_s = $vc->load_string($data);
-is $load_s->as_string(), $data, 'load_string()';        #7
+is $load_s->as_string(), $data, 'load_string()';                                    # 8
 
 done_testing;
 
-`rm got.vcf`;
 
 __DATA__
 
