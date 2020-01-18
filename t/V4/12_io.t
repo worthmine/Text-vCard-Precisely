@@ -1,9 +1,9 @@
 use strict;
 use warnings;
-use Path::Tiny;
-
-use Test::More tests => 3;
+use Test::More tests => 5;
 use Data::Section::Simple qw(get_data_section);
+use Path::Tiny qw(path);
+use File::Compare;
 
 use lib qw(./lib);
 
@@ -47,15 +47,28 @@ my $data = get_data_section('data.vcf');
 $data =~ s/\n/\r\n/g;
 
 my $string = $vc->load_hashref($hashref)->as_string();
-is $string, $data, 'as_string()';                       #4
+is $string, $data, 'as_string()';                                                   # 1
+
+$vc->as_file('got.vcf');
+my $got = path('got.vcf');
+
+SKIP: {
+    skip "it's not a Windows PC", 1 unless $^O eq 'MSWin32';
+    is compare( $got, path( 't', 'V4', 'Expected', 'win32.vcf' ) ), 0, 'as_file()'; # 2
+}
+SKIP: {
+    skip "it's a Windows PC", 1 if $^O eq 'MSWin32';
+    is compare( $got, path( 't', 'V4', 'Expected', 'unix.vcf' ) ), 0, 'as_file()';  # 3
+}
+$got->remove();
 
 my $in_file = path( 't', 'V4', 'Expected', 'unix.vcf' );
 $string = $vc->load_file($in_file)->as_string();
 my $expected_content = $in_file->slurp_utf8;
-is $string, $expected_content, 'load_file()';           #5
+is $string, $expected_content, 'load_file()';                                       # 4
 
 my $load_s = $vc->load_string($data);
-is $load_s->as_string(), $data, 'load_string()';        #6
+is $load_s->as_string(), $data, 'load_string()';                                    # 5
 
 done_testing;
 

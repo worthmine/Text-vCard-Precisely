@@ -1,8 +1,8 @@
 use strict;
 use warnings;
-use Path::Tiny qw(path);
 use Test::More tests => 5;
 use Data::Section::Simple qw(get_data_section);
+use Path::Tiny qw(path);
 use File::Compare;
 
 use lib qw(./lib);
