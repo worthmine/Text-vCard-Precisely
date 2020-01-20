@@ -1,6 +1,4 @@
 version: 1.0.{build}
-build:
-  verbosity: minimal
 
 init:
   - git config --global core.autocrlf input
