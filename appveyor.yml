@@ -1,8 +1,8 @@
 version: 1.0.{build}
 build:
   verbosity: minimal
-i
-  init:
+
+init:
   - git config --global core.autocrlf input
 
 install:
