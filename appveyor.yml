@@ -1,3 +1,19 @@
 version: 1.0.{build}
 build:
   verbosity: minimal
+i
+  init:
+  - git config --global core.autocrlf input
+
+install:
+  - choco install strawberryperl -version 5.26.1.1  …①
+  - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\b
+in;C:\strawberry\perl\bin;%PATH%  …②
+  - cpanm --installdeps --notest --quiet --with-configure
+--with-develop .
+
+build: off
+test_script:
+  - prove -lvr t
+
+shallow_clone: true
