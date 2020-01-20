@@ -2,6 +2,9 @@ Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
 
+0.16 2020-01-20T11:49:06Z
+  - failing to install for Windows is fixed
+
 0.15 2020-01-18T14:59:11Z
   - devided the test for as_file() with Windows or not  
 
