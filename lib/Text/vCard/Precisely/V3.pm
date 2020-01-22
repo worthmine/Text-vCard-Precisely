@@ -289,6 +289,7 @@ sub as_string {
     my ($self) = @_;
     my $str = $self->_header();
     $str .= $self->_make_types(@types);
+#    $str .= 'SORT-STRING:' . $self->sort_string . $cr if $self->sort_string;
     $str .= 'BDAY:' . $self->bday . $cr if $self->bday;
     $str .= 'UID:' . $self->uid . $cr if $self->uid;
     $str .= $self->_footer();
