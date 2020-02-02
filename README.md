@@ -187,6 +187,7 @@ Accepts/returns an ArrayRef that looks like:
     ]
 
 After version 0.18, **content will not be validated as phone numbers** All _Str_ type is accepted.
+So you have to validate phone numbers with your way.
 
 ## adr(), address()
 
@@ -379,8 +380,6 @@ And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't sup
 - [RFC 2425](https://tools.ietf.org/html/rfc2425)
 - [RFC 6350](https://tools.ietf.org/html/rfc6350)
 - [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata)
-- [CPAN](http://search.cpan.org/perldoc?Text%3A%3AvCard%3A%3APrecisely)
-- [GitHub](https://github.com/worthmine/Text-vCard-Precisely)
 
 # AUTHOR
 

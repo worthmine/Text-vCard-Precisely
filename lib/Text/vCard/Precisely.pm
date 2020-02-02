@@ -1,7 +1,7 @@
 # ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely;
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -226,6 +226,7 @@ Accepts/returns an ArrayRef that looks like:
  ]
 
 After version 0.18, B<content will not be validated as phone numbers> All I<Str> type is accepted.
+So you have to validate phone numbers with your way.
 
 =head2 adr(), address()
 
@@ -431,14 +432,6 @@ L<RFC 6350|https://tools.ietf.org/html/rfc6350>
 =item
 
 L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
-
-=item
-
-L<CPAN|http://search.cpan.org/perldoc?Text%3A%3AvCard%3A%3APrecisely>
-
-=item
-
-L<GitHub|https://github.com/worthmine/Text-vCard-Precisely>
 
 =back
 
