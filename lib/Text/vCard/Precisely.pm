@@ -118,11 +118,6 @@ Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely. they cause some Moji
 
 Android 4.4.x can't parse vCard4.0
 
-
-=item
-
-I wanted to learn Moose, of course
-
 =back
 
 To handle an address book with several vCard entries in it, start with
@@ -229,6 +224,8 @@ Accepts/returns an ArrayRef that looks like:
     { type => ['work'], content => '651-290-1234', preferred => 1 },
     { type => ['home'], content => '651-290-1111' },
  ]
+
+After version 0.18, B<content will not be validated as phone numbers> All I<Str> type is accepted.
 
 =head2 adr(), address()
 
