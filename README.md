@@ -3,10 +3,6 @@
 
 Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisely
 
-<div>
-    <a href="https://travis-ci.org/worthmine/Text-vCard-Precisely"><img src="https://travis-ci.org/worthmine/Text-vCard-Precisely.svg?branch=master"></a>
-</div>
-
 # SYNOPSIS
 
     my $vc = Text::vCard::Precisely->new();

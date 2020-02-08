@@ -1,6 +1,6 @@
 package Text::vCard::Precisely;
 
-our $VERSION = '0.18';
+our $VERSION = '0.19';
 
 use Moose;
 use Moose::Util::TypeConstraints;
