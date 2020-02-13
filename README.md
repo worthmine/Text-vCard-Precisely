@@ -337,13 +337,17 @@ I don't know well about in Android or Windows. Somebody please feedback me
 
 **It's DEPRECATED from 4.0** You can use this method Just ONLY in vCard3.0
 
-## aroud UTF-8
+# For operating files with multiple vCards
+
+See [Text::vCard::Precisely::Multiple](https://metacpan.org/pod/Text::vCard::Precisely::Multiple)
+
+# aroud UTF-8
 
 If you want to send precisely the vCard with UTF-8 characters to the **ALMOST** of smartphones, Use 3.0
 
 It seems to be TOO EARLY to use 4.0
 
-## for under perl-5.12.5
+# for under perl-5.12.5
 
 This module uses `\P{ascii}` in regexp so You have to use 5.12.5 and later
 
@@ -354,6 +358,7 @@ And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't sup
 - [RFC 2426](https://tools.ietf.org/html/rfc2426)
 - [RFC 2425](https://tools.ietf.org/html/rfc2425)
 - [RFC 6350](https://tools.ietf.org/html/rfc6350)
+- [Text::vCard::Precisely::Multiple](https://metacpan.org/pod/Text::vCard::Precisely::Multiple)
 - [Text::vFile::asData](https://github.com/richardc/perl-text-vfile-asdata)
 
 # AUTHOR

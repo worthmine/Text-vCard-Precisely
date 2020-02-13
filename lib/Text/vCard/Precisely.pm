@@ -377,13 +377,17 @@ I don't know well about in Android or Windows. Somebody please feedback me
 
 B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
 
-=head2 aroud UTF-8
+=head1 For operating files with multiple vCards
+
+See L<Text::vCard::Precisely::Multiple|https://metacpan.org/pod/Text::vCard::Precisely::Multiple>
+
+=head1 aroud UTF-8
 
 If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> of smartphones, Use 3.0
 
 It seems to be TOO EARLY to use 4.0
 
-=head2 for under perl-5.12.5
+=head1 for under perl-5.12.5
 
 This module uses C<\P{ascii}> in regexp so You have to use 5.12.5 and later
 
@@ -404,6 +408,10 @@ L<RFC 2425|https://tools.ietf.org/html/rfc2425>
 =item
 
 L<RFC 6350|https://tools.ietf.org/html/rfc6350>
+
+=item
+
+L<Text::vCard::Precisely::Multiple|https://metacpan.org/pod/Text::vCard::Precisely::Multiple>
 
 =item
 

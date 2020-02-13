@@ -156,11 +156,11 @@ Text::vCard::Precisely::Multiple - some add-on for Text::vCard::Precisely
 
  and
 
- $vcm->as_string();;;
+ $vcm->as_string();
 
  or
 
- $vcm->as_file('outp;ut.vcf');
+ $vcm->as_file('output.vcf');
 
 =cut
 
@@ -195,7 +195,8 @@ Accepts an ArrayRef that looks like below:
         }],
         EMAIL => 'forrestgump@example.com',
         REV => '20080424T195243Z',
-    },{...};
+    },{...}
+ ];
 
 =head2 load_file($file_name)
 
@@ -221,9 +222,9 @@ These methods accept and return strings
 returns Version number of the vcard.
 Defaults to B<'3.0'> and this method is B<READONLY>
 
-=head2 aroud UTF-8
+=head1 aroud UTF-8
 
-=head2 for under perl-5.12.5
+=head1 for under perl-5.12.5
 
 This module uses Text::vCard::Precisely and it require you to use 5.12.5 and later
 
