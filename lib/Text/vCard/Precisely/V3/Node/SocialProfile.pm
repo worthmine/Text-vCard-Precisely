@@ -13,7 +13,7 @@ has content => (is => 'rw', isa => 'Str', required => 1 );
 
 subtype 'SocialProfileType'
     => as 'Str'
-    => where { m/^(:?facebook|twitter|LinkedIn|flickr|myspace|sinaweibo|LINE|GitHub|Instagram)$/is }
+    => where { m/^(:?facebook|twitter|LinkedIn|flickr|myspace|sinaweibo|LINE|GitHub|Instagram|youtube|twitch)$/is }
     => message { "The text you provided, $_, was not supported in 'SocialProfileType'" };
 has types => ( is => 'rw', isa => 'SocialProfileType', required => 1 );
 
