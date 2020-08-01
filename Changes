@@ -2,6 +2,9 @@ Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
 
+0.23 2020-08-01T05:25:01Z
+  - optimized the PODs for reading
+
 0.22 2020-08-01T02:03:50Z
   - just fixed broken POD
 
