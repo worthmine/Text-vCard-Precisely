@@ -23,10 +23,10 @@ use Path::Tiny;
 Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precisely
 
 =head1 SYNOPSIS
-
- my $vc = Text::vCard::Precisely->new( version => '3.0' );
+ my $vc = Text::vCard::Precisely->new();
  # Or you can write like below if you want to be expressly using 3.0:
- #my $vc = Text::vCard::Precisely::V3->new();
+ my $vc3 = Text::vCard::Precisely->new( version => '3.0' );
+ #or $vc3 = Text::vCard::Precisely::V3->new();
 
  $vc->n([ 'Gump', 'Forrest', , 'Mr', '' ]);
  $vc->fn( 'Forrest Gump' );
@@ -379,6 +379,7 @@ These methods accept and return strings
 =head2 version()
 
 returns Version number of the vcard. Defaults to B<'3.0'> and this method is B<READONLY>
+
 =cut
 
 has version => ( is => 'ro', isa => 'Str', default => '3.0' );
