@@ -1,6 +1,6 @@
 package Text::vCard::Precisely::V3;
 
-our $VERSION = '0.21';
+our $VERSION = '0.22';
 
 use 5.8.9;
 

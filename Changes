@@ -2,6 +2,9 @@ Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
 
+0.22 2020-08-01T02:03:50Z
+  - just fixed broken POD
+
 0.21 2020-08-01T01:34:02Z
   - Added YouTube and Twitch as SocialProfile options
   - replaced wrong regexps
