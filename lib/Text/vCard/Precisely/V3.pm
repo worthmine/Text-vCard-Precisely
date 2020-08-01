@@ -2,7 +2,7 @@ package Text::vCard::Precisely::V3;
 
 our $VERSION = '0.22';
 
-use 5.8.9;
+use 5.12.5;
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -78,7 +78,8 @@ Text::vCard B<doesn't provide> full methods based on L<RFC2426|https://tools.iet
 
 =item
 
-Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely. they cause some Mojibake
+Mac OS X and iOS can't parse vCard4.0 with UTF-8 precisely.
+they cause some Mojibake
 
 =item
 
@@ -87,10 +88,11 @@ Android 4.4.x can't parse vCard4.0
 =back
 
 To handle an address book with several vCard entries in it, start with
-L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData> and then come back to this module.
+L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData>
+and then come back to this module.
 
-Note that the vCard RFC requires FN type.
-And this module does not check or warn if these conditions have not been met.
+Note that the vCard RFC requires C<FN> type.
+And this module does NOT check or warn if these conditions have not been met.
 
 =cut
 
@@ -266,7 +268,7 @@ sub _parse_param {
 =head2 as_string()
 
 Returns the vCard as a string.
-You have to use Encode::encode_utf8() if your vCard is written in utf8
+You have to use C<Encode::encode_utf8()> if your vCard is written in utf8
 
 =cut
 
@@ -401,7 +403,7 @@ has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1 );
 =head2 name(), profile(), mailer(), agent(), class();
 
 These Types will be DEPRECATED in vCard4.0 and it seems they are useless
-So just sapport as B<READONLY> methods
+So just support it as B<READONLY> methods
  
 =cut
 
@@ -410,7 +412,9 @@ has $will_be_deprecated => ( is => 'ro', isa => 'Str' );
 =head1 COMPLEX GETTERS/SETTERS
 
 They are based on Moose with coercion.
-So, these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str.
+So, these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str],
+single HashRef or single Str.
+
 Read source if you were confused.
 
 =head2 n()
@@ -678,8 +682,11 @@ has [qw|note org title role categories fn nickname geo key label|] =>
 
 =head2 sort_string()
 
-To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://metacpan.org/pod/Text::vCard::Precisely::V4> supports it)
+To specify the family name, given name or organization text
+to be used for national-language-specific sorting of the FN, N and ORG
+B<This method will be DEPRECATED in vCard4.0> Use C<SORT-AS> param instead of it.
+
+L<Text::vCard::Precisely::V4|https://metacpan.org/pod/Text::vCard::Precisely::V4> supports it.
 
 =cut
 
@@ -699,9 +706,11 @@ has uid => ( is => 'rw', isa => 'UID' );
 =head2 tz(), timezone()
 
 Both are same method with Alias
+
 To specify information related to the time zone of the object the vCard represents
 utc-offset format is NOT RECOMMENDED in vCard4.0
 TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426> or L<RFC6350|https://tools.ietf.org/html/rfc6350>
+
 So it just supports some text values
 
 =cut
@@ -715,6 +724,7 @@ has tz => ( is => 'rw', isa => 'TimeZones', coerce => 1 );
 =head2 bday(), birthday()
 
 Both are same method with Alias
+
 To specify the birth date of the object the vCard represents
  
 =cut
@@ -746,7 +756,7 @@ has [qw|source sound|] => ( is => 'rw', isa => 'URLs', coerce => 1 );
 
 =head2 socialprofile()
  
-There is no documents about X-SOCIALPROFILE in RFC but it works!
+There is no documents about C<X-SOCIALPROFILE> in RFC but it works!
 
 =cut
 
@@ -797,14 +807,14 @@ sub timezone {
 
 =head1 aroud UTF-8
 
-if you want to send precisely the vCard3.0 with UTF-8 characters to the B<Android4.4.x or before>, you have to set Charset param for each values like below:
+if you want to send precisely the vCard3.0 with UTF-8 characters to the 
+B<Android4.4.x or before>, you have to set Charset param for each values like below:
 
  ADR;CHARSET=UTF-8:201号室;マンション;通り;市;都道府県;郵便番号;日本
 
 =head1 for under perl-5.12.5
 
 This module uses C<\P{ascii}> in regexp so You have to use 5.12.5 and later
-And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them
 
 =head1 SEE ALSO
 
@@ -835,4 +845,3 @@ L<Yuki Yoshida(worthmine)|https://github.com/worthmine>
 =head1 LICENSE
 
 This is free software; you can redistribute it and/or modify it under the same terms as Perl.
- 

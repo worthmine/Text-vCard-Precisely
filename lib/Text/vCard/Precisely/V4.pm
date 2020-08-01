@@ -19,17 +19,17 @@ Text::vCard::Precisely::V4 - Read, Write and Edit B<vCards 4.0>
 
 =head1 SYNOPSIS
  
-You can unlock types that will be available in vCard 4.0
+You can unlock types that will be available in vCard4.0
 
  my $vc = Text::vCard::Precisely->new( version => '4.0' );
  # Or you can write like below:
- #my $vc = Text::vCard::Precisely::V4->new();
+ my $vc4 = Text::vCard::Precisely::V4->new();
 
 The Usage is same with L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
 
 =head1 DESCRIPTION
 
-This module is an additional version for reading/writing for vCard 4.0. it's just a wrapper of L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
+This module is an additional version for reading/writing for vCard4.0. it's just a wrapper of L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
 
 B<Caution!> It's NOT be recommended because some reasons below:
 
@@ -45,7 +45,7 @@ Android 4.4.x can't parse vCard4.0.
 
 =back
 
-Note that the vCard RFC requires FN type.
+Note that the vCard RFC requires C<FN> type.
 And this module does not check or warn if these conditions have not been met.
 
 =cut
@@ -88,7 +88,7 @@ override '_parse_param' => sub {
 =head2 as_string()
 
 Returns the vCard as a string.
-You HAVE TO use encode_utf8() if your vCard is written in utf8
+You HAVE TO use C<Encode::encode_utf8()> if your vCard is written in utf8
 
 =cut
 
@@ -148,7 +148,8 @@ The format in as_string() is B<different from 3.0>, but the interface is SAME
 
 They are based on Moose with coercion
 
-So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef or single Str
+So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str],
+single HashRef or single Str
 
 Read source if you were confused
 
@@ -459,7 +460,7 @@ B<They're DEPRECATED in 4.0>
 
 =head2 sort_string()
 
-Use SORT-AS param instead of it
+Use C<SORT-AS> param instead of it
 
 =cut
 
@@ -470,7 +471,7 @@ sub sort_string {
 
 =head2 label()
 
-Use LABEL param in ADR instead of it
+Use C<LABEL> param in C<ADR> instead of it
 
 =cut
 
@@ -487,48 +488,47 @@ There is no method for these, just warn if you use them
 
 sub class {
     my $self = shift;
-    croak "'CLASS' Type is DEPRECATED in vCard4.0!";
+    croak "'CLASS' Type is DEPRECATED from vCard4.0!";
 }
 
 sub name {
     my $self = shift;
-    croak "'NAME' Type is DEPRECATED in vCard4.0!";
+    croak "'NAME' Type is DEPRECATED from vCard4.0!";
 }
 
 sub profile {
     my $self = shift;
-    croak "'PROFILE' Type is DEPRECATED in vCard4.0!";
+    croak "'PROFILE' Type is DEPRECATED from vCard4.0!";
 }
 
 sub mailer {
     my $self = shift;
-    croak "'MAILER' Type is DEPRECATED in vCard4.0!";
+    croak "'MAILER' Type is DEPRECATED from vCard4.0!";
 }
 
 =head2 agent()
 
-Use AGENT param in RELATED instead of it
+Use C<AGENT> param in C<RELATED> instead of it
 
 =cut
 
 sub agent {
     my $self = shift;
-    croak "'AGENT' Type is DEPRECATED in vCard4.0! Use AGENT param in RELATED instead of it";
+    croak "'AGENT' Type is DEPRECATED from vCard4.0! Use AGENT param in RELATED instead of it";
 }
 
 1;
 
 =head1 aroud UTF-8
 
-If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> of smartphones, Use 3.0
+If you want to send precisely the vCard with UTF-8 characters to
+the B<ALMOST> of smartphones, Use 3.0
 
 It seems to be TOO EARLY to use 4.0
 
 =head1 for under perl-5.12.5
 
-This module uses \P{ascii} in regexp so You have to use 5.12.5 and later
-
-And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them
+This module uses C<\P{ascii}> in regexp so You have to use 5.12.5 and later
 
 =head1 SEE ALSO
 
