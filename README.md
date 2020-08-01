@@ -61,7 +61,7 @@ because some reason below:
 To handle an address book with several vCard entries in it, start with
 [Text::vFile::asData](https://metacpan.org/pod/Text::vFile::asData) and then come back to this module.
 
-Note that the vCard RFC requires version() and full\_name().  This module does not check or warn yet if these conditions have not been met
+Note that the vCard RFC requires `VERSION` and `FN`.  This module does not check or warn yet if these conditions have not been met
 
 # Constructors
 
@@ -116,7 +116,7 @@ Accepts a vCard string
 ## as\_string()
 
 Returns the vCard as a string.
-You have to use Encode::encode\_utf8() if your vCard is written in utf8
+You have to use `Encode::encode_utf8()` if your vCard is written in utf8
 
 ## as\_file($filename)
 
@@ -139,9 +139,9 @@ To specify revision information about the current vCard
 ## sort\_string()
 
 To specify the family name, given name or organization text to be used for
-national-language-specific sorting of the FN, N and ORG.
+national-language-specific sorting of the `FN`, `N` and `ORG`.
 
-**This method is DEPRECATED in vCard4.0** Use SORT-AS param instead of it.
+**This method is DEPRECATED in vCard4.0** Use `SORT-AS` param instead of it.
 
 # COMPLEX GETTERS/SETTERS
 
@@ -265,7 +265,7 @@ To specify information related to the time zone of the object the vCard represen
 
 utc-offset format is NOT RECOMMENDED from vCard4.0
 
-TZ can be a URL, but there is no document in
+`TZ` can be a URL, but there is no document in
  [RFC2426](https://tools.ietf.org/html/rfc2426)
 or [RFC6350](https://tools.ietf.org/html/rfc6350)
 
@@ -294,7 +294,7 @@ the name property value of the vCard
 
 ## socialprofile()
 
-There is no documents about X-SOCIALPROFILE in RFC but it works in iOS and Mac OS X!
+There is no documents about `X-SOCIALPROFILE` in RFC but it works in iOS and Mac OS X!
 
 I don't know well about in Android or Windows. Somebody please feedback me
 
@@ -316,8 +316,6 @@ It seems to be TOO EARLY to use 4.0
 # for under perl-5.12.5
 
 This module uses `\P{ascii}` in regexp so You have to use 5.12.5 and later
-
-And this module uses Data::Validate::URI and it has bug on 5.8.x. so I can't support them
 
 # SEE ALSO
 
