@@ -1,4 +1,3 @@
-# ABSTRACT: turns baubles into trinkets
 package Text::vCard::Precisely::V3;
 
 our $VERSION = '0.21';
@@ -23,6 +22,7 @@ use Path::Tiny;
 Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precisely
 
 =head1 SYNOPSIS
+
  my $vc = Text::vCard::Precisely->new();
  # Or you can write like below if you want to be expressly using 3.0:
  my $vc3 = Text::vCard::Precisely->new( version => '3.0' );
