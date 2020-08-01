@@ -66,9 +66,9 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
 
 =head1 DESCRIPTION
 
-A vCard is a digital business card. vCard and L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> provide an API for parsing vCards.
+A vCard is a digital business card. vCard and L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData> provide an API for parsing vCards.
 
-This module is forked from L<Text::vCard|https://github.com/ranguard/text-vcard> because some reason below:
+This module is forked from L<Text::vCard|https://metacpan.org/pod/Text::vCard> because some reason below:
 
 =over
 
@@ -87,7 +87,7 @@ Android 4.4.x can't parse vCard4.0
 =back
 
 To handle an address book with several vCard entries in it, start with
-L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> and then come back to this module.
+L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData> and then come back to this module.
 
 Note that the vCard RFC requires FN type.
 And this module does not check or warn if these conditions have not been met.
@@ -640,6 +640,7 @@ To specify information related to the global positioning of the object the vCard
 To specify a public key or authentication certificate associated with the object that the vCard represents
 
 =head2 label()
+
 ToDo: because B<It's DEPRECATED in 4.0>
 To specify the formatted text corresponding to delivery address of the object the vCard represents
 
@@ -678,7 +679,7 @@ has [qw|note org title role categories fn nickname geo key label|] =>
 =head2 sort_string()
 
 To specify the family name, given name or organization text to be used for national-language-specific sorting of the FN, N and ORG
-B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm> supports it)
+B<This method will be DEPRECATED in vCard4.0> Use SORT-AS param instead of it. (L<Text::vCard::Precisely::V4|https://metacpan.org/pod/Text::vCard::Precisely::V4> supports it)
 
 =cut
 
@@ -819,11 +820,11 @@ L<RFC 2425|https://tools.ietf.org/html/rfc2425>
 
 =item
 
-L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
+L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData>
 
 =item
 
-L<Text::vCard::Precisely::V4 on GitHub|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V4.pm>
+L<Text::vCard::Precisely::V4|https://metacpan.org/pod/Text::vCard::Precisely::V4>
 
 =back
 

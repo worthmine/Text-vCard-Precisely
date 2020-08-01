@@ -77,9 +77,9 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
 =head1 DESCRIPTION
 
 A vCard is a digital business card.
-vCard and L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> provides an API for parsing vCards
+vCard and L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData> provides an API for parsing vCards
 
-This module is forked from L<Text::vCard|https://github.com/ranguard/text-vcard>
+This module is forked from L<Text::vCard|https://metacpan.org/pod/Text::vCard>
 because some reason below:
 
 =over
@@ -99,7 +99,7 @@ Android 4.4.x can't parse vCard4.0
 =back
 
 To handle an address book with several vCard entries in it, start with
-L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata> and then come back to this module.
+L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData> and then come back to this module.
 
 Note that the vCard RFC requires version() and full_name().  This module does not check or warn yet if these conditions have not been met
 
@@ -417,7 +417,7 @@ L<Text::vCard::Precisely::Multiple|https://metacpan.org/pod/Text::vCard::Precise
 
 =item
 
-L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
+L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData>
 
 =back
 

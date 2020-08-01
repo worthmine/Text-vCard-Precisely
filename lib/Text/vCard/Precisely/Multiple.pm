@@ -246,7 +246,7 @@ L<RFC 6350|https://tools.ietf.org/html/rfc6350>
 
 =item
 
-L<Text::vFile::asData|https://github.com/richardc/perl-text-vfile-asdata>
+L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData>
 
 =back
 

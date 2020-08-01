@@ -25,11 +25,11 @@ You can unlock types that will be available in vCard 4.0
  # Or you can write like below:
  #my $vc = Text::vCard::Precisely::V4->new();
 
-The Usage is same with L<Text::vCard::Precisely::V3|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm>
+The Usage is same with L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
 
 =head1 DESCRIPTION
 
-This module is an additional version for reading/writing for vCard 4.0. it's just a wrapper of L<Text::vCard::Precisely::V3|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm> with Moose.
+This module is an additional version for reading/writing for vCard 4.0. it's just a wrapper of L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
 
 B<Caution!> It's NOT be recommended because some reasons below:
 
@@ -540,7 +540,7 @@ L<RFC 6350|https://tools.ietf.org/html/rfc6350>
 
 =item
 
-L<Text::vCard::Precisely::V3 on GitHub|https://github.com/worthmine/Text-vCard-Precisely/blob/master/lib/Text/vCard/Precisely/V3.pm>
+L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
 
 =item
 
