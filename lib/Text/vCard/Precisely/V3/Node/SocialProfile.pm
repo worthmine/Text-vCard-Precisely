@@ -26,15 +26,16 @@ has displayname => ( is => 'rw', isa => 'SocialProfileName', coerce => 1 );
 override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
-    push @lines, $self->name || croak "Empty name";
-    push @lines, 'ALTID=' . $self->altID if $self->can('altID') and $self->altID;
-    push @lines, 'PID=' . join ',', @{ $self->pid } if $self->can('pid') and $self->pid;
-    push @lines, 'TYPE=' . $self->types || croak "Empty types";
-    push @lines, 'X-USERID=' . $self->userid if defined $self->userid and $self->userid;
-    push @lines, 'X-DISPLAYNAME=' . $self->displayname
-        if defined $self->displayname and $self->displayname;
+    push @lines, $self->name() || croak "Empty name";
+    push @lines, 'ALTID=' . $self->altID() if $self->can('altID') and $self->altID();
+    push @lines, 'PID=' . join ',', @{ $self->pid() } if $self->can('pid') and $self->pid();
+    push @lines, 'TYPE=' . $self->types() || croak "Empty types";
+    push @lines, 'X-USERID=' . $self->userid() if defined $self->userid() and $self->userid();
+    push @lines, 'X-DISPLAYNAME=' . $self->displayname()
+        if defined $self->displayname()
+        and $self->displayname();
 
-    my $string = join( ';', @lines ) . ':' . $self->content;
+    my $string = join( ';', @lines ) . ':' . $self->content();
     return $self->fold( $string, -force => 1 );
 };
 

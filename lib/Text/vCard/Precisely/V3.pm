@@ -34,7 +34,7 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
  use GD;
  use MIME::Base64;
 
- my $img = GD->new( ... some param ... )->plot->png;
+ my $img = GD->new( ... some param ... )->plot()->png();
  my $base64 = MIME::Base64::encode($img);
 
  $vc->photo([
@@ -61,29 +61,6 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
  });
 
  $vc->url({ content => 'https://twitter.com/worthmine', types => ['twitter'] }); # for URL param
-
-And you can use X-SOCIALPROFILE type if you want like below:
-
- use Facebook::Graph;
- use Encode;
-
- my $fb = Facebook::Graph->new(
-    app_id => 'your app id',
-    secret => 'your secret key',
- );
- $fb->authorize;
- $fb->access>token( $fb->{'app_id'} . '|' . $fb->{'secret'} );
- my $q = $fb->query->find( 'some facebookID' )
- ->select>fields(qw( id name ))
- ->request
- ->as_hashref;
-
- $vc->socialprofile({ # Now you can set X-Social-Profile but Android ignore it
-    content => 'https://www.facebook/' . 'some facebookID',
-    types => 'facebook',
-    displayname => encode_utf8( $q->{'name'} ),
-    userid => $q->{'id'},
- });
 
  print $vc->as_string();
 
@@ -414,11 +391,10 @@ To specify revision information about the current vCard3.0
 
 subtype 'TimeStamp' => as 'Str' => where {m/^\d{4}-?\d{2}-?\d{2}(?:T\d{2}:?\d{2}:?\d{2}Z)?$/is}
 => message {"The TimeStamp you provided, $_, was not correct"};
-coerce 'TimeStamp',
-    from 'Int', via {
+coerce 'TimeStamp', from 'Int', via {
     my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
     return sprintf '%4d-%02d-%02dT%02d:%02d:%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
-    }, from 'ArrayRef[HashRef]', via { $_->[0]{'content'} };
+}, from 'ArrayRef[HashRef]', via { $_->[0]{'content'} };
 has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1 );
 
 =head2 name(), profile(), mailer(), agent(), class();
@@ -635,7 +611,7 @@ coerce 'Photos', from 'HashRef', via {
         map { Text::vCard::Precisely::V3::Node::Image->new( { name => $name, content => $_, } ) }
             @$_ ]
     }, from 'Object',           # when URI.pm is used
-    via { [ Text::vCard::Precisely::V3::Node::Image->new( { content => $_->as_string } ) ] };
+    via { [ Text::vCard::Precisely::V3::Node::Image->new( { content => $_->as_string() } ) ] };
 has [qw| photo logo |] => ( is => 'rw', isa => 'Photos', coerce => 1 );
 
 =head2 note()

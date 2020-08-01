@@ -32,7 +32,7 @@ override 'as_string' => sub {
     my $types = 'TYPE="' . join( ',', @types ) . '"' if @types;
     push @lines, $types if $types;
 
-#push @lines, 'TYPE=' . join( ';TYPE=', map { uc $_ } @{ $self->types } ) if @{ $self->types || [] } > 0;
+#push @lines, 'TYPE=' . join( ';TYPE=', map { uc $_ } @{ $self->types() } ) if @{ $self->types() || [] } > 0;
 
     my $string = join( ';', @lines ) . ':' . $self->content();
     return $self->fold( $string, -force => 1 );

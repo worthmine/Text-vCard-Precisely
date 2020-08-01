@@ -59,8 +59,8 @@ sub as_string {
     $node =~ tr/_/-/;
 
     push @lines, uc($node) || croak "Empty name";
-    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types } )
-        if @{ $self->types || [] } > 0;
+    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types() } )
+        if @{ $self->types() || [] } > 0;
     push @lines, 'PREF=' . $self->pref()         if $self->pref();
     push @lines, 'LANGUAGE=' . $self->language() if $self->language();
 

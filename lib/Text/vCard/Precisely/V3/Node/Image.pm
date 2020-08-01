@@ -17,7 +17,7 @@ subtype 'Images' => as 'Str' => where {
         m!^([A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$!
 } => message {"The Unvalid value you provided, $_, was not supported in 'Images'"};
 coerce 'Images' => from 'Str' =>
-    via { is_web_uri($_) && return $_->as_string or encode_base64( $_, "" ) };
+    via { is_web_uri($_) && return $_->as_string() or encode_base64( $_, "" ) };
 has content => ( is => 'rw', isa => 'Images', required => 1, coerce => 1 );
 
 subtype 'Media_type' => as 'Str' => where {m|^image/(?:X-)?[a-zA-z0-9\-]+$|is}
@@ -27,11 +27,11 @@ has media_type => ( is => 'rw', isa => 'Media_type' );
 override 'as_string' => sub {
     my ($self) = @_;
     my @lines;
-    push @lines, $self->name || croak "Empty name";
-    push @lines, "TYPE=" . $self->media_type if defined $self->media_type;
-    push @lines, "ENCODING=b" unless is_web_uri( $self->content );
+    push @lines, $self->name() || croak "Empty name";
+    push @lines, "TYPE=" . $self->media_type() if defined $self->media_type();
+    push @lines, "ENCODING=b" unless is_web_uri( $self->content() );
 
-    my $string = join( ';', @lines ) . ':' . $self->content;
+    my $string = join( ';', @lines ) . ':' . $self->content();
     return $self->fold( $string, -force => 1 );
 };
 

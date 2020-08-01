@@ -15,7 +15,7 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
     use GD;
     use MIME::Base64;
 
-    my $img = GD->new( ... some param ... )->plot->png;
+    my $img = GD->new( ... some param ... )->plot()->png();
     my $base64 = MIME::Base64::encode($img);
 
     $vc->photo([

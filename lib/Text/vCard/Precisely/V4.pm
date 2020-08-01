@@ -278,7 +278,7 @@ coerce 'v4Photos', from 'HashRef', via {
         map { Text::vCard::Precisely::V4::Node::Image->new( { name => $name, content => $_, } ) }
             @$_ ]
     }, from 'Object',           # when URI.pm is used
-    via { [ Text::vCard::Precisely::V4::Node::Image->new( { content => $_->as_string } ) ] };
+    via { [ Text::vCard::Precisely::V4::Node::Image->new( { content => $_->as_string() } ) ] };
 has [qw| photo logo |] => ( is => 'rw', isa => 'v4Photos', coerce => 1 );
 
 =head2 note()
@@ -386,14 +386,13 @@ has kind => ( is => 'rw', isa => 'KIND' );
 
 subtype 'v4TimeStamp' => as 'Str' => where {m/^\d{8}T\d{6}(?:Z(?:-\d{2}(?:\d{2})?)?)?$/is}
 => message {"The TimeStamp you provided, $_, was not correct"};
-coerce 'v4TimeStamp',
-    from 'Str', via {
+coerce 'v4TimeStamp', from 'Str', via {
     m/^(\d{4})-?(\d{2})-?(\d{2})(?:T(\d{2}):?(\d{2}):?(\d{2})Z)?$/is;
     return sprintf '%4d%02d%02dT%02d%02d%02dZ', $1, $2, $3, $4, $5, $6
-    }, from 'Int', via {
+}, from 'Int', via {
     my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
     return sprintf '%4d%02d%02dT%02d%02d%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
-    }, from 'ArrayRef[HashRef]', via { $_->[0]{content} };
+}, from 'ArrayRef[HashRef]', via { $_->[0]{content} };
 has rev => ( is => 'rw', isa => 'v4TimeStamp', coerce => 1 );
 
 =head2 member(), clientpidmap()
