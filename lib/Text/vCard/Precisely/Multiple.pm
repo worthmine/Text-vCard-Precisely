@@ -27,17 +27,17 @@ has options => (
         add_option    => 'push',
         clear_options => 'clear',
 
-        #        map_options    => 'map',
-        #        filter_options => 'grep',
-        #        find_option    => 'first',
-        #        get_option     => 'get',
-        #        join_options   => 'join',
+        #map_options    => 'map',
+        #filter_options => 'grep',
+        #find_option    => 'first',
+        #get_option     => 'get',
+        #join_options   => 'join',
         count_options => 'count',
 
-        #        has_options    => 'count',
+        #has_options    => 'count',
         has_no_options => 'is_empty',
 
-        #        sorted_options => 'sort',
+        #sorted_options => 'sort',
     },
 );
 
@@ -221,8 +221,6 @@ These methods accept and return strings
 
 returns Version number of the vcard.
 Defaults to B<'3.0'> and this method is B<READONLY>
-
-=head1 aroud UTF-8
 
 =head1 for under perl-5.12.5
 

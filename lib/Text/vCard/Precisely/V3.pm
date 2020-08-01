@@ -56,7 +56,7 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
     street    => 'Waters Edge',
     city      => 'Baytown',
     region    => 'LA',
-    post_code => '30314,
+    post_code => '30314',
     country   => 'United States of America',
  });
 
@@ -400,7 +400,7 @@ has rev => ( is => 'rw', isa => 'TimeStamp', coerce => 1 );
 
 =head2 name(), profile(), mailer(), agent(), class();
 
-These Types will be DEPRECATED in vCard 4.0 and it seems they are useless
+These Types will be DEPRECATED in vCard4.0 and it seems they are useless
 So just sapport as B<READONLY> methods
  
 =cut
@@ -641,7 +641,7 @@ To specify a public key or authentication certificate associated with the object
 
 =head2 label()
 
-ToDo: because B<It's DEPRECATED in 4.0>
+ToDo: because B<It's DEPRECATED in vCard4.0>
 To specify the formatted text corresponding to delivery address of the object the vCard represents
 
 =cut
@@ -700,7 +700,7 @@ has uid => ( is => 'rw', isa => 'UID' );
 
 Both are same method with Alias
 To specify information related to the time zone of the object the vCard represents
-utc-offset format is NOT RECOMMENDED in vCard 4.0
+utc-offset format is NOT RECOMMENDED in vCard4.0
 TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426> or L<RFC6350|https://tools.ietf.org/html/rfc6350>
 So it just supports some text values
 

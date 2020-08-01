@@ -303,13 +303,13 @@ The format is SAME as 3.0
 
 To specify the language(s) that may be used for contacting the entity associated with the vCard
 
-It's the B<new method in 4.0>
+It's the B<new method from 4.0>
 
 =head2 impp(), xml()
 
 I don't think they are so popular paramater, but here are the methods!
 
-They are the B<new method in 4.0>
+They are the B<new method from 4.0>
 
 =head2 geo(), key()
 
@@ -357,7 +357,7 @@ The formats are SAME as 3.0
 
 I don't think they are so popular types, but here are the methods!
 
-They are the B<new method in 4.0>
+They are the B<new method from 4.0>
 
 =cut
 
@@ -375,7 +375,7 @@ has related => ( is => 'rw', isa => 'Related', coerce => 1 );
 
 To specify the kind of object the vCard represents
 
-It's the B<new method in 4.0>
+It's the B<new method from 4.0>
  
 =cut
 
@@ -399,7 +399,7 @@ has rev => ( is => 'rw', isa => 'v4TimeStamp', coerce => 1 );
 
 I don't think they are so popular types, but here are the methods!
 
-It's the B<new method in 4.0>
+It's the B<new method from 4.0>
 
 =cut
 
@@ -434,13 +434,13 @@ The format is SAME as 3.0
 
 The date of marriage, or equivalent, of the object the vCard represents
  
-It's the B<new method in 4.0>
+It's the B<new method from 4.0>
 
 =head2 gender()
 
 To specify the components of the sex and gender identity of the object the vCard represents
 
-It's the B<new method in 4.0>
+It's the B<new method from 4.0>
 
 =head2 prodid()
 

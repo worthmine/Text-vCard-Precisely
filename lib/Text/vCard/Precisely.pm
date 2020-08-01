@@ -107,7 +107,7 @@ Note that the vCard RFC requires version() and full_name().  This module does no
 
 =head2 load_hashref($HashRef)
 
-Accepts an HashRef that looks like below:
+Accepts a HashRef that looks like below:
 
  my $hashref = {
     N   => [ 'Gump', 'Forrest', '', 'Mr.', '' ],
@@ -186,8 +186,9 @@ B<This method is DEPRECATED in vCard4.0> Use SORT-AS param instead of it.
 =head1 COMPLEX GETTERS/SETTERS
 
 They are based on Moose with coercion.
-So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str], single HashRef
-or single Str.
+So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str],
+single HashRef or single Str.
+
 Read source if you were confused
 
 =head2 n()
@@ -203,7 +204,9 @@ Accepts/returns an ArrayRef that looks like:
     { type => ['home'], content => '651-290-1111' },
  ]
 
-After version 0.18, B<content will not be validated as phone numbers> All I<Str> type is accepted.
+After version 0.18, B<content will not be validated as phone numbers> 
+All I<Str> type is accepted.
+
 So you have to validate phone numbers with your way.
 
 =head2 adr(), address()
@@ -252,8 +255,8 @@ or accept the string as URL like below
 
 =head2 photo(), logo()
 
-Accepts/returns an ArrayRef of URLs or Images: Even if they are raw image binary
- or text encoded in Base64, it does not matter
+Accepts/returns an ArrayRef of URLs or Images: 
+Even if they are raw image binary or text encoded in Base64, it does not matter
 
 B<Attention!> Mac OS X and iOS B<ignore> the description beeing URL
 
@@ -275,18 +278,6 @@ A person's entire name as they would like to see it displayed
 
 To specify the text corresponding to the nickname of the object the vCard represents
 
-=head2 lang()
-
-To specify the language(s) that may be used for contacting the entity associated with the vCard.
-
-It's the B<new method from 4.0>
-
-=head2 impp(), xml()
-
-I don't think they are so popular types, but here are the methods!
-
-They are the B<new method from 4.0>
-
 =head2 geo()
 
 To specify information related to the global positioning of the object the vCard represents
@@ -297,32 +288,14 @@ To specify a public key or authentication certificate associated with the object
 
 =head2 label()
 
-ToDo: because B<It's DEPRECATED from 4.0>
+ToDo: because B<It's DEPRECATED in vCard4.0>
 
 To specify the formatted text corresponding to delivery address of the object the vCard represents
 
 =head2 uid()
 
-To specify a value that represents a globally unique identifier corresponding to the individual
-or resource associated with the vCard
-
-=head2 fburl(), caladruri(), caluri()
-
-I don't think they are so popular types, but here are the methods!
-
-They are the B<new method from 4.0>
-
-=head2 kind()
-
-To specify the kind of object the vCard represents
-
-It's the B<new method from 4.0>
-
-=head2 member(), clientpidmap()
-
-I don't think they are so popular types, but here are the methods!
-
-It's the B<new method from 4.0>
+To specify a value that represents a globally unique identifier corresponding to 
+the individual or resource associated with the vCard
 
 =head2 tz(), timezone()
 
@@ -330,10 +303,12 @@ Both are same method with Alias
 
 To specify information related to the time zone of the object the vCard represents
 
-utc-offset format is NOT RECOMMENDED in vCard 4.0
+utc-offset format is NOT RECOMMENDED from vCard4.0
 
-TZ can be a URL, but there is no document in L<RFC2426|https://tools.ietf.org/html/rfc2426>
+TZ can be a URL, but there is no document in
+ L<RFC2426|https://tools.ietf.org/html/rfc2426>
 or L<RFC6350|https://tools.ietf.org/html/rfc6350>
+
 So it just supports some text values
 
 =head2 bday(), birthday()
@@ -341,18 +316,6 @@ So it just supports some text values
 Both are same method with Alias
 
 To specify the birth date of the object the vCard represents
-
-=head2 anniversary()
-
-The date of marriage, or equivalent, of the object the vCard represents
-
-It's the B<new method from 4.0>
-
-=head2 gender()
-
-To specify the components of the sex and gender identity of the object the vCard represents
-
-It's the B<new method from 4.0>
 
 =head2 prodid()
 
@@ -366,8 +329,8 @@ To identify the source of directory information contained in the content type
 
 To specify a digital sound content information that annotates some aspect of the vCard
 
-This property is often used to specify the proper pronunciation of the name property value
- of the vCard
+This property is often used to specify the proper pronunciation of 
+the name property value of the vCard
 
 =head2 socialprofile()
 
@@ -377,7 +340,7 @@ I don't know well about in Android or Windows. Somebody please feedback me
 
 =head2 label()
 
-B<It's DEPRECATED from 4.0> You can use this method Just ONLY in vCard3.0
+B<It's DEPRECATED in vCard4.0> You can use this method Just ONLY in vCard3.0
 
 =head1 For operating files with multiple vCards
 
@@ -385,7 +348,8 @@ See L<Text::vCard::Precisely::Multiple|https://metacpan.org/pod/Text::vCard::Pre
 
 =head1 aroud UTF-8
 
-If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST> of smartphones, Use 3.0
+If you want to send precisely the vCard with UTF-8 characters to the B<ALMOST>
+of smartphones, Use 3.0
 
 It seems to be TOO EARLY to use 4.0
 
