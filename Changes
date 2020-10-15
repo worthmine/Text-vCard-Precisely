@@ -2,6 +2,10 @@ Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
 
+0.26 2020-10-15T11:42:59Z
+  - made document clear
+  - make code & tests strict for RFC6350
+
 0.25 2020-10-15T07:59:12Z
   - fixed #20 (url with hashref was broken)
   - renamed the tests for contexts

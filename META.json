@@ -26,16 +26,6 @@
       ]
    },
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "Data::Section::Simple" : "0",
-            "Test::More" : "0",
-            "Text::Diff" : "0",
-            "lib" : "0",
-            "strict" : "0",
-            "warnings" : "0"
-         }
-      },
       "configure" : {
          "requires" : {
             "Module::Build::Tiny" : "0.035"
@@ -52,23 +42,24 @@
       },
       "runtime" : {
          "requires" : {
-            "Carp" : "0",
-            "Data::UUID" : "0",
-            "Data::Validate::URI" : "0",
-            "Encode" : "0",
-            "MIME::Base64" : "0",
-            "Moose" : "0",
-            "Moose::Util::TypeConstraints" : "0",
-            "MooseX::Deprecated" : "0",
-            "MooseX::Types::DateTime" : "0",
-            "MooseX::Types::Email" : "0",
-            "Path::Tiny" : "0",
-            "Text::LineFold" : "0",
-            "Text::vFile::asData" : "0",
-            "URI" : "0",
-            "overload" : "0",
-            "perl" : "v5.12.5",
-            "utf8" : "0"
+            "Data::UUID" : "1.226",
+            "Data::Validate::URI" : "0.07",
+            "Moose" : "2.2013",
+            "Moose::Util::TypeConstraints" : "2.2013",
+            "MooseX::Types::DateTime" : "0.13",
+            "MooseX::Types::Email" : "0.008",
+            "Path::Tiny" : "0.114",
+            "Text::LineFold" : "2018.012",
+            "Text::vFile::asData" : "0.08",
+            "URI" : "1.76",
+            "perl" : "v5.12.5"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Data::Section::Simple" : "0.07",
+            "Test::More" : "0",
+            "Text::Diff" : "1.45"
          }
       }
    },
@@ -84,7 +75,7 @@
          "web" : "https://github.com/worthmine/Text-vCard-Precisely"
       }
    },
-   "version" : "0.25",
+   "version" : "0.26",
    "x_contributors" : [
       "Mohammad S Anwar <Mohammad.Anwar@yahoo.com>",
       "Robin Mordasiewicz <robin@mordasiewicz.com>",
