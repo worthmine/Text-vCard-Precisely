@@ -2,6 +2,10 @@ Revision history for Perl extension Text-vCard-Precisely
 
 {{$NEXT}}
 
+0.24 2020-10-15T01:56:14Z
+  - bug fixed for not overridden with using 'Text::vCard::Precisely->new(version => '4.0');'
+  - renamed the tests for correct order
+
 0.23 2020-08-01T05:25:01Z
   - optimized the PODs for reading
 
