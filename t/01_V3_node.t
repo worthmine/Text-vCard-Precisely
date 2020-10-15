@@ -45,12 +45,12 @@ $vc->categories( [ { content => 'fisher' } ] );
 $vc->note( [ { content => "It's a note!" } ] );
 $vc->geo( [ { content => '39.95;-75.1667' } ] );
 $vc->label(
-    [   {   types   => ['home'],
+    [   {   types   => 'home',
             content => '123 Main St.\nSpringfield, IL 12345\nUSA'
         }
     ]
 );    # DEPRECATED in vCard4.0
-$vc->key( [ { types => ['PGP'], content => 'http://example.com/key.pgp' } ] );
+$vc->key( [ { types => 'PGP', content => 'http://example.com/key.pgp' } ] );
 
 is $vc->as_string, $expected_content, 'Node(ArrayRef of HashRef)';    # 3
 

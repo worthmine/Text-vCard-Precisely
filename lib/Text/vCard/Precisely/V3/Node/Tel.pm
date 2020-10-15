@@ -19,10 +19,10 @@ has content => ( is => 'rw', default => '', isa => 'Str' );
 has preferred => ( is => 'rw', default => 0, isa => 'Bool' );
 
 subtype 'TelType' => as 'Str' => where {
-    m/^(?:work|home|pref)$/is or                                #common
+    m/^(?:work|home|pref)$/is ||                                #common
         m/^(?:text|voice|fax|cell|video|pager|textphone)$/is    # for tel
 } => message {"The text you provided, $_, was not supported in 'TelType'"};
-has types => ( is => 'rw', isa => 'ArrayRef[Maybe[TelType]]', default => sub { [] }, );
+has types => ( is => 'rw', isa => 'ArrayRef[Maybe[TelType]]', default => sub { [] } );
 
 override 'as_string' => sub {
     my ($self) = @_;

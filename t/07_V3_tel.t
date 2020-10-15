@@ -21,8 +21,8 @@ $in_file          = path( 't', 'V3', 'Tel', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8();
 
 $vc->tel(
-    [   { types => ['home'], content => '0120-000-000' },
-        { types => ['fax'],  content => '+12 345 6789 0123' },
+    [   { types => 'home', content => '0120-000-000' },
+        { types => 'fax',  content => '+12 345 6789 0123' },
     ]
 );
 is $vc->as_string(), $expected_content, 'tel(ArrayRef of HashRef)';    # 3

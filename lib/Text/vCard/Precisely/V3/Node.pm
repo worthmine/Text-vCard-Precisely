@@ -37,7 +37,10 @@ subtype 'Type' => as 'Str' => where {
     m/^(?:work|home|PGP)$/is or                       #common
         m|^(?:[a-zA-z0-9\-]+/X-[a-zA-z0-9\-]+)$|s;    # does everything pass?
 } => message {"The text you provided, $_, was not supported in 'Type'"};
-has types => ( is => 'rw', isa => 'ArrayRef[Type]', default => sub { [] } );
+
+subtype 'Types' => as 'ArrayRef[Type]';
+coerce 'Types'  => from 'Str' => via { [$_] };
+has types       => ( is => 'rw', isa => 'Types', default => sub { [] }, coerce => 1 );
 
 subtype 'Language' => as 'Str' =>
     where {m|^[a-z]{2}(?:-[a-z]{2})?$|s}              # does it need something strictly?

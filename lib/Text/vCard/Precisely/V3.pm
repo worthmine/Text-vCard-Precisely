@@ -452,14 +452,12 @@ coerce 'Tels',
     from 'Str',
     via { [ Text::vCard::Precisely::V3::Node::Tel->new( { content => $_ } ) ] },
     from 'HashRef', via {
-    [   Text::vCard::Precisely::V3::Node::Tel->new(
-            { %$_, types => [ @{ $_->{'types'} || [] } ] }
-        )
-    ]
+    my $types = ref( $_->{'types'} ) eq 'ARRAY' ? $_->{'types'} : [ $_->{'types'} ];
+    [ Text::vCard::Precisely::V3::Node::Tel->new( { %$_, types => $types } ) ]
     }, from 'ArrayRef[HashRef]', via {
     [   map {
-            Text::vCard::Precisely::V3::Node::Tel->new(
-                { %$_, types => [ @{ $_->{'types'} || [] } ], %$_ } )
+            my $types = ref( $_->{'types'} ) eq 'ARRAY' ? $_->{'types'} : [ $_->{'types'} ];
+            Text::vCard::Precisely::V3::Node::Tel->new( { %$_, types => $types } )
         } @$_
     ]
     };

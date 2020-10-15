@@ -8,8 +8,8 @@ use Moose::Util::TypeConstraints;
 
 extends 'Text::vCard::Precisely::V3::Node';
 
-has name => ( is => 'ro', default => 'URL', isa => 'Str' );
-has types => ( is => 'rw', isa => 'ArrayRef[Str]' );
+has name  => ( is => 'ro', default => 'URL',   isa    => 'Str' );
+has types => ( is => 'rw', isa     => 'Types', coerce => 1 );
 
 subtype 'URL' => as 'Str';
 coerce 'URL'  => from 'Str' => via { [ URI->new($_)->as_string() ] };

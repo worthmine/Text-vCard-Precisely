@@ -25,24 +25,24 @@ is $vc->as_string, $expected_content, 'Node(Str)';    # 1
 $in_file          = path( 't', 'V4', 'Node', 'hash.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$vc->key( { types => ['PGP'], content => 'http://example.com/key.pgp' } );
+$vc->key( { types => 'PGP', content => 'http://example.com/key.pgp' } );
 is $vc->as_string, $expected_content, 'Node(HashRef)';    # 2
 
 $in_file          = path( 't', 'V4', 'Node', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$vc->fn( [ { content => 'Forrest Gump' } ] );
-$vc->nickname( [ { content => 'Gumpy' } ] );
-$vc->org( [ { content => 'Bubba Gump Shrimp Co.' } ] );
-$vc->impp( [ { content => 'aim:johndoe@aol.com' } ] );
+$vc->fn( { content => 'Forrest Gump' } );
+$vc->nickname( { content => 'Gumpy' } );
+$vc->org( { content => 'Bubba Gump Shrimp Co.' } );
+$vc->impp( { content => 'aim:johndoe@aol.com' } );
 $vc->lang( [ { content => 'en-us' }, { content => 'ja-jp' } ] );
-$vc->title( [ { content => 'Shrimp Man' } ] );
-$vc->role( [ { content => 'Section 9' } ] );
-$vc->categories( [ { content => 'fisher' } ] );
-$vc->note( [ { content => "It's a note!" } ] );
-$vc->xml( [ { content => '<b>Not an xCard XML element</b>' } ] );
-$vc->geo( [ { content => '39.95;-75.1667' } ] );
-$vc->key( [ { types   => ['PGP'], content => 'http://example.com/key.pgp' } ] );
+$vc->title( { content => 'Shrimp Man' } );
+$vc->role( { content => 'Section 9' } );
+$vc->categories( { content => 'fisher' } );
+$vc->note( { content => "It's a note!" } );
+$vc->xml( { content => '<b>Not an xCard XML element</b>' } );
+$vc->geo( { content => '39.95;-75.1667' } );
+$vc->key( { types   => 'PGP', content => 'http://example.com/key.pgp' } );
 
 is $vc->as_string, $expected_content, 'Node(ArrayRef of HashRef)';    # 3
 

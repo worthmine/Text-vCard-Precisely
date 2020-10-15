@@ -16,11 +16,11 @@ my $hashref = {
     PHOTO =>
         { media_type => 'image/gif', content => 'http://www.example.com/dir_photos/my_photo.gif' },
     TEL => [
-        { types => [ 'WORK', 'VOICE' ], content => '(111) 555-1212' },
-        { types => [ 'HOME', 'VOICE' ], content => '(404) 555-1212' },
+        { types => [qw(WORK VOICE)], content => '(111) 555-1212' },
+        { types => [qw(HOME VOICE)], content => '(404) 555-1212' },
     ],
     ADR => [
-        {   types     => ['work'],
+        {   types     => 'work',
             pref      => 1,
             extended  => 100,
             street    => 'Waters Edge',
@@ -29,7 +29,7 @@ my $hashref = {
             post_code => '30314',
             country   => 'United States of America'
         },
-        {   types     => ['home'],
+        {   types     => 'home',
             extended  => 42,
             street    => 'Plantation St.',
             city      => 'Baytown',

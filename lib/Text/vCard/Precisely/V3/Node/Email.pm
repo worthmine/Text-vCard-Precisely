@@ -18,7 +18,9 @@ subtype 'EmailType' => as 'Str' => where {
         m/^(?:contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is # 本当にこれでいのか怪しい
 } => message {"The Email you provided, $_, was not supported in 'Type'"};
 
-has types => ( is => 'rw', isa => 'ArrayRef[EmailType]', default => sub { [] } );
+subtype 'EmailTypes' => as 'ArrayRef[EmailType]';
+coerce 'EmailTypes'  => from 'Str' => via { [$_] };
+has types            => ( is => 'rw', isa => 'EmailTypes', default => sub { [] }, coerce => 1 );
 
 override 'as_string' => sub {
     my ($self) = @_;
