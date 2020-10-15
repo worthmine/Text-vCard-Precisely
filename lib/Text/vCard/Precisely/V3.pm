@@ -160,11 +160,9 @@ sub load_hashref {
         next unless $method and $content;
         if ( ref $content eq 'Hash' ) {
             $self->$method( { name => uc($key), %$content } );
-        }
-        elsif ( ref $content eq 'Array' ) {
+        } elsif ( ref $content eq 'Array' ) {
             $self->$method( { name => uc($key), @$content } );
-        }
-        else {
+        } else {
             $self->$method($content);
         }
     }
@@ -212,29 +210,24 @@ sub _make_hashref {
             if ( $name eq 'N' ) {
                 my @names = split /(?<!\\);/, $node->{'value'};
                 $hashref->{$name} ||= \@names;
-            }
-            elsif ( $name eq 'TEL' ) {
+            } elsif ( $name eq 'TEL' ) {
                 my $content = $node->{'value'};
                 $hashref->{$name} = [] unless exists $hashref->{$name};
                 if ( ref( $node->{'params'} ) eq 'ARRAY' ) {
                     my @types = map { values %$_ } @{ $node->{'params'} };
                     push @{ $hashref->{$name} }, { types => \@types, content => $content };
-                }
-                elsif ( ref( $node->{'param'} ) eq 'HASH' ) {
+                } elsif ( ref( $node->{'param'} ) eq 'HASH' ) {
                     push my @types, sort @{ $node->{'params'} } if ref $node->{'params'};
                     push @{ $hashref->{$name} }, { types => \@types, content => $content };
-                }
-                else {
+                } else {
                     push my @types, $node->{'param'};
                     push @{ $hashref->{$name} }, { types => \@types, content => $content };
                 }
                 $hashref->{$name} ||= $content;
-            }
-            elsif ( $name eq 'REV' ) {
+            } elsif ( $name eq 'REV' ) {
                 $hashref->{$name} ||= $node->{'value'};
-            }
-            elsif ( $name eq 'ADR' ) {
-                my $ref      = $self->_parse_param($node);
+            } elsif ( $name eq 'ADR' ) {
+                my $ref = $self->_parse_param($node);
                 my @addesses = split /(?<!\\);/, $node->{'value'};
                 $ref->{'pobox'}     = $addesses[0];
                 $ref->{'extended'}  = $addesses[1];
@@ -244,8 +237,7 @@ sub _make_hashref {
                 $ref->{'post_code'} = $addesses[5];
                 $ref->{'country'}   = $addesses[6];
                 push @{ $hashref->{$name} }, $ref;
-            }
-            else {
+            } else {
                 my $ref = $self->_parse_param($node);
                 $ref->{'content'} = $node->{'value'};
                 push @{ $hashref->{$name} }, $ref;
@@ -291,7 +283,7 @@ sub as_string {
     my $str = $self->_header();
     $str .= $self->_make_types(@types);
     $str .= 'BDAY:' . $self->bday() . $cr if $self->bday();
-    $str .= 'UID:' . $self->uid() . $cr if $self->uid();
+    $str .= 'UID:' . $self->uid() . $cr   if $self->uid();
     $str .= $self->_footer();
     $str = $self->_fold($str);
     return decode( $self->encoding_out(), $str ) unless $self->encoding_out() eq 'none';
@@ -317,17 +309,15 @@ sub _make_types {
             foreach my $item ( @{ $self->$method } ) {
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ) {
                     $str .= $item->as_string();
-                }
-                elsif ($item) {
+                } elsif ($item) {
                     $str .= uc($node) . ":" . $item->as_string() . $cr;
                 }
             }
-        }
-        elsif ( $self->$method() and $self->$method()->isa('Text::vCard::Precisely::V3::Node::N') )
+        } elsif ( $self->$method()
+            and $self->$method()->isa('Text::vCard::Precisely::V3::Node::N') )
         {
             $str .= $self->$method()->as_string();
-        }
-        elsif ( $self->$method ) {
+        } elsif ( $self->$method ) {
             $str .= $self->$method();
         }
     }
@@ -545,10 +535,10 @@ or accept the string as URL like below
 
 subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
 coerce 'URLs', from 'Str', via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [ Text::vCard::Precisely::V3::Node::URL->new( { name => $name, content => $_ } ) ]
 }, from 'HashRef[Str]', via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [
         Text::vCard::Precisely::V3::Node::URL->new(
             {   name    => $name,
@@ -558,7 +548,7 @@ coerce 'URLs', from 'Str', via {
     ]
 }, from 'Object',    # Can't asign 'URI' or 'Object[URI]'
     via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [
         Text::vCard::Precisely::V3::Node::URL->new(
             {   name    => $name,
@@ -581,7 +571,7 @@ Attention! Mac OS X and iOS B<ignore> the description beeing URL
 
 subtype 'Photos' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Image]';
 coerce 'Photos', from 'HashRef', via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [
         Text::vCard::Precisely::V3::Node::Image->new(
             {   name       => $name,
@@ -601,7 +591,7 @@ coerce 'Photos', from 'HashRef', via {
     ]
 }, from 'Str',    # when parse BASE64 encoded strings
     via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [
         Text::vCard::Precisely::V3::Node::Image->new(
             {   name    => $name,
@@ -611,7 +601,7 @@ coerce 'Photos', from 'HashRef', via {
     ]
     }, from 'ArrayRef[Str]',    # when parse BASE64 encoded strings
     via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [
         map { Text::vCard::Precisely::V3::Node::Image->new( { name => $name, content => $_, } ) }
             @$_ ]
@@ -652,10 +642,10 @@ To specify the formatted text corresponding to delivery address of the object th
 
 subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
 coerce 'Node', from 'Str', via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [ Text::vCard::Precisely::V3::Node->new( { name => $name, content => $_ } ) ]
 }, from 'HashRef', via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [
         Text::vCard::Precisely::V3::Node->new(
             {   name    => $_->{'name'}    || $name,
@@ -665,7 +655,7 @@ coerce 'Node', from 'Str', via {
         )
     ]
 }, from 'ArrayRef[HashRef]', via {
-    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
     return [
         map {
             Text::vCard::Precisely::V3::Node->new(
