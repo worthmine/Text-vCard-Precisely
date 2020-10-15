@@ -537,23 +537,17 @@ subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
 coerce 'URLs', from 'Str', via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [ Text::vCard::Precisely::V3::Node::URL->new( { name => $name, content => $_ } ) ]
-}, from 'HashRef[Str]', via {
+}, from 'HashRef', via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
-        Text::vCard::Precisely::V3::Node::URL->new(
-            {   name    => $name,
-                content => $_->{'content'}
-            }
-        )
+        Text::vCard::Precisely::V3::Node::URL->new( { name => $name, content => $_->{'content'} } )
     ]
 }, from 'Object',    # Can't asign 'URI' or 'Object[URI]'
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V3::Node::URL->new(
-            {   name    => $name,
-                content => $_->as_string(),
-            }
+            { name => $name, content => $_->as_string(), }
         )
     ]
     }, from 'ArrayRef[HashRef]', via {
