@@ -326,8 +326,8 @@ coerce 'v4Node', from 'Str', via {
     my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
     return [
         Text::vCard::Precisely::V4::Node->new(
-            {   name  => $_->{'name'}  || $name,
-                types => $_->{'types'} || [],
+            {   name    => $_->{'name'}  || $name,
+                types   => $_->{'types'} || [],
                 sort_as => $_->{'sort_as'},
                 content => $_->{'content'} || croak "No value in HashRef!",
             }
@@ -338,8 +338,8 @@ coerce 'v4Node', from 'Str', via {
     return [
         map {
             Text::vCard::Precisely::V4::Node->new(
-                {   name  => $_->{'name'}  || $name,
-                    types => $_->{'types'} || [],
+                {   name    => $_->{'name'}  || $name,
+                    types   => $_->{'types'} || [],
                     sort_as => $_->{'sort_as'},
                     content => $_->{'content'} || croak "No value in HashRef!",
                 }
