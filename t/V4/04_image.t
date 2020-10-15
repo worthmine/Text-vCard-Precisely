@@ -6,11 +6,9 @@ use MIME::Base64;
 use URI;
 use List::Util qw(first);
 
-use lib qw(./lib);
-use Text::vCard::Precisely::V4;
-
 use Test::More tests => 7;
 
+use Text::vCard::Precisely::V4;
 my $vc = Text::vCard::Precisely::V4->new();
 
 my $img = <<'EOL';
@@ -20,29 +18,28 @@ AAAAASUVORK5CYII=
 EOL
 $img =~ s/\s//g;
 
-my $in_file = path( 't', 'V4', 'Image', 'base.vcf' );
+my $in_file          = path( 't', 'V4', 'Image', 'base.vcf' );
 my $expected_content = $in_file->slurp_utf8;
 
 $vc->photo($img);
 $vc->logo($img);
-is $vc->as_string, $expected_content, 'photo(Base64)';                  # 1
+is $vc->as_string, $expected_content, 'photo(Base64)';    # 1
 
-$in_file = path( 't', 'V4', 'Image', 'uri.vcf' );
+$in_file          = path( 't', 'V4', 'Image', 'uri.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $uri = URI->new('https://www.example.com/image.png');
 $vc->photo($uri);
-is $vc->as_string, $expected_content, 'photo(URL)';                     # 2
+is $vc->as_string, $expected_content, 'photo(URL)';       # 2
 
-$in_file = path( 't', 'V4', 'Image', 'hash.vcf' );
+$in_file          = path( 't', 'V4', 'Image', 'hash.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 $vc->photo( { media_type => 'image/png', content => $img } );
-$vc->logo(  { media_type => 'image/png', content => $img } );
-is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';       # 3
+$vc->logo( { media_type => 'image/png', content => $img } );
+is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';    # 3
 
-
-$in_file = path( 't', 'V4', 'Image', 'maltiple.vcf' );
+$in_file          = path( 't', 'V4', 'Image', 'maltiple.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
 my $img2 = <<'EOL';
@@ -69,23 +66,24 @@ igAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAP/2Q==
 EOL
 $img2 =~ s/\s//g;
 
-$vc->photo([ $img, $img2 ]);
-is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';      # 4
+$vc->photo( [ $img, $img2 ] );
+is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';    # 4
 
-$in_file = path( 't', 'V4', 'Image', 'maltiple_base64.vcf' );
+$in_file          = path( 't', 'V4', 'Image', 'maltiple_base64.vcf' );
 $expected_content = $in_file->slurp_utf8;
 
-$vc->photo([
-    { media_type => 'image/png',  content => $img },
-    { media_type => 'image/jpeg', content => $img2 },
-]);
-is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)';     # 5
+$vc->photo(
+    [   { media_type => 'image/png',  content => $img },
+        { media_type => 'image/jpeg', content => $img2 },
+    ]
+);
+is $vc->as_string, $expected_content, 'photo(ArrayRef of HashRef)';    # 5
 
 SKIP: {
-    eval{ require GD };
+    eval { require GD };
     skip "GD is not installed: $@", 2 if $@;
 
-    my $gd = new GD::Image( 100, 100 );
+    my $gd    = new GD::Image( 100, 100 );
     my $black = $gd->colorAllocate( 0, 0, 0 );
     $gd->rectangle( 0, 0, 99, 99, $black );
 
@@ -100,9 +98,10 @@ SKIP: {
     $vc->photo($raw);
     $vc->logo($raw);
     my $got = $vc->as_string;
-    if ( first{ $got eq $_ } @expected ){                                # 6
+    if ( first { $got eq $_ } @expected ) {    # 6
         pass 'photo(raw)';
-    }else{
+    } else {
+
         # this will fail, to have $got & $expect printed out for diagnostics
         is $got, $expected[1], 'photo(raw)';
     }
@@ -112,25 +111,30 @@ SKIP: {
     my $raw2 = $gd->jpeg;
 
     @expected = ();
-    $in_file = path( 't', 'V4', 'Image', 'maltiple_gd.vcf' );
+    $in_file  = path( 't', 'V4', 'Image', 'maltiple_gd.vcf' );
     push @expected, $in_file->slurp_utf8;
     $in_file = path( 't', 'V4', 'Image', 'maltiple_gd2.vcf' );
     push @expected, $in_file->slurp_utf8;
-#    $in_file = path( 't', 'V4', 'Image', 'maltiple_gd3.vcf' );
-#    push @expected, $in_file->slurp_utf8;
 
-    $vc->photo([
-        { media_type => 'image/png',  content => $raw },
-        { media_type => 'image/jpeg', content => $raw2 },
-    ]);
+    #    $in_file = path( 't', 'V4', 'Image', 'maltiple_gd3.vcf' );
+    #    push @expected, $in_file->slurp_utf8;
+
+    $vc->photo(
+        [   { media_type => 'image/png',  content => $raw },
+            { media_type => 'image/jpeg', content => $raw2 },
+        ]
+    );
     $vc->logo( { media_type => 'image/png', content => $raw } );
     $got = $vc->as_string;
-    $got =~ s|\Q+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBkZWZhdWx0IHF1Y|+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBkZWZhdWx0IHF1Y|m;
-    $got =~ s|\Q+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2OTApLCBkZWZhdWx0IHF1Y|+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBkZWZhdWx0IHF1Y|m;
+    $got
+        =~ s|\Q+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2NjIpLCBkZWZhdWx0IHF1Y|+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBkZWZhdWx0IHF1Y|m;
+    $got
+        =~ s|\Q+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2OTApLCBkZWZhdWx0IHF1Y|+Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBkZWZhdWx0IHF1Y|m;
 
-    if ( first{ $got eq $_ } @expected ){                                # 7
+    if ( first { $got eq $_ } @expected ) {    # 7
         pass 'photo(ArrayRef of Hashref of raw)';
-    }else{
+    } else {
+
         # this will fail, to have $got & $expect printed out for diagnostics
         is $got, $expected[1], 'photo(ArrayRef of Hashref of raw)';
     }

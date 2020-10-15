@@ -5,37 +5,37 @@ use Test::More tests => 10;
 use Path::Tiny qw(path);
 use Data::Section::Simple qw(get_data_section);
 use Text::Diff qw(diff);
-use lib qw(./lib);
 
-BEGIN { use_ok ('Text::vCard::Precisely::Multiple') };                                                  # 1
-my $vcm = new_ok('Text::vCard::Precisely::Multiple');                                                   # 2
+BEGIN { use_ok('Text::vCard::Precisely::Multiple') };    # 1
+my $vcm = new_ok('Text::vCard::Precisely::Multiple');    # 2
 
 my $path = path( 't', 'Multiple', 'example.vcf' );
 $vcm->load_file($path);
 
-foreach my $vc ( $vcm->all_options() ){
+foreach my $vc ( $vcm->all_options() ) {
     next unless $vc->fn();
+
     #note $vc->as_string();
     $vc->fn()->[0] =~ /^FN:(\w+)/;
-    is $vc->isa('Text::vCard::Precisely'), 1, "loading vCard for $1 succeeded.";                        # 3-7
+    is $vc->isa('Text::vCard::Precisely'), 1, "loading vCard for $1 succeeded.";    # 3-7
 }
 
 my $got = $vcm->as_file('got.vcf');
-open my $fh_got, '<', $got;
-open my $fh_expected, '<', $^O eq 'MSWin32'? path( 't', 'Multiple', 'windows.vcf' ): $path;
-is diff( $fh_got, $fh_expected ), '', "method as_file succeeded.";                                      # 8
+open my $fh_got,      '<', $got;
+open my $fh_expected, '<', $^O eq 'MSWin32' ? path( 't', 'Multiple', 'windows.vcf' ) : $path;
+is diff( $fh_got, $fh_expected ), '', "method as_file succeeded.";                  # 8
 close $fh_got;
 close $fh_expected;
 $got->remove();
 
 my $arrayref = [];
-my $e = get_data_section('array.pl');
+my $e        = get_data_section('array.pl');
 eval $e or die $@;
 $vcm->load_arrayref($arrayref);
-is $vcm->count_options(), 2, "loading from ArrayRef succeeded.";                                        # 9
+is $vcm->count_options(), 2, "loading from ArrayRef succeeded.";                    # 9
 
 ( my $gump = get_data_section('Gump') ) =~ s/\n/\r\n/g;
-is $vcm->as_string(), $gump, "method as_string succeeded.";                                             #10
+is $vcm->as_string(), $gump, "method as_string succeeded.";                         #10
 
 done_testing;
 

@@ -5,7 +5,6 @@ use URI;
 
 use Test::More tests => 2;
 
-use lib qw(./lib);
 use Text::vCard::Precisely::V3;
 
 my $vc = Text::vCard::Precisely::V3->new();
