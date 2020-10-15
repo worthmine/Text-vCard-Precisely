@@ -22,7 +22,7 @@ override 'as_string' => sub {
     push @lines, 'ALTID=' . $self->altID() if $self->can('altID') and $self->altID();
     push @lines, 'PID=' . join ',', @{ $self->pid() } if $self->can('pid') and $self->pid();
     push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types() } )
-        if @{ $self->types() || [] } > 0;
+        if ref $self->types() eq 'ARRAY' and $self->types()->[0];
 
     my $string = join( ';', @lines ) . ':' . $self->content();
     return $self->fold( $string, -force => 1 );
