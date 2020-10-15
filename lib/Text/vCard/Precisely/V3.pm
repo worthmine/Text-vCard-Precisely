@@ -535,10 +535,10 @@ or accept the string as URL like below
 
 subtype 'URLs' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::URL]';
 coerce 'URLs', from 'Str', via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [ Text::vCard::Precisely::V3::Node::URL->new( { name => $name, content => $_ } ) ]
 }, from 'HashRef[Str]', via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V3::Node::URL->new(
             {   name    => $name,
@@ -548,7 +548,7 @@ coerce 'URLs', from 'Str', via {
     ]
 }, from 'Object',    # Can't asign 'URI' or 'Object[URI]'
     via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V3::Node::URL->new(
             {   name    => $name,
@@ -571,7 +571,7 @@ Attention! Mac OS X and iOS B<ignore> the description beeing URL
 
 subtype 'Photos' => as 'ArrayRef[Text::vCard::Precisely::V3::Node::Image]';
 coerce 'Photos', from 'HashRef', via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V3::Node::Image->new(
             {   name       => $name,
@@ -591,7 +591,7 @@ coerce 'Photos', from 'HashRef', via {
     ]
 }, from 'Str',    # when parse BASE64 encoded strings
     via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V3::Node::Image->new(
             {   name    => $name,
@@ -601,7 +601,7 @@ coerce 'Photos', from 'HashRef', via {
     ]
     }, from 'ArrayRef[Str]',    # when parse BASE64 encoded strings
     via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         map { Text::vCard::Precisely::V3::Node::Image->new( { name => $name, content => $_, } ) }
             @$_ ]
@@ -642,10 +642,10 @@ To specify the formatted text corresponding to delivery address of the object th
 
 subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
 coerce 'Node', from 'Str', via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [ Text::vCard::Precisely::V3::Node->new( { name => $name, content => $_ } ) ]
 }, from 'HashRef', via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V3::Node->new(
             {   name    => $_->{'name'}    || $name,
@@ -655,7 +655,7 @@ coerce 'Node', from 'Str', via {
         )
     ]
 }, from 'ArrayRef[HashRef]', via {
-    my $name = uc( split( /::/, ( caller(2) )[3] ) )[-1];
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         map {
             Text::vCard::Precisely::V3::Node->new(
