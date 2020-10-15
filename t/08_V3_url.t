@@ -10,7 +10,7 @@ use Text::vCard::Precisely::V3;
 my $vc = Text::vCard::Precisely::V3->new();
 
 my $in_file          = path( 't', 'V3', 'URI', 'base.vcf' );
-my $expected_content = $in_file->slurp_utf8;
+my $expected_content = $in_file->slurp_utf8();
 
 $vc->url('https://www.example.com');
 $vc->source('https://www.example.com');

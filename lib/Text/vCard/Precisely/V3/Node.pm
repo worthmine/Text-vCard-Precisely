@@ -44,7 +44,7 @@ subtype 'Language' => as 'Str' =>
 => message {"The Language you provided, $_, was not supported"};
 has language => ( is => 'rw', isa => 'Language' );
 
-sub charset {                                         # DEPRECATED in vCard 3.0
+sub charset {    # DEPRECATED in vCard 3.0
     my $self = shift;
     croak "'CHARSET' param is DEPRECATED! vCard3.0 will accept just ONLY UTF-8";
 }

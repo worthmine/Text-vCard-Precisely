@@ -362,7 +362,7 @@ They are the B<new method from 4.0>
 
 =cut
 
-has [qw|source sound url fburl caladruri caluri|] => ( is => 'rw', isa => 'URLs', coerce => 1 );
+has [qw|source sound fburl caladruri caluri|] => ( is => 'rw', isa => 'URL', coerce => 1 );
 
 subtype 'Related' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Related]';
 coerce 'Related',
