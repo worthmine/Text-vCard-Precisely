@@ -44,8 +44,11 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
 
  use GD;
  use MIME::Base64;
+ my $gd = GD::Image->new( 100, 100 );
+ my $black = $gd->colorAllocate( 0, 0, 0 );
+ $gd->rectangle( 0, 0, 99, 99, $black );
 
- my $img = GD->new( ... some param ... )->plot()->png();
+ my $img = $gd->png();
  my $base64 = MIME::Base64::encode($img);
 
  $vc->photo([
@@ -78,9 +81,9 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
 =head1 DESCRIPTION
 
 A vCard is a digital business card.
-vCard and L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData> provides an API for parsing vCards
+vCard and L<Text::vFile::asData> provides an API for parsing vCards
 
-This module is forked from L<Text::vCard|https://metacpan.org/pod/Text::vCard>
+This module is forked from L<Text::vCard>
 because some reason below:
 
 =over
@@ -100,7 +103,7 @@ Android 4.4.x can't parse vCard4.0
 =back
 
 To handle an address book with several vCard entries in it, start with
-L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData> and then come back to this module.
+L<Text::vFile::asData> and then come back to this module.
 
 Note that the vCard RFC requires C<VERSION> and C<FN>.  This module does not check or warn yet if these conditions have not been met
 
@@ -345,7 +348,7 @@ B<It's DEPRECATED in vCard4.0> You can use this method Just ONLY in vCard3.0
 
 =head1 For operating files with multiple vCards
 
-See L<Text::vCard::Precisely::Multiple|https://metacpan.org/pod/Text::vCard::Precisely::Multiple>
+See L<Text::vCard::Precisely::Multiple>
 
 =head1 aroud UTF-8
 
@@ -376,17 +379,17 @@ L<RFC 6350|https://tools.ietf.org/html/rfc6350>
 
 =item
 
-L<Text::vCard::Precisely::Multiple|https://metacpan.org/pod/Text::vCard::Precisely::Multiple>
+L<Text::vCard::Precisely::Multiple>
 
 =item
 
-L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData>
+L<Text::vFile::asData>
 
 =back
 
 =head1 AUTHOR
 
-L<Yuki Yoshida(worthmine)|https://github.com/worthmine>
+Yuki Yoshida(L<worthmine|https://github.com/worthmine>)
 
 =head1 LICENSE
 

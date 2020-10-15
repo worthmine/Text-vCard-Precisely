@@ -33,8 +33,11 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
 
  use GD;
  use MIME::Base64;
+ my $gd = GD::Image->new( 100, 100 );
+ my $black = $gd->colorAllocate( 0, 0, 0 );
+ $gd->rectangle( 0, 0, 99, 99, $black );
 
- my $img = GD->new( ... some param ... )->plot()->png();
+ my $img = $gd->png();
  my $base64 = MIME::Base64::encode($img);
 
  $vc->photo([
@@ -88,7 +91,7 @@ Android 4.4.x can't parse vCard4.0
 =back
 
 To handle an address book with several vCard entries in it, start with
-L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData>
+L<Text::vFile::asData>
 and then come back to this module.
 
 Note that the vCard RFC requires C<FN> type.
@@ -812,17 +815,17 @@ L<RFC 2425|https://tools.ietf.org/html/rfc2425>
 
 =item
 
-L<Text::vFile::asData|https://metacpan.org/pod/Text::vFile::asData>
+L<Text::vFile::asData>
 
 =item
 
-L<Text::vCard::Precisely::V4|https://metacpan.org/pod/Text::vCard::Precisely::V4>
+L<Text::vCard::Precisely::V4>
 
 =back
 
 =head1 AUTHOR
 
-L<Yuki Yoshida(worthmine)|https://github.com/worthmine>
+Yuki Yoshida(L<worthmine|https://github.com/worthmine>)
 
 =head1 LICENSE
 

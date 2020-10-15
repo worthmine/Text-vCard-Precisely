@@ -25,7 +25,7 @@ You can unlock types that will be available in vCard4.0
  # Or you can write like below:
  my $vc4 = Text::vCard::Precisely::V4->new();
 
-The Usage is same with L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
+The Usage is same with L<Text::vCard::Precisely::V3>
 
 =head1 DESCRIPTION
 
@@ -535,7 +535,7 @@ L<RFC 6350|https://tools.ietf.org/html/rfc6350>
 
 =item
 
-L<Text::vCard::Precisely::V3|https://metacpan.org/pod/Text::vCard::Precisely::V3>
+L<Text::vCard::Precisely::V3>
 
 =item
 
@@ -545,7 +545,7 @@ L<vCard on Wikipedia|https://en.wikipedia.org/wiki/VCard>
  
 =head1 AUTHOR
  
-L<Yuki Yoshida(worthmine)|https://github.com/worthmine>
+Yuki Yoshida(L<worthmine|https://github.com/worthmine>)
 
 =head1 LICENSE
 

@@ -43,7 +43,6 @@ $vc->note( { content => "It's a note!" } );
 $vc->xml( { content => '<b>Not an xCard XML element</b>' } );
 $vc->geo( { content => '39.95;-75.1667' } );
 $vc->key( { types   => 'PGP', content => 'http://example.com/key.pgp' } );
-
 is $vc->as_string, $expected_content, 'Node(ArrayRef of HashRef)';    # 3
 
 $in_file          = path( 't', 'V4', 'Node', 'utf8.vcf' );
