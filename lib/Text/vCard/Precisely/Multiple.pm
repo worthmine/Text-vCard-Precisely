@@ -104,7 +104,9 @@ Text::vCard::Precisely::Multiple - some add-on for Text::vCard::Precisely
 
 =head1 SYNOPSIS
 
- my $vcm = Text::vCard::Precisely::Multiple->new(); # default is 3.0
+ use Text::vCard::Precisely::Multiple;
+ my $vcm  = Text::vCard::Precisely::Multiple->new();                    # default is 3.0
+ my $vcm4 = Text::vCard::Precisely::Multiple->new( version => '4.0' );  # for using 4.0
  
  my $path = path( 'some', 'dir', 'example.vcf' );
  $vcm->load_file($path);

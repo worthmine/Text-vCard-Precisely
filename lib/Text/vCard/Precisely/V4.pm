@@ -21,6 +21,7 @@ Text::vCard::Precisely::V4 - Read, Write and Edit B<vCards 4.0>
  
 You can unlock types that will be available in vCard4.0
 
+ use Text::vCard::Precisely;
  my $vc = Text::vCard::Precisely->new( version => '4.0' );
  # Or you can write like below:
  my $vc4 = Text::vCard::Precisely::V4->new();
