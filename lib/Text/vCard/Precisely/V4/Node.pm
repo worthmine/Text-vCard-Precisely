@@ -20,7 +20,7 @@ enum 'Name' => [
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
 subtype 'SortAs' => as 'Str' =>
-    where { use utf8; decode_utf8($_) =~ m|^[\p{ascii}\w\s]+$|s }    # Does everything pass?
+    where { decode_utf8($_) =~ m|^[\p{ascii}\w\s]+$|s }    # Does everything pass?
 => message {"The SORT-AS you provided, $_, was not supported"};
 has sort_as => ( is => 'rw', isa => 'Maybe[SortAs]' );
 

@@ -23,7 +23,6 @@ enum 'Name' => [
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
 subtype 'Content' => as 'Str' => where {
-    use utf8;
     decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s
 }    # Does it need to be more strictly?
 => message {"The value you provided, $_, was not supported"};
@@ -87,7 +86,6 @@ sub fold {
         ;    # line break with 75bytes
     my $decoded = decode_utf8($string);
 
-    use utf8;
     $string =~ s/(?<!\r)\n/\t/g;
     $string
         = ( $decoded =~ /\P{ascii}+/ || $arg{'-force'} )
