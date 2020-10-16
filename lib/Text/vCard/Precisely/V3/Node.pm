@@ -1,7 +1,7 @@
 package Text::vCard::Precisely::V3::Node;
 
 use Carp;
-use Encode qw( decode_utf8 encode_utf8 );
+use Encode qw( decode_utf8 );
 
 use 5.12.5;
 use Text::LineFold;
@@ -24,7 +24,7 @@ has name => ( is => 'rw', required => 1, isa => 'Name' );
 
 subtype 'Content' => as 'Str' => where {
     use utf8;
-    decode_utf8($_) =~ m|^[\w\p{ascii}\s]*$|s
+    decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s
 }    # Does it need to be more strictly?
 => message {"The value you provided, $_, was not supported"};
 has content => ( is => 'rw', required => 1, isa => 'Content' );

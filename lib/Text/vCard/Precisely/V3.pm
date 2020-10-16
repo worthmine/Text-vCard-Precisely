@@ -10,10 +10,10 @@ use MooseX::Types::DateTime qw(TimeZone);
 
 use Carp;
 use Data::UUID;
-use Encode;
 use Text::LineFold;
 use URI;
 use Path::Tiny;
+use Encode qw(encode decode);
 
 =encoding utf8
 
@@ -290,8 +290,7 @@ sub as_string {
     $str .= 'UID:' . $self->uid() . $cr   if $self->uid();
     $str .= $self->_footer();
     $str = $self->_fold($str);
-    return decode( $self->encoding_out(), $str ) unless $self->encoding_out() eq 'none';
-    return $str;
+    return decode( $self->encoding_out(), $str );
 }
 
 sub _header {
@@ -636,8 +635,8 @@ To specify the formatted text corresponding to delivery address of the object th
 
 =cut
 
-subtype 'Node' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
-coerce 'Node', from 'Str', via {
+subtype 'Nodes' => as 'ArrayRef[Text::vCard::Precisely::V3::Node]';
+coerce 'Nodes', from 'Str', via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [ Text::vCard::Precisely::V3::Node->new( { name => $name, content => $_ } ) ]
 }, from 'HashRef', via {
@@ -664,7 +663,7 @@ coerce 'Node', from 'Str', via {
     ]
 };
 has [qw|note org title role categories fn nickname geo key label|] =>
-    ( is => 'rw', isa => 'Node', coerce => 1 );
+    ( is => 'rw', isa => 'Nodes', coerce => 1 );
 
 =head2 sort_string()
 
@@ -676,7 +675,7 @@ L<Text::vCard::Precisely::V4|https://metacpan.org/pod/Text::vCard::Precisely::V4
 
 =cut
 
-has sort_string => ( is => 'rw', isa => 'Node', coerce => 1 );
+has sort_string => ( is => 'rw', isa => 'Nodes', coerce => 1 );
 
 =head2 uid()
 

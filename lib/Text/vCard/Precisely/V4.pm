@@ -119,8 +119,7 @@ sub as_string {
 
     $str .= $self->_footer();
     $str = $self->_fold($str);
-    return decode( $self->encoding_out(), $str ) unless $self->encoding_out() eq 'none';
-    return $str;
+    return decode( $self->encoding_out(), $str );
 }
 
 =head2 as_file($filename)
