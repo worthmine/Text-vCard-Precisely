@@ -35,7 +35,7 @@ $vc->fn('Forrest Gump');
 $vc->nickname('Gumpy');
 $vc->org('Bubba Gump Shrimp Co.');
 $vc->impp('aim:johndoe@aol.com');
-$vc->lang( [ { content => 'en-us' }, { content => 'ja-jp' } ] );
+$vc->lang( [ 'en-us', 'ja-jp' ] );
 $vc->title('Shrimp Man');
 $vc->role('Section 9');
 $vc->categories('fisher');

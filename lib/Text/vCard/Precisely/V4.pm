@@ -102,8 +102,6 @@ my @types = qw(
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
 
-# ToDo: to accept SORT-AS param in FN and ORG. only N is allowed this.
-
 sub as_string {
     my ($self) = @_;
     my $str = $self->_header();
@@ -313,8 +311,8 @@ The format is SAME as 3.0
 
 =cut
 
-subtype 'v4Node' => as 'ArrayRef[Text::vCard::Precisely::V4::Node]';
-coerce 'v4Node', from 'Str', via {
+subtype 'v4Nodes' => as 'ArrayRef[Text::vCard::Precisely::V4::Node]';
+coerce 'v4Nodes', from 'Str', via {
     my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
     return [ Text::vCard::Precisely::V4::Node->new( { name => $name, content => $_ } ) ]
 }, from 'HashRef', via {
@@ -327,6 +325,14 @@ coerce 'v4Node', from 'Str', via {
                 content => $_->{'content'} || croak "No value in HashRef!",
             }
         )
+    ]
+}, from 'ArrayRef[Str]', via {
+    my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
+    return [
+        map {
+            Text::vCard::Precisely::V4::Node->new(
+                { name => $name, content => $_ || croak "No value in ArrayRef[Str]!", } )
+        } @$_
     ]
 }, from 'ArrayRef[HashRef]', via {
     my $name = uc [ split( /::/, [ caller(2) ]->[3] ) ]->[-1];
@@ -343,7 +349,7 @@ coerce 'v4Node', from 'Str', via {
     ]
 };
 has [qw|note org title role fn lang impp xml geo key|] =>
-    ( is => 'rw', isa => 'v4Node', coerce => 1 );
+    ( is => 'rw', isa => 'v4Nodes', coerce => 1 );
 
 =head2 source(), sound()
 
