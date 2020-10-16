@@ -1,7 +1,7 @@
 package Text::vCard::Precisely::V3::Node;
 
 use Carp;
-use Encode qw( decode_utf8 );
+use Encode qw( decode_utf8 encode_utf8 is_utf8);
 
 use 5.12.5;
 use Text::LineFold;
@@ -20,12 +20,12 @@ enum 'Name' => [
         X-SOCIALPROFILE
         )
 ];
-has name => ( is => 'rw', required => 1, isa => 'Name' );
+has name          => ( is => 'rw', required => 1, isa => 'Name' );
+subtype 'Content' => as 'Str';                                       # => where {
 
-subtype 'Content' => as 'Str' => where {
-    decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s
-}    # Does it need to be more strictly?
-=> message {"The value you provided, $_, was not supported"};
+#    !is_utf8($_) && decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s  # It seems these lines
+#}    # Does it need to be more strictly?                       # do NOT work
+#=> message {"The value you provided, $_, was not supported"};
 has content => ( is => 'rw', required => 1, isa => 'Content' );
 
 subtype 'Preffered' => as 'Int' => where { $_ > 0 and $_ <= 100 }

@@ -201,7 +201,7 @@ sub load_string {
     my ( $self, $str ) = @_;
     my @lines   = split /\r\n/, $str;
     my $data    = $vf->parse_lines(@lines);
-    my $hashref = $self->_make_hashref( $data->{'objects'}[0]->{properties} );
+    my $hashref = $self->_make_hashref( $data->{'objects'}[0]->{'properties'} );
     $self->load_hashref($hashref);
 }
 
@@ -264,23 +264,21 @@ sub _parse_param {
 =head2 as_string()
 
 Returns the vCard as a string.
-You have to use C<Encode::encode_utf8()> if your vCard is written in utf8
+You have to use C<Encode::encode_utf8()> if your vCard is written in UTF-8
 
 =cut
 
 my $cr = "\x0D\x0A";
 our $will_be_deprecated = [qw(name profile mailer agent class)];
 
-my @types = (
-    qw(
-        FN N NICKNAME
-        ADR LABEL TEL EMAIL GEO
-        ORG TITLE ROLE CATEGORIES
-        NOTE SOUND UID URL KEY
-        SOCIALPROFILE PHOTO LOGO SOURCE
-        SORT-STRING
-        ), map {uc} @$will_be_deprecated
-);
+my @types = qw(
+    FN N NICKNAME
+    ADR LABEL TEL EMAIL GEO
+    ORG TITLE ROLE CATEGORIES
+    NOTE SOUND UID URL KEY
+    SOCIALPROFILE PHOTO LOGO SOURCE
+    SORT-STRING
+    ), map {uc} @$will_be_deprecated;
 
 sub as_string {
     my ($self) = @_;
@@ -577,7 +575,7 @@ coerce 'Photos', from 'HashRef', via {
     ]
 }, from 'ArrayRef[HashRef]', via {
     [   map {
-            if ( ref $_->{types} eq 'ARRAY' ) {
+            if ( ref $_->{'types'} eq 'ARRAY' ) {
                 ( $_->{'media_type'} ) = @{ $_->{'types'} };
                 delete $_->{'types'};
             }
