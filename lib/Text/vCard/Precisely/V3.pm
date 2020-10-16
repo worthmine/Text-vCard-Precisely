@@ -104,6 +104,7 @@ use Text::vFile::asData;
 my $vf = Text::vFile::asData->new( { preserve_params => 1 } );
 
 use Text::vCard::Precisely::V3::Node;
+use Text::vCard::Precisely::V3::Node::MultiContent;
 use Text::vCard::Precisely::V3::Node::N;
 use Text::vCard::Precisely::V3::Node::Address;
 use Text::vCard::Precisely::V3::Node::Tel;
@@ -308,6 +309,10 @@ sub _make_types {
         croak "the Method you provided, $node is not supported." unless $method;
         if ( ref $self->$method eq 'ARRAY' ) {
             foreach my $item ( @{ $self->$method } ) {
+
+                #if ( $item->isa('Text::vCard::Precisely::V3::Node::MultiContent') ) {
+                #    $str .= $item->as_string();
+                #} els
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ) {
                     $str .= $item->as_string();
                 } elsif ($item) {
@@ -618,6 +623,18 @@ A person's entire name as they would like to see it displayed
 
 To specify the text corresponding to the nickname of the object the vCard represents
 
+=cut
+
+subtype 'SeparatedByComma' => as 'Text::vCard::Precisely::V3::Node::MultiContent';
+coerce 'SeparatedByComma', from 'Str', via {
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
+    return Text::vCard::Precisely::V3::Node::MultiContent->new( { name => $name, content => [$_] } )
+}, from 'ArrayRef[Str]', via {
+    my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
+    return Text::vCard::Precisely::V3::Node::MultiContent->new( { name => $name, content => $_ } )
+};
+has [qw|categories nickname|] => ( is => 'rw', isa => 'SeparatedByComma', coerce => 1 );
+
 =head2 geo()
 
 To specify information related to the global positioning of the object the vCard represents
@@ -660,8 +677,7 @@ coerce 'Nodes', from 'Str', via {
         } @$_
     ]
 };
-has [qw|note org title role categories fn nickname geo key label|] =>
-    ( is => 'rw', isa => 'Nodes', coerce => 1 );
+has [qw|note org title role fn geo key label|] => ( is => 'rw', isa => 'Nodes', coerce => 1 );
 
 =head2 sort_string()
 

@@ -12,20 +12,19 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 enum 'Name' => [
-    qw( FN N SORT_STRING
-        ADR LABEL TEL EMAIL PHOTO LOGO URL
-        TZ GEO NICKNAME KEY NOTE
-        ORG TITLE ROLE CATEGORIES
-        SOURCE SOUND
+    qw( FN N SORT_STRING ORG TITLE ROLE
+        ADR LABEL TEL EMAIL PHOTO LOGO URL SOURCE SOUND
+        TZ GEO KEY NOTE
         X-SOCIALPROFILE
         )
 ];
-has name          => ( is => 'rw', required => 1, isa => 'Name' );
-subtype 'Content' => as 'Str';                                       # => where {
+has name => ( is => 'rw', required => 1, isa => 'Name' );
+
+subtype 'Content' => as 'Str';    # => where {
 
 #    !is_utf8($_) && decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s  # It seems these lines
 #}    # Does it need to be more strictly?                       # do NOT work
-#=> message {"The value you provided, $_, was not supported"};
+#=> message {"The value you provided, $_, was not supported"};  # like what I've thought
 has content => ( is => 'rw', required => 1, isa => 'Content' );
 
 subtype 'Preffered' => as 'Int' => where { $_ > 0 and $_ <= 100 }

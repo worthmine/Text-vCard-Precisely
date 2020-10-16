@@ -9,10 +9,9 @@ use Moose::Util::TypeConstraints;
 extends 'Text::vCard::Precisely::V3::Node';
 
 enum 'Name' => [
-    qw( FN
+    qw( FN ORG TITLE ROLE
         ADR TEL EMAIL PHOTO LOGO URL
-        TZ GEO NICKNAME IMPP LANG XML KEY NOTE
-        ORG TITLE ROLE CATEGORIES
+        TZ GEO IMPP LANG XML KEY NOTE
         SOURCE SOUND FBURL CALADRURI CALURI
         RELATED X-SOCIALPROFILE
         )

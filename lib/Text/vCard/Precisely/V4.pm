@@ -102,7 +102,7 @@ my @types = qw(
     XML KEY SOCIALPROFILE PHOTO LOGO SOURCE
 );
 
-# ToDo: to accept SORT-AS param in FN,N,ORG
+# ToDo: to accept SORT-AS param in FN and ORG. only N is allowed this.
 
 sub as_string {
     my ($self) = @_;
@@ -342,7 +342,7 @@ coerce 'v4Node', from 'Str', via {
         } @$_
     ]
 };
-has [qw|note org title role categories fn nickname lang impp xml geo key|] =>
+has [qw|note org title role fn lang impp xml geo key|] =>
     ( is => 'rw', isa => 'v4Node', coerce => 1 );
 
 =head2 source(), sound()
