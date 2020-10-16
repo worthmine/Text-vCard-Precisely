@@ -1,6 +1,6 @@
 package Text::vCard::Precisely;
 
-our $VERSION = '0.26';
+our $VERSION = '0.27';
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -275,6 +275,11 @@ To specify supplemental information or a comment that is associated with the vCa
 
 To specify additional information for your jobs
 
+In these, C<CATEGORIES> may have multiple content with being separated by COMMA.
+multiple content is expressed by using ArrayRef like this:
+
+ $vc->categories([qw(Internet Travel)]);
+
 =head2 fn(), full_name(), fullname()
 
 A person's entire name as they would like to see it displayed
@@ -282,6 +287,10 @@ A person's entire name as they would like to see it displayed
 =head2 nickname()
 
 To specify the text corresponding to the nickname of the object the vCard represents
+
+Like C<CATEGORIES>, It ALSO may have multiple content with being separated by COMMA.
+
+ $vc->nickname([qw(Johny John)]);
 
 =head2 geo()
 

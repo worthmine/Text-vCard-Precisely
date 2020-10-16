@@ -234,6 +234,11 @@ To specify supplemental information or a comment that is associated with the vCa
 
 To specify additional information for your jobs
 
+In these, `CATEGORIES` may have multiple content with being separated by COMMA.
+multiple content is expressed by using ArrayRef like this:
+
+    $vc->categories([qw(Internet Travel)]);
+
 ## fn(), full\_name(), fullname()
 
 A person's entire name as they would like to see it displayed
@@ -241,6 +246,10 @@ A person's entire name as they would like to see it displayed
 ## nickname()
 
 To specify the text corresponding to the nickname of the object the vCard represents
+
+Like `CATEGORIES`, It ALSO may have multiple content with being separated by COMMA.
+
+    $vc->nickname([qw(Johny John)]);
 
 ## geo()
 
