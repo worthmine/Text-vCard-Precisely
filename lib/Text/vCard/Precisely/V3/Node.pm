@@ -60,7 +60,7 @@ sub as_string {
     $node =~ tr/_/-/;
 
     push @lines, uc($node) || croak "Empty name";
-    push @lines, 'TYPE=' . join( ',', map { uc $_ } @{ $self->types() } )
+    push @lines, 'TYPE=' . join( ',', map {uc} @{ $self->types() } )
         if ref $self->types() eq 'ARRAY' and $self->types()->[0];
     push @lines, 'PREF=' . $self->pref()         if $self->pref();
     push @lines, 'LANGUAGE=' . $self->language() if $self->language();
@@ -90,7 +90,6 @@ sub fold {
         = ( $decoded =~ /\P{ascii}+/ || $arg{'-force'} )
         ? $lf->fold( "", " ",  $string )
         : $lf->fold( "", "  ", $string );
-
     $string =~ tr/\t/\n/;
 
     return $string;
@@ -99,8 +98,10 @@ sub fold {
 sub _escape {
     my $self = shift;
     my $txt  = shift;
-    ( my $r = $txt ) =~ s/([,;\\])/\\$1/sg if $txt;
-    return $r || '';
+    return '' unless defined $txt;
+    $txt =~ s/([,;\\])/\\$1/g;
+    $txt =~ s/\n/\\n/g;
+    return $txt;
 }
 
 1;
