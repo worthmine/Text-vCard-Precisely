@@ -22,9 +22,9 @@ has name => ( is => 'rw', required => 1, isa => 'Name' );
 
 subtype 'Content' => as 'Str';    # => where {
 
-#    !is_utf8($_) && decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s  # It seems these lines
+#   !is_utf8($_) && decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s    # It seems these lines
 #}    # Does it need to be more strictly?                       # do NOT work
-#=> message {"The value you provided, $_, was not supported"};  # like what I've thought
+#=> message {"The value you provided, $_, was not supported"};    # like what I've thought
 has content => ( is => 'rw', required => 1, isa => 'Content' );
 
 subtype 'Preffered' => as 'Int' => where { $_ > 0 and $_ <= 100 }
