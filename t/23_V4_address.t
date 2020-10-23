@@ -92,7 +92,7 @@ $vc->adr(
         post_code => '91921-1234',
         country   => 'U.S.A.',
         label =>
-            "Mr. John Q. Public, Esq.\nMail Drop: TNE QB\n123 Main Street\nAny Town, CA  91921-1234\nU.S.A."
+            "Mr. John Q. Public, Esq.\nMail Drop: TNE QB\n123 Main Street\nAny Town, CA 91921-1234\nU.S.A."
     }
 );
 is $vc->as_string, $expected_content, 'adr(HashRef with label)';    # 6

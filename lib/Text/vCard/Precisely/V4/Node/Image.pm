@@ -7,14 +7,13 @@ use Moose;
 
 extends qw(Text::vCard::Precisely::V3::Node::Image Text::vCard::Precisely::V4::Node);
 
-has name    => ( is => 'rw', default => 'PHOTO',  isa      => 'Str', required => 1 );
-has content => ( is => 'rw', isa     => 'Images', required => 1,     coerce   => 1 );
-has media_type => ( is => 'rw', isa => 'Media_type' );
+has name       => ( is => 'rw', default => 'PHOTO',  isa      => 'Str', required => 1 );
+has content    => ( is => 'rw', isa     => 'Images', required => 1,     coerce   => 1 );
+has media_type => ( is => 'rw', isa     => 'Media_type' );
 
 override 'as_string' => sub {
     my ($self) = @_;
-    my @lines;
-    push @lines, $self->name() || croak "Empty name";
+    my @lines = $self->name() || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID() if $self->altID();
     push @lines, 'PID=' . join ',', @{ $self->pid() } if $self->pid();
     push @lines, "MEDIATYPE=" . $self->media_type() if defined $self->media_type();

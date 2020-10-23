@@ -17,8 +17,7 @@ has content   => ( is => 'ro', default => '', isa => 'URL', coerce => 1 );
 
 override 'as_string' => sub {
     my ($self) = @_;
-    my @lines;
-    push @lines, $self->name() || croak "Empty name";
+    my @lines = $self->name() || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID() if $self->can('altID') and $self->altID();
     push @lines, 'PID=' . join ',',  @{ $self->pid() } if $self->can('pid') and $self->pid();
     push @lines, 'TYPE=' . join ',', map {uc} @{ $self->types() }

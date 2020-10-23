@@ -16,8 +16,7 @@ has content => ( is => 'ro', default => '', isa => 'Str' );
 
 override 'as_string' => sub {
     my ($self) = @_;
-    my @lines;
-    push @lines, $self->name() || croak "Empty name";
+    my @lines = $self->name() || croak "Empty name";
     push @lines, 'VALUE=uri';
     push @lines, 'ALTID=' . $self->altID() if $self->altID();
     push @lines, 'PID=' . join ',', @{ $self->pid() } if $self->pid();

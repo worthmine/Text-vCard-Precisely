@@ -29,8 +29,7 @@ has content => ( is => 'rw', isa => 'Values', coerce => 1 );
 
 override 'as_string' => sub {
     my ($self) = @_;
-    my @lines;
-    push @lines, $self->name() || croak "Empty name";
+    my @lines = $self->name() || croak "Empty name";
     push @lines, 'LANGUAGE=' . $self->language() if $self->language();
 
     my @values = map { $self->_escape($_) }

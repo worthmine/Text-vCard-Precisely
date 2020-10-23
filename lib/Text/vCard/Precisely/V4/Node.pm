@@ -16,7 +16,7 @@ enum 'Name' => [
         RELATED X-SOCIALPROFILE
         )
 ];
-has name => ( is => 'rw', required => 1, isa => 'Name' );
+has name => ( is => 'ro', required => 1, isa => 'Name' );
 
 subtype 'SortAs' => as 'Str' =>
     where { decode_utf8($_) =~ m|^[\p{ascii}\w\s]+$|s }    # Does everything pass?
@@ -38,8 +38,7 @@ has media_type => ( is => 'rw', isa => 'MediaType' );
 
 sub as_string {
     my ($self) = @_;
-    my @lines;
-    push @lines, $self->name() || croak "Empty name";
+    my @lines = $self->name() || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID() if $self->altID();
     push @lines, 'PID=' . join ',', @{ $self->pid() } if $self->pid();
     push @lines, 'TYPE="' . join( ',', map {uc} @{ $self->types() } ) . '"'

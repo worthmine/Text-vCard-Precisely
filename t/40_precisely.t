@@ -27,12 +27,8 @@ $vc->adr(
 ( my $text = <<'END') =~ s/\n/\r\n/g;
 BEGIN:VCARD
 VERSION:4.0
-ADR;LABEL="Mr. John Q. Public, Esq.
-Mail Drop: TNE QB
-123 Main Street
-Any
-  Town, CA  91921-1234
-U.S.A.":;;123 Main Street;Any Town;CA;91921-
+ADR;LABEL="Mr. John Q. Public\, Esq.\nMail Drop: TNE QB\n123 Main Street
+  \nAny Town\, CA  91921-1234\nU.S.A.":;;123 Main Street;Any Town;CA;91921-
   1234;U.S.A.
 END:VCARD
 END

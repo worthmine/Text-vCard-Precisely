@@ -309,10 +309,6 @@ sub _make_types {
         croak "the Method you provided, $node is not supported." unless $method;
         if ( ref $self->$method eq 'ARRAY' ) {
             foreach my $item ( @{ $self->$method } ) {
-
-                #if ( $item->isa('Text::vCard::Precisely::V3::Node::MultiContent') ) {
-                #    $str .= $item->as_string();
-                #} els
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ) {
                     $str .= $item->as_string();
                 } elsif ($item) {

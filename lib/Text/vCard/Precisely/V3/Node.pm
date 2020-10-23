@@ -55,11 +55,10 @@ no Moose;
 
 sub as_string {
     my ($self) = @_;
-    my @lines;
     my $node = $self->name();
     $node =~ tr/_/-/;
 
-    push @lines, uc($node) || croak "Empty name";
+    my @lines = uc($node) || croak "Empty name";
     push @lines, 'TYPE=' . join( ',', map {uc} @{ $self->types() } )
         if ref $self->types() eq 'ARRAY' and $self->types()->[0];
     push @lines, 'PREF=' . $self->pref()         if $self->pref();

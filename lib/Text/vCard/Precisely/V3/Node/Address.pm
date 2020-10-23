@@ -13,8 +13,7 @@ has \@order => ( is => 'rw', isa => 'Str' );
 
 override 'as_string' => sub {
     my ($self) = @_;
-    my @lines;
-    push @lines, $self->name() || croak "Empty name";
+    my @lines = $self->name() || croak "Empty name";
     push @lines, 'TYPE=' . join( ',', map {uc} @{ $self->types() } )
         if ref $self->types() eq 'ARRAY' and $self->types()->[0];
     push @lines, 'PREF=' . $self->pref()         if $self->pref();

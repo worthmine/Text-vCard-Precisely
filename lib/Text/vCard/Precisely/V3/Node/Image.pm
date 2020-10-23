@@ -26,8 +26,7 @@ has media_type => ( is => 'rw', isa => 'Media_type' );
 
 override 'as_string' => sub {
     my ($self) = @_;
-    my @lines;
-    push @lines, $self->name() || croak "Empty name";
+    my @lines = $self->name() || croak "Empty name";
     push @lines, "TYPE=" . $self->media_type() if defined $self->media_type();
     push @lines, "ENCODING=b" unless is_web_uri( $self->content() );
 
