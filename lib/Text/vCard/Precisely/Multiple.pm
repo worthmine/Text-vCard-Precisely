@@ -79,7 +79,7 @@ sub load_file {
 
 sub as_string {
     my $self = shift;
-    return $self->join_options("\x0D\x0A");
+    return $self->join_options('');
 }
 
 sub as_file {

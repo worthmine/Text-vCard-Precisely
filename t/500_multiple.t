@@ -14,8 +14,6 @@ $vcm->load_file($path);
 
 foreach my $vc ( $vcm->all_options() ) {
     next unless $vc->fn();
-
-    #note $vc->as_string();
     $vc->fn()->[0] =~ /^FN:(\w+)/;
     is $vc->isa('Text::vCard::Precisely'), 1, "loading vCard for $1 succeeded.";    # 3-7
 }
@@ -103,7 +101,6 @@ URL:http://www.example.com/dir_photos/my_photo.gif
 PHOTO;TYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
 REV:20080424T195243Z
 END:VCARD
-
 BEGIN:VCARD
 VERSION:3.0
 FN:Forrest Gump
