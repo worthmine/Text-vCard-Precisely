@@ -445,8 +445,8 @@ has n => ( is => 'rw', isa => 'N', coerce => 1 );
  Accepts/returns an ArrayRef that looks like:
 
  [
-    { type => ['work'], content => '651-290-1234', preferred => 1 },
-    { type => ['home'], content => '651-290-1111' },
+    { types => ['work'], content => '651-290-1234', preferred => 1 },
+    { types => ['home'], content => '651-290-1111' },
  ]
  
 =cut
@@ -500,8 +500,8 @@ has adr => ( is => 'rw', isa => 'Address', coerce => 1 );
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { type => ['work'], content => 'bbanner@ssh.secret.army.mil' },
-    { type => ['home'], content => 'bbanner@timewarner.com', pref => 1 },
+    { types => ['work'], content => 'bbanner@ssh.secret.army.mil' },
+    { types => ['home'], content => 'bbanner@timewarner.com', pref => 1 },
  ]
 
 or accept the string as email like below

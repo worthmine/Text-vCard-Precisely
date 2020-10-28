@@ -205,12 +205,12 @@ To specify the components of the name of the object the vCard represents
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { type => ['work'], content => '651-290-1234', preferred => 1 },
-    { type => ['home'], content => '651-290-1111' },
+    { types => ['work'], content => '651-290-1234', preferred => 1 },
+    { types => ['home'], content => '651-290-1111' },
  ]
 
 After version 0.18, B<content will not be validated as phone numbers> 
-All I<Str> type is accepted.
+All I<Str> types are accepted.
 
 So you have to validate phone numbers with your way.
 
@@ -237,8 +237,8 @@ Accepts/returns an ArrayRef that looks like:
 Accepts/returns an ArrayRef that looks like:
 
  [
-    { type => ['work'], content => 'bbanner@ssh.secret.army.mil' },
-    { type => ['home'], content => 'bbanner@timewarner.com', pref => 1 },
+    { types => ['work'], content => 'bbanner@ssh.secret.army.mil' },
+    { types => ['home'], content => 'bbanner@timewarner.com', pref => 1 },
  ]
 
 or accept the string as email like below
