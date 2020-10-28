@@ -14,13 +14,11 @@ use Path::Tiny;
 enum 'Version' => [qw( 3.0 4.0 )];
 has version    => ( is => 'ro', isa => 'Version', default => '3.0', required => 1 );
 
-subtype 'vCards' => as 'ArrayRef[Text::vCard::Precisely]';
-coerce 'vCards', from 'Text::vCard::Precisely', via { [$_] };
-has options => (
+subtype 'vCards' => as 'ArrayRef[Text::vCard::Precisely::V3]';
+has options      => (
     traits  => ['Array'],
     is      => 'ro',
     isa     => 'vCards',
-    coerce  => 1,
     default => sub { [] },
     handles => {
         all_options   => 'elements',
@@ -31,7 +29,7 @@ has options => (
         #filter_options => 'grep',
         #find_option    => 'first',
         #get_option     => 'get',
-        #join_options   => 'join',
+        join_options  => 'join',
         count_options => 'count',
 
         #has_options    => 'count',
@@ -40,6 +38,11 @@ has options => (
         #sorted_options => 'sort',
     },
 );
+
+sub push {    # don't be called yet
+    my $self = shift;
+    croak "wrong version is set" if grep { $_->version ne $self->version } @_;
+}
 
 __PACKAGE__->meta->make_immutable;
 no Moose;
@@ -76,11 +79,7 @@ sub load_file {
 
 sub as_string {
     my $self = shift;
-    my $str  = '';
-    foreach my $vc ( $self->all_options() ) {
-        $str .= $vc->as_string();
-    }
-    return $str;
+    return $self->join_options("\x0D\x0A");
 }
 
 sub as_file {
@@ -168,7 +167,7 @@ Text::vCard::Precisely::Multiple - some add-on for Text::vCard::Precisely
 
 =head1 DESCRIPTION
 
-If you have a file that  contains multiple vCards, This module may be useful.
+If you have a file that contains multiple vCards, This module may be useful.
 
 =head1 Constructors
 

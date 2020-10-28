@@ -103,6 +103,7 @@ URL:http://www.example.com/dir_photos/my_photo.gif
 PHOTO;TYPE=image/gif:http://www.example.com/dir_photos/my_photo.gif
 REV:20080424T195243Z
 END:VCARD
+
 BEGIN:VCARD
 VERSION:3.0
 FN:Forrest Gump

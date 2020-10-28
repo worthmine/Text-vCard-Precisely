@@ -4,6 +4,8 @@ our $VERSION = '0.28';
 
 use 5.12.5;
 
+use overload( '""' => \&as_string );
+
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);

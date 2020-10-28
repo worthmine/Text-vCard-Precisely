@@ -2,6 +2,8 @@ package Text::vCard::Precisely::V4;
 
 our $VERSION = '0.28';
 
+use overload( '""' => \&as_string );
+
 use Moose;
 use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
