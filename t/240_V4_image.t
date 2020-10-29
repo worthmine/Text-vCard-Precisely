@@ -19,28 +19,28 @@ EOL
 $img =~ s/\s//g;
 
 my $in_file          = path( 't', 'V4', 'Image', 'base.vcf' );
-my $expected_content = $in_file->slurp_utf8;
+my $expected_content = $in_file->slurp;
 
 $vc->photo($img);
 $vc->logo($img);
 is $vc->as_string, $expected_content, 'photo(Base64)';    # 1
 
 $in_file          = path( 't', 'V4', 'Image', 'uri.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 my $uri = URI->new('https://www.example.com/image.png');
 $vc->photo($uri);
 is $vc->as_string, $expected_content, 'photo(URL)';       # 2
 
 $in_file          = path( 't', 'V4', 'Image', 'hash.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 $vc->photo( { media_type => 'image/png', content => $img } );
 $vc->logo( { media_type => 'image/png', content => $img } );
 is $vc->as_string, $expected_content, 'photo(HashRef of Base64)';    # 3
 
 $in_file          = path( 't', 'V4', 'Image', 'maltiple.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 my $img2 = <<'EOL';
 /9j/4AAQSkZJRgABAQEAYABgAAD//gA
@@ -70,7 +70,7 @@ $vc->photo( [ $img, $img2 ] );
 is $vc->as_string, $expected_content, 'photo(ArrayRef of base64)';    # 4
 
 $in_file          = path( 't', 'V4', 'Image', 'maltiple_base64.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 $vc->photo(
     [   { media_type => 'image/png',  content => $img },
@@ -91,9 +91,9 @@ SKIP: {
 
     my @expected = ();
     $in_file = path( 't', 'V4', 'Image', 'gd.vcf' );
-    push @expected, $in_file->slurp_utf8;
+    push @expected, $in_file->slurp;
     $in_file = path( 't', 'V4', 'Image', 'gd2.vcf' );
-    push @expected, $in_file->slurp_utf8;
+    push @expected, $in_file->slurp;
 
     $vc->photo($raw);
     $vc->logo($raw);
@@ -112,12 +112,12 @@ SKIP: {
 
     @expected = ();
     $in_file  = path( 't', 'V4', 'Image', 'maltiple_gd.vcf' );
-    push @expected, $in_file->slurp_utf8;
+    push @expected, $in_file->slurp;
     $in_file = path( 't', 'V4', 'Image', 'maltiple_gd2.vcf' );
-    push @expected, $in_file->slurp_utf8;
+    push @expected, $in_file->slurp;
 
     #    $in_file = path( 't', 'V4', 'Image', 'maltiple_gd3.vcf' );
-    #    push @expected, $in_file->slurp_utf8;
+    #    push @expected, $in_file->slurp;
 
     $vc->photo(
         [   { media_type => 'image/png',  content => $raw },

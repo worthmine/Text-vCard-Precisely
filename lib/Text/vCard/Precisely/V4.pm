@@ -9,7 +9,6 @@ use Moose::Util::TypeConstraints;
 use MooseX::Types::DateTime qw(TimeZone);
 
 extends 'Text::vCard::Precisely::V3';
-
 use Carp;
 use Encode;
 
@@ -90,8 +89,8 @@ override '_parse_param' => sub {
 
 =head2 as_string()
 
-Returns the vCard as a string.
-You HAVE TO use C<Encode::encode_utf8()> if your vCard is written in utf8
+Returns the vCard as a string with non-decoded UTF-8.
+if you have `use utf8;` in your scope, you have to do C<Encode::decode_utf8>
 
 =cut
 
@@ -114,12 +113,11 @@ sub as_string {
     $str .= 'ANNIVERSARY:' . $self->anniversary() . $cr if $self->anniversary();
     $str .= 'GENDER:' . $self->gender() . $cr           if $self->gender();
     $str .= 'UID:' . $self->uid() . $cr                 if $self->uid();
-    $str .= join '', @{ $self->member() } if $self->member();
+    $str .= join '', map { $_->as_string() } @{ $self->member() } if $self->member();
     map { $str .= "CLIENTPIDMAP:$_" . $cr } @{ $self->clientpidmap() } if $self->clientpidmap();
 
     $str .= $self->_footer();
-    $str = $self->_fold($str);
-    return decode( $self->encoding_out(), $str );
+    return $self->_fold($str);
 }
 
 =head2 as_file($filename)
@@ -260,13 +258,7 @@ coerce 'v4Photos', from 'HashRef', via {
 }, from 'Str',    # when parse BASE64 encoded strings
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
-    return [
-        Text::vCard::Precisely::V4::Node::Image->new(
-            {   name    => $name,
-                content => $_,
-            }
-        )
-    ]
+    return [ Text::vCard::Precisely::V4::Node::Image->new( { name => $name, content => $_, } ) ]
     }, from 'ArrayRef[Str]',    # when parse BASE64 encoded strings
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
@@ -384,7 +376,7 @@ It's the B<new method from 4.0>
 =cut
 
 subtype 'KIND' => as 'Str' =>
-    where {m/^(?:individual|group|org|location|[a-z0-9\-]+|X-[a-z0-9\-]+)$/s}
+    where {m/^(?:individual|group|org|location|[a-z0-9\-]+|X-[a-z0-9\-]+)$/is}
 => message {"The KIND you provided, $_, was not supported"};
 has kind => ( is => 'rw', isa => 'KIND' );
 
@@ -396,7 +388,7 @@ coerce 'v4TimeStamp', from 'Str', via {
 }, from 'Int', via {
     my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
     return sprintf '%4d%02d%02dT%02d%02d%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
-}, from 'ArrayRef[HashRef]', via { $_->[0]{content} };
+}, from 'ArrayRef[HashRef]', via { $_->[0]{'content'} };
 has rev => ( is => 'rw', isa => 'v4TimeStamp', coerce => 1 );
 
 =head2 member(), clientpidmap()
@@ -454,7 +446,7 @@ The format is SAME as 3.0
 
 has [qw|bday anniversary gender prodid|] => ( is => 'rw', isa => 'Str' );
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 =head1 DEPRECATED Methods

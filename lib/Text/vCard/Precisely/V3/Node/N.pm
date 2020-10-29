@@ -39,7 +39,7 @@ override 'as_string' => sub {
     return $self->fold( $string, -force => 1 );
 };
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 #Alias

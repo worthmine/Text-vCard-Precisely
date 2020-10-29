@@ -1,12 +1,9 @@
 package Text::vCard::Precisely::V3::Node;
 
-use Carp;
-use Encode qw( decode_utf8 encode_utf8 is_utf8);
-
 use 5.12.5;
+use Carp;
+use Encode qw( decode_utf8 is_utf8);
 use Text::LineFold;
-
-use overload( '""' => \&as_string );
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -20,11 +17,12 @@ enum 'Name' => [
 ];
 has name => ( is => 'rw', required => 1, isa => 'Name' );
 
-subtype 'Content' => as 'Str';    # => where {
-
-#   !is_utf8($_) && decode_utf8($_) =~ m|^[\w\p{ascii}\s]+$|s    # It seems these lines
-#}    # Does it need to be more strictly?                       # do NOT work
-#=> message {"The value you provided, $_, was not supported"};    # like what I've thought
+subtype 'Content' => as 'Str' => where {
+    use utf8;
+    local $_ = is_utf8($_) ? $_ : decode_utf8($_);
+    m|^[\w\p{ascii}\s]+$|s    # It seems these lines
+}    # Does it need to be more strictly?                       # do NOT work
+=> message {"The value you provided, $_, was not supported"};    # like what I've thought
 has content => ( is => 'rw', required => 1, isa => 'Content' );
 
 subtype 'Preffered' => as 'Int' => where { $_ > 0 and $_ <= 100 }
@@ -32,8 +30,8 @@ subtype 'Preffered' => as 'Int' => where { $_ > 0 and $_ <= 100 }
 has pref => ( is => 'rw', isa => 'Preffered' );
 
 subtype 'Type' => as 'Str' => where {
-    m/^(?:work|home|PGP)$/is or                       #common
-        m|^(?:[a-zA-z0-9\-]+/X-[a-zA-z0-9\-]+)$|s;    # does everything pass?
+    m/^(?:work|home|PGP)$/is or                                  #common
+        m|^(?:[a-zA-z0-9\-]+/X-[a-zA-z0-9\-]+)$|is;              # does everything pass?
 } => message {"The text you provided, $_, was not supported in 'Type'"};
 
 subtype 'Types' => as 'ArrayRef[Type]';
@@ -41,7 +39,7 @@ coerce 'Types'  => from 'Str' => via { [$_] };
 has types       => ( is => 'rw', isa => 'Types', default => sub { [] }, coerce => 1 );
 
 subtype 'Language' => as 'Str' =>
-    where {m|^[a-z]{2}(?:-[a-z]{2})?$|s}              # does it need something strictly?
+    where {m|^[a-z]{2}(?:-[a-z]{2})?$|s}                         # does it need something strictly?
 => message {"The Language you provided, $_, was not supported"};
 has language => ( is => 'rw', isa => 'Language' );
 
@@ -50,7 +48,7 @@ sub charset {    # DEPRECATED in vCard 3.0
     croak "'CHARSET' param is DEPRECATED! vCard3.0 will accept just ONLY UTF-8";
 }
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 sub as_string {
@@ -83,7 +81,7 @@ sub fold {
     my $lf     = Text::LineFold->new( CharMax => 74, Newline => "\x0D\x0A", TabSize => 1 )
         ;    # line break with 75bytes
     my $decoded = decode_utf8($string);
-
+    use utf8;
     $string =~ s/(?<!\r)\n/\t/g;
     $string
         = ( $decoded =~ /\P{ascii}+/ || $arg{'-force'} )

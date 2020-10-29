@@ -9,7 +9,7 @@ use Text::vCard::Precisely::V3;
 my $vc = Text::vCard::Precisely::V3->new();
 
 my $in_file          = path( 't', 'V3', 'Name', 'base.vcf' );
-my $expected_content = $in_file->slurp_utf8;
+my $expected_content = $in_file->slurp;
 
 $vc->n('family;given;additional;prefixes;suffixes');
 is $vc->as_string, $expected_content, 'n(Str)';    # 1
@@ -28,7 +28,7 @@ $vc->n(
 is $vc->as_string, $expected_content, 'n(HashRef)';     # 3
 
 $in_file          = path( 't', 'V3', 'Name', 'no_suffixes.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 $vc->n('family;given;additional;prefixes');
 is $vc->as_string, $expected_content, 'n(Str with no suffixes)';    # 4
@@ -46,7 +46,7 @@ $vc->n(
 is $vc->as_string, $expected_content, 'n(HashRef with no suffixes)';     # 6
 
 $in_file          = path( 't', 'V3', 'Name', 'utf8.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 $vc->n( { content => [ '姓', '名', '', '', '様' ], } );
 is $vc->as_string, $expected_content, 'n(HashRef with utf8)';            # 7

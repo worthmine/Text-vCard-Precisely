@@ -8,7 +8,7 @@ use Text::vCard::Precisely::V4;
 my $vc = Text::vCard::Precisely::V4->new();
 
 my $in_file          = path( 't', 'V4', 'Expected', 'kind.vcf' );
-my $expected_content = $in_file->slurp_utf8;
+my $expected_content = $in_file->slurp;
 
 $vc->kind('individual');
 is $vc->as_string, $expected_content, 'kind(Str)';    # 1

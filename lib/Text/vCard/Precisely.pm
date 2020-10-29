@@ -19,7 +19,7 @@ sub BUILD {
     return Text::vCard::Precisely::V4->new(@_);
 }
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 1;
@@ -45,9 +45,7 @@ Text::vCard::Precisely - Read, Write and Edit the vCards 3.0 and/or 4.0 precisel
 
  use GD;
  use MIME::Base64;
- my $gd = GD::Image->new( 100, 100 );
- my $black = $gd->colorAllocate( 0, 0, 0 );
- $gd->rectangle( 0, 0, 99, 99, $black );
+ my $gd = GD::Image->new();
 
  my $img = $gd->png();
  my $base64 = MIME::Base64::encode($img);
@@ -160,8 +158,8 @@ Accepts a vCard string
 
 =head2 as_string()
 
-Returns the vCard as a string.
-You have to use C<Encode::encode_utf8()> if your vCard is written in utf8
+Returns the vCard as a string with non-decoded UTF-8.
+if you have `use utf8;` in your scope, you have to do C<Encode::decode_utf8>
 
 =head2 as_file($filename)
 

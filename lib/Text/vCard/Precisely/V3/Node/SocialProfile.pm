@@ -1,7 +1,7 @@
 package Text::vCard::Precisely::V3::Node::SocialProfile;
 
 use Carp;
-use Encode;
+use Encode qw(encode_utf8 decode_utf8 is_utf8);
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -18,9 +18,12 @@ has types => ( is => 'rw', isa => 'SocialProfileType', required => 1 );
 
 has userid => ( is => 'rw', isa => 'Str' );
 
-subtype 'SocialProfileName' => as 'Str' => where { decode_utf8($_) =~ m/^[\w\s]+$/s }
-=> message {"The text you provided, $_, was not supported in 'SocialProfileName'"};
-coerce 'SocialProfileName', from 'Str', via { encode_utf8($_) };
+subtype 'SocialProfileName' => as 'Str' => where {
+    use utf8;
+    local $_ = is_utf8($_) ? $_ : decode_utf8($_);
+    m/^[\w\s]+$/s
+} => message {"The text you provided, $_, was not supported in 'SocialProfileName'"};
+coerce 'SocialProfileName', from 'Str', via { is_utf8($_) ? encode_utf8($_) : $_ };
 has displayname => ( is => 'rw', isa => 'SocialProfileName', coerce => 1 );
 
 override 'as_string' => sub {
@@ -38,7 +41,7 @@ override 'as_string' => sub {
     return $self->fold( $string, -force => 1 );
 };
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 1;

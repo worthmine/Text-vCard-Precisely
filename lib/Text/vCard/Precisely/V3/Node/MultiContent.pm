@@ -20,7 +20,7 @@ sub as_string {
     return $self->fold($string);
 }
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 1;

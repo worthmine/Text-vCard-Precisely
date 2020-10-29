@@ -14,17 +14,17 @@ $vcm->load_file($path);
 
 foreach my $vc ( $vcm->all_options() ) {
     next unless $vc->fn();
-    $vc->fn()->[0] =~ /^FN:(\w+)/;
+    $vc->fn->[0]->as_string() =~ /^FN:(\w+)/;
     is $vc->isa('Text::vCard::Precisely'), 1, "loading vCard for $1 succeeded.";    # 3-7
 }
 
 my $got = $vcm->as_file('got.vcf');
 open my $fh_got,      '<', $got;
 open my $fh_expected, '<', $^O eq 'MSWin32' ? path( 't', 'Multiple', 'windows.vcf' ) : $path;
-is diff( $fh_got, $fh_expected ), '', "method as_file succeeded.";                  # 8
+is diff( $fh_got, $fh_expected ), '', "method as_file() succeeded.";                # 8
 close $fh_got;
 close $fh_expected;
-$got->remove();
+$got->remove;
 
 my $arrayref = [];
 my $e        = get_data_section('array.pl');

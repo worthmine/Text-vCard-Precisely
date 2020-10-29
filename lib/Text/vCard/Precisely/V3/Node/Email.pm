@@ -14,9 +14,9 @@ has content => ( is => 'ro', default => '',      isa => EmailAddress );
 has preferred => ( is => 'rw', default => 0, isa => 'Bool' );
 
 subtype 'EmailType' => as 'Str' => where {
-    m/^(?:work|home)$/s or    # common
-        m/^(?:contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is # 本当にこれでいのか怪しい
-} => message {"The Email you provided, $_, was not supported in 'Type'"};
+    m/^(?:work|home)$/is or    # common
+        m/^(?:contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is # Are those correct?
+} => message {"The EmailType you provided, $_, was not supported in 'EmailTypes'"};
 
 subtype 'EmailTypes' => as 'ArrayRef[EmailType]';
 coerce 'EmailTypes'  => from 'Str' => via { [$_] };
@@ -37,7 +37,7 @@ override 'as_string' => sub {
     return $self->fold( $string, -force => 1 );
 };
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 1;

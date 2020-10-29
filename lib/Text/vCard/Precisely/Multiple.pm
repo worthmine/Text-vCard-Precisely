@@ -41,10 +41,10 @@ has options      => (
 
 sub push {    # don't be called yet
     my $self = shift;
-    croak "wrong version is set" if grep { $_->version ne $self->version } @_;
+    croak "wrong version is set" if grep { $_->version() ne $self->version() } @_;
 }
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 sub load_arrayref {
@@ -87,7 +87,7 @@ sub as_file {
     croak "No filename was set!" unless $filename;
 
     my $file = path($filename);
-    $file->spew( { binmode => ":encoding(UTF-8)" }, $self->as_string() );
+    $file->spew_utf8( $self->as_string() );
     return $file;
 }
 

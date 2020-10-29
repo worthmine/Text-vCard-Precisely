@@ -15,7 +15,6 @@ use Data::UUID;
 use Text::LineFold;
 use URI;
 use Path::Tiny;
-use Encode qw(encode decode);
 
 =encoding utf8
 
@@ -36,9 +35,7 @@ Text::vCard::Precisely::V3 - Read, Write and Edit B<just ONLY vCards 3.0> precis
 
  use GD;
  use MIME::Base64;
- my $gd = GD::Image->new( 100, 100 );
- my $black = $gd->colorAllocate( 0, 0, 0 );
- $gd->rectangle( 0, 0, 99, 99, $black );
+ my $gd = GD::Image->new();
 
  my $img = $gd->png();
  my $base64 = MIME::Base64::encode($img);
@@ -204,7 +201,7 @@ sub load_string {
     my ( $self, $str ) = @_;
     my @lines   = split /\r\n/, $str;
     my $data    = $vf->parse_lines(@lines);
-    my $hashref = $self->_make_hashref( $data->{'objects'}[0]->{'properties'} );
+    my $hashref = $self->_make_hashref( $data->{'objects'}[0]{'properties'} );
     $self->load_hashref($hashref);
 }
 
@@ -266,8 +263,8 @@ sub _parse_param {
 
 =head2 as_string()
 
-Returns the vCard as a string.
-You have to use C<Encode::encode_utf8()> if your vCard is written in UTF-8
+Returns the vCard as a string with non-decoded UTF-8.
+if you have `use utf8;` in your scope, you have to do C<Encode::decode_utf8>
 
 =cut
 
@@ -290,8 +287,7 @@ sub as_string {
     $str .= 'BDAY:' . $self->bday() . $cr if $self->bday();
     $str .= 'UID:' . $self->uid() . $cr   if $self->uid();
     $str .= $self->_footer();
-    $str = $self->_fold($str);
-    return decode( $self->encoding_out(), $str );
+    return $self->_fold($str);
 }
 
 sub _header {
@@ -317,12 +313,12 @@ sub _make_types {
                     $str .= uc($node) . ":" . $item->as_string() . $cr;
                 }
             }
-        } elsif ( $self->$method()
-            and $self->$method()->isa('Text::vCard::Precisely::V3::Node::N') )
+        } elsif ( $self->$method
+            and $self->$method->isa('Text::vCard::Precisely::V3::Node::N') )
         {
-            $str .= $self->$method()->as_string();
+            $str .= $self->$method->as_string();
         } elsif ( $self->$method ) {
-            $str .= $self->$method();
+            $str .= $self->$method;
         }
     }
     return $str;
@@ -362,8 +358,6 @@ sub as_file {
     croak "No filename was set!" unless $filename;
 
     my $file = path($filename);
-
-    #$file->spew( {binmode => ":encoding(UTF-8)"}, $self->as_string() );
     $file->spew_utf8( $self->as_string() );
     return $file;
 }
@@ -548,10 +542,7 @@ coerce 'URLs', from 'Str', via {
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
-        Text::vCard::Precisely::V3::Node::URL->new(
-            { name => $name, content => $_->as_string(), }
-        )
-    ]
+        Text::vCard::Precisely::V3::Node::URL->new( { name => $name, content => $_->as_string } ) ]
     }, from 'ArrayRef[HashRef]', via {
     [ map { Text::vCard::Precisely::V3::Node::URL->new($_) } @$_ ]
     };
@@ -588,13 +579,7 @@ coerce 'Photos', from 'HashRef', via {
 }, from 'Str',    # when parse BASE64 encoded strings
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
-    return [
-        Text::vCard::Precisely::V3::Node::Image->new(
-            {   name    => $name,
-                content => $_,
-            }
-        )
-    ]
+    return [ Text::vCard::Precisely::V3::Node::Image->new( { name => $name, content => $_, } ) ]
     }, from 'ArrayRef[Str]',    # when parse BASE64 encoded strings
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
@@ -602,7 +587,7 @@ coerce 'Photos', from 'HashRef', via {
         map { Text::vCard::Precisely::V3::Node::Image->new( { name => $name, content => $_, } ) }
             @$_ ]
     }, from 'Object',           # when URI.pm is used
-    via { [ Text::vCard::Precisely::V3::Node::Image->new( { content => $_->as_string() } ) ] };
+    via { [ Text::vCard::Precisely::V3::Node::Image->new( { content => $_->as_string } ) ] };
 has [qw| photo logo |] => ( is => 'rw', isa => 'Photos', coerce => 1 );
 
 =head2 note()
@@ -778,7 +763,7 @@ coerce 'SocialProfile',
     };
 has socialprofile => ( is => 'rw', isa => 'SocialProfile', coerce => 1 );
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 #== Alias =================================================================

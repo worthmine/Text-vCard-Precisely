@@ -9,7 +9,7 @@ use Text::vCard::Precisely::V3;
 my $vc = Text::vCard::Precisely::V3->new();
 
 my $in_file          = path( 't', 'V3', 'Email', 'base.vcf' );
-my $expected_content = $in_file->slurp_utf8;
+my $expected_content = $in_file->slurp;
 
 $vc->email('tester@example.com');
 is $vc->as_string, $expected_content, 'email(Str)';    # test1
@@ -18,7 +18,7 @@ $vc->email( { content => 'tester@example.com' } );
 is $vc->as_string, $expected_content, 'email(HashRef)';    # test2
 
 $in_file          = path( 't', 'V3', 'Email', 'maltiple.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 $vc->email(
     [   { types => 'home', content => 'tester@example.com' },

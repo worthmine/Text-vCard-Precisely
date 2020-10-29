@@ -8,4 +8,4 @@ use_ok('Text::vCard::Precisely::V4');    # 1
 my $vc = new_ok('Text::vCard::Precisely::V4');           # 2
 $vc = new_ok( 'Text::vCard::Precisely::V4', [ {} ] );    # 3
 
-done_testing();
+done_testing;

@@ -47,7 +47,7 @@ my $hashref = {
 my $data = get_data_section('data.vcf');
 $data =~ s/\n/\r\n/g;
 
-my $string = $vc->load_hashref($hashref)->as_string();
+my $string = $vc->load_hashref($hashref)->as_string;
 is $string, $data, 'as_string()';    # 1
 
 $vc->as_file('got.vcf');
@@ -72,11 +72,11 @@ SKIP: {
     close $fh_got;
     close $fh_expected;
 }
-$got->remove();
+$got->remove;
 
 my $in_file = path( 't', 'V3', 'Expected', 'unix.vcf' );
-$string = $vc->load_file($in_file)->as_string();
-my $expected_content = $in_file->slurp_utf8;
+$string = $vc->load_file($in_file)->as_string;
+my $expected_content = $in_file->slurp;
 is $string, $expected_content, 'load_file()';                              # 4
 
 my $load_s = $vc->load_string($data);

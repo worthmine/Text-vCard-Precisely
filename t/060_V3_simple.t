@@ -14,12 +14,12 @@ $vc->bday('19960415');
 $vc->prodid('-//ONLINE DIRECTORY//NONSGML Version 1//EN');
 
 my $in_file          = path( 't', 'V3', 'Simple', 'base.vcf' );
-my $expected_content = $in_file->slurp_utf8;
+my $expected_content = $in_file->slurp;
 
 is $vc->as_string, $expected_content, 'simples(Str)';    # 1
 
 $in_file          = path( 't', 'V3', 'Simple', 'utf8.vcf' );
-$expected_content = $in_file->slurp_utf8;
+$expected_content = $in_file->slurp;
 
 $vc->fn('太宰治');
 $vc->n('太宰;治');

@@ -1,7 +1,7 @@
 package Text::vCard::Precisely::V4::Node;
 
 use Carp;
-use Encode qw(decode_utf8);
+use Encode qw(decode_utf8 is_utf8);
 
 use Moose;
 use Moose::Util::TypeConstraints;
@@ -18,8 +18,11 @@ enum 'Name' => [
 ];
 has name => ( is => 'ro', required => 1, isa => 'Name' );
 
-subtype 'SortAs' => as 'Str' =>
-    where { decode_utf8($_) =~ m|^[\p{ascii}\w\s]+$|s }    # Does everything pass?
+subtype 'SortAs' => as 'Str' => where {
+    use utf8;
+    local $_ = is_utf8($_) ? $_ : decode_utf8($_);
+    m|^[\p{ascii}\w\s]+$|s
+}    # Does everything pass?
 => message {"The SORT-AS you provided, $_, was not supported"};
 has sort_as => ( is => 'rw', isa => 'Maybe[SortAs]' );
 
@@ -62,7 +65,7 @@ sub as_string {
     return $self->fold($string);
 }
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 1;

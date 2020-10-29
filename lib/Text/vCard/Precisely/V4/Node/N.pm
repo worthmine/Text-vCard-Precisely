@@ -17,12 +17,12 @@ override 'as_string' => sub {
     push @lines, 'LANGUAGE=' . $self->language()      if $self->language();
     push @lines, 'SORT-AS="' . $self->sort_as() . '"' if $self->sort_as();
 
-    my @values = map { $self->$_ or $self->content() && $self->content()->{$_} } @order;
+    my @values = map { $self->$_ or $self->content() && $self->content->{$_} } @order;
     my $string = join( ';', @lines ) . ':' . join ';', map { $self->_escape($_) } @values;
     return $self->fold( $string, -force => 1 );
 };
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 1;

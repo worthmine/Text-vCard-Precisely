@@ -15,7 +15,7 @@ override 'as_string' => sub {
     my ($self) = @_;
     my @lines = $self->name() || croak "Empty name";
     push @lines, 'TYPE=' . join( ',', map {uc} @{ $self->types() } )
-        if ref $self->types() eq 'ARRAY' and $self->types()->[0];
+        if ref $self->types() eq 'ARRAY' and $self->types->[0];
     push @lines, 'PREF=' . $self->pref()         if $self->pref();
     push @lines, 'LANGUAGE=' . $self->language() if $self->language();
 
@@ -23,7 +23,7 @@ override 'as_string' => sub {
     return $self->fold($string);
 };
 
-__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable();
 no Moose;
 
 1;
