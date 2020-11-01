@@ -308,17 +308,13 @@ sub _make_types {
         if ( ref $self->$method eq 'ARRAY' ) {
             foreach my $item ( @{ $self->$method } ) {
                 if ( $item->isa('Text::vCard::Precisely::V3::Node') ) {
-                    $str .= $item->as_string();
+                    $str .= $item->as_string() . $cr;
                 } elsif ($item) {
                     $str .= uc($node) . ":" . $item->as_string() . $cr;
                 }
             }
-        } elsif ( $self->$method
-            and $self->$method->isa('Text::vCard::Precisely::V3::Node::N') )
-        {
-            $str .= $self->$method->as_string();
-        } elsif ( $self->$method ) {
-            $str .= $self->$method;
+        } else {
+            $str .= $self->$method->as_string() . $cr if $self->$method;
         }
     }
     return $str;

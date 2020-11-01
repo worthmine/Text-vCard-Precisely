@@ -113,7 +113,7 @@ sub as_string {
     $str .= 'ANNIVERSARY:' . $self->anniversary() . $cr if $self->anniversary();
     $str .= 'GENDER:' . $self->gender() . $cr           if $self->gender();
     $str .= 'UID:' . $self->uid() . $cr                 if $self->uid();
-    $str .= join '', map { $_->as_string() } @{ $self->member() } if $self->member();
+    $str .= join '', map { $_->as_string() . $cr } @{ $self->member() } if $self->member();
     map { $str .= "CLIENTPIDMAP:$_" . $cr } @{ $self->clientpidmap() } if $self->clientpidmap();
 
     $str .= $self->_footer();

@@ -63,23 +63,20 @@ sub as_string {
     push @lines, 'LANGUAGE=' . $self->language() if $self->language();
 
     my $content = $self->content();
-    my $string
-        = join( ';', @lines ) . ':'
-        . (
+    my $string  = join( ';', @lines ) . ':';
+    return $string .=
         ref($content) eq 'Array'
         ? map { $node =~ /^(?:LABEL|GEO)$/s ? $content : $self->_escape($_) } @$content
         : $node =~ /^(?:LABEL|GEO)$/s ? $content
-        :                               $self->_escape($content)
-        ) . "\x0D\x0A";
-    return $string;
-    return $self->fold($string);
+        :                               $self->_escape($content);
 }
 
 sub fold {
     my $self   = shift;
     my $string = shift;
     my %arg    = @_;
-    my $lf     = Text::LineFold->new( CharMax => 74, Newline => "\x0D\x0A", TabSize => 1 )
+    local $/ = "\x0D\x0A";
+    my $lf = Text::LineFold->new( CharMax => 74, Newline => $/, TabSize => 1 )
         ;    # line break with 75bytes
     my $decoded = decode_utf8($string);
     use utf8;
@@ -90,6 +87,7 @@ sub fold {
         : $lf->fold( "", "  ", $string );
     $string =~ tr/\t/\n/;
 
+    chomp $string;
     return $string;
 }
 
