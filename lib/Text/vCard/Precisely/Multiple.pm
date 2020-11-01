@@ -87,7 +87,7 @@ sub as_file {
     croak "No filename was set!" unless $filename;
 
     my $file = path($filename);
-    $file->spew( $self->as_string() );
+    $file->spew_raw( $self->as_string() );
     return $file;
 }
 
@@ -95,7 +95,7 @@ sub as_file {
 
 __END__
 
-=encoding UTF8
+=encoding utf-8
 
 =head1 NAME
 

@@ -354,7 +354,7 @@ sub as_file {
     croak "No filename was set!" unless $filename;
 
     my $file = path($filename);
-    $file->spew( $self->as_string() );
+    $file->spew_raw( $self->as_string() );
     return $file;
 }
 
