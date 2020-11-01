@@ -74,7 +74,7 @@ $got->remove;
 
 my $in_file = path( 't', 'V4', 'Expected', 'unix.vcf' );
 $string = $vc->load_file($in_file)->as_string;
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 is $string, $expected_content, 'load_file()';                              # 4
 
 my $load_s = $vc->load_string($data);

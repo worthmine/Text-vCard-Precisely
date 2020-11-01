@@ -9,7 +9,7 @@ use Text::vCard::Precisely::V3;
 my $vc = Text::vCard::Precisely::V3->new();
 
 my $in_file          = path( 't', 'V3', 'Address', 'base.vcf' );
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   pobox     => 'pobox',
@@ -24,7 +24,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef)';    # 1
 
 $in_file          = path( 't', 'V3', 'Address', 'maltiple.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     [   {   pobox     => 'pobox',
@@ -48,7 +48,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(ArrayRef of HashRef)';    # 2
 
 $in_file          = path( 't', 'V3', 'Address', 'utf8.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   types     => [qw(home work)],
@@ -64,7 +64,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef with utf8)';    # 3
 
 $in_file          = path( 't', 'V3', 'Address', 'long_ascii.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   types     => [qw(home work)],
@@ -80,7 +80,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef with long ascii)';    # 4
 
 $in_file          = path( 't', 'V3', 'Address', 'long_utf8.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   types     => [qw(home work)],

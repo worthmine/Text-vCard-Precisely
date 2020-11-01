@@ -17,7 +17,7 @@ $vc->uid("urn:uuid:$uuidj");
 $vc->related( { types => 'co-worker', content => "urn:uuid:$uuidt" } );
 
 my $in_file          = path( 't', 'V4', 'Expected', 'related.vcf' );
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 
 is $vc->as_string, $expected_content, 'related(Data::UUID)';    # 1
 

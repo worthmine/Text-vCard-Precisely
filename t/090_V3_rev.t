@@ -10,12 +10,12 @@ my $vc = Text::vCard::Precisely::V3->new();
 $vc->rev('2008-04-24T19:52:43Z');
 
 my $in_file          = path( 't', 'V3', 'Rev', 'base.vcf' );
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 
 is $vc->as_string, $expected_content, 'rev(DateTime)';    # 1
 
 $in_file          = path( 't', 'V3', 'Rev', 'date.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->rev('2008-04-24');
 is $vc->as_string, $expected_content, 'rev(Date)';        # 2

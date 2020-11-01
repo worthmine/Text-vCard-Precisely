@@ -15,12 +15,12 @@ $vc->gender('F');
 $vc->prodid('-//ONLINE DIRECTORY//NONSGML Version 1//EN');
 
 my $in_file          = path( 't', 'V4', 'Simple', 'base.vcf' );
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 
 is $vc->as_string, $expected_content, 'simples(Str)';    # 1
 
 $in_file          = path( 't', 'V4', 'Simple', 'utf8.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->fn('太宰治');
 $vc->n('太宰;治');
@@ -30,7 +30,7 @@ my $fail = eval { $vc->sort_string('だざいおさむ') };
 is undef, $fail, "fail to declare 'SORT-STRING' type";              # 3
 
 $in_file          = path( 't', 'V4', 'Simple', 'sort_as.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->n( { content => '太宰;治', sort_as => 'だざいおさむ' } );
 is $vc->as_string, $expected_content, 'simples(N with SORT-AS)';    # 4

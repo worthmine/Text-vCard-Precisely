@@ -20,7 +20,7 @@ $vc->org($org);
 $vc->fn($org);
 
 my $in_file          = path( 't', 'V4', 'Expected', 'member.vcf' );
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 
 is $vc->as_string, $expected_content, 'uid(Data::UUID)';    # 1
 

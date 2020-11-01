@@ -9,7 +9,7 @@ use Text::vCard::Precisely::V3;
 my $vc = Text::vCard::Precisely::V3->new();
 
 my $in_file          = path( 't', 'V3', 'Tel', 'base.vcf' );
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 
 $vc->tel('0120-000-000');
 is $vc->as_string(), $expected_content, 'tel(Str)';    # 1
@@ -18,7 +18,7 @@ $vc->tel( { content => '0120-000-000' } );
 is $vc->as_string(), $expected_content, 'tel(HashRef)';    # 2
 
 $in_file          = path( 't', 'V3', 'Tel', 'maltiple.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->tel(
     [   { types => 'home', content => '0120-000-000' },
@@ -28,7 +28,7 @@ $vc->tel(
 is $vc->as_string(), $expected_content, 'tel(ArrayRef of HashRef)';    # 3
 
 $in_file          = path( 't', 'V3', 'Tel', 'multiTypes.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->tel( { types => [qw(cell voice)], content => '0120-000-000', preferred => 1 } );
 

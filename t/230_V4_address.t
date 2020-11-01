@@ -8,7 +8,7 @@ use Text::vCard::Precisely::V4;
 my $vc = Text::vCard::Precisely::V4->new();
 
 my $in_file          = path( 't', 'V4', 'Address', 'base.vcf' );
-my $expected_content = $in_file->slurp;
+my $expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   street    => 'street',
@@ -21,7 +21,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef)';    # 1
 
 $in_file          = path( 't', 'V4', 'Address', 'maltiple.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     [   {   street    => 'street',
@@ -41,7 +41,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(ArrayRef of HashRef)';    # 2
 
 $in_file          = path( 't', 'V4', 'Address', 'utf8.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   types     => [qw(home work)],
@@ -55,7 +55,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef with utf8)';    # 3
 
 $in_file          = path( 't', 'V4', 'Address', 'long_ascii.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   types     => [qw(home work)],
@@ -69,7 +69,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef with long ascii)';    # 4
 
 $in_file          = path( 't', 'V4', 'Address', 'long_utf8.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   types     => [qw(home work)],
@@ -83,7 +83,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef with long utf8)';    # 5
 
 $in_file          = path( 't', 'V4', 'Address', 'label.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   street    => '123 Main Street',
@@ -98,7 +98,7 @@ $vc->adr(
 is $vc->as_string, $expected_content, 'adr(HashRef with label)';    # 6
 
 $in_file          = path( 't', 'V4', 'Address', 'geo.vcf' );
-$expected_content = $in_file->slurp;
+$expected_content = $in_file->slurp_raw;
 
 $vc->adr(
     {   geo       => 'geo:12.3457,78.910',
