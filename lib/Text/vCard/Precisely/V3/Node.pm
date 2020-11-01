@@ -70,7 +70,8 @@ sub as_string {
         ? map { $node =~ /^(?:LABEL|GEO)$/s ? $content : $self->_escape($_) } @$content
         : $node =~ /^(?:LABEL|GEO)$/s ? $content
         :                               $self->_escape($content)
-        );
+        ) . "\x0D\x0A";
+    return $string;
     return $self->fold($string);
 }
 
