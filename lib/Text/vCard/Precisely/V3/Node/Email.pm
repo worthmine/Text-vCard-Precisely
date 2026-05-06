@@ -2,27 +2,32 @@ package Text::vCard::Precisely::V3::Node::Email;
 
 use Carp;
 
-use Moose;
-use Moose::Util::TypeConstraints;
-use MooseX::Types::Email qw/EmailAddress/;
+use Moo;
+use Type::Utils qw(declare coerce enum from via as where message);
+use Types::Standard qw(Str Bool ArrayRef);
+use Email::Valid;
 
 extends 'Text::vCard::Precisely::V3::Node';
 
-has name    => ( is => 'ro', default => 'EMAIL', isa => 'Str' );
-has content => ( is => 'ro', default => '',      isa => EmailAddress );
+my $EmailAddress = declare 'EmailAddress', as Str,
+    where { Email::Valid->address($_) },
+    message {"The email address you provided, $_, was not valid"};
 
-has preferred => ( is => 'rw', default => 0, isa => 'Bool' );
+has name    => ( is => 'ro', default => 'EMAIL', isa => Str );
+has content => ( is => 'ro', default => '',      isa => $EmailAddress );
 
-subtype 'EmailType' => as 'Str' => where {
+has preferred => ( is => 'rw', default => 0, isa => Bool );
+
+my $EmailType = declare 'EmailType', as Str, where {
     m/^(?:work|home)$/is or    # common
         m/^(?:contact|acquaintance|friend|met|co-worker|colleague|co-resident|neighbor|child|parent|sibling|spouse|kin|muse|crush|date|sweetheart|me|agent|emergency)$/is # Are those correct?
-} => message {"The EmailType you provided, $_, was not supported in 'EmailTypes'"};
+}, message {"The EmailType you provided, $_, was not supported in 'EmailTypes'"};
 
-subtype 'EmailTypes' => as 'ArrayRef[EmailType]';
-coerce 'EmailTypes'  => from 'Str' => via { [$_] };
-has types            => ( is => 'rw', isa => 'EmailTypes', default => sub { [] }, coerce => 1 );
+my $EmailTypes = declare 'EmailTypes', as ArrayRef[$EmailType];
+coerce $EmailTypes, from Str, via { [$_] };
+has types => ( is => 'rw', isa => $EmailTypes, default => sub { [] }, coerce => 1 );
 
-override 'as_string' => sub {
+sub as_string {
     my ($self) = @_;
     my @lines = $self->name() || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID() if $self->can('altID') and $self->altID();
@@ -35,9 +40,8 @@ override 'as_string' => sub {
 
     my $string = join( ';', @lines ) . ':' . $self->content();
     return $self->fold( $string, -force => 1 );
-};
+}
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 1;

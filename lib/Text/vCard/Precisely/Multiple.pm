@@ -2,8 +2,10 @@ package Text::vCard::Precisely::Multiple;
 
 our $VERSION = '0.28';
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use MooX::HandlesVia;
+use Type::Utils qw(declare enum as);
+use Types::Standard qw(InstanceOf ArrayRef);
 
 use Carp;
 use Text::vCard::Precisely;
@@ -11,17 +13,17 @@ use Text::vFile::asData;
 my $vf = Text::vFile::asData->new();
 use Path::Tiny;
 
-enum 'Version' => [qw( 3.0 4.0 )];
-has version    => ( is => 'ro', isa => 'Version', default => '3.0', required => 1 );
+my $Version = enum 'Version', [qw( 3.0 4.0 )];
+has version    => ( is => 'ro', isa => $Version, default => '3.0', required => 1 );
 
-subtype 'vCards' => as 'ArrayRef[Text::vCard::Precisely::V3]';
-has options      => (
-    traits  => ['Array'],
-    is      => 'ro',
-    isa     => 'vCards',
-    default => sub { [] },
-    handles => {
-        all_options   => 'elements',
+my $vCards = declare 'vCards', as ArrayRef[InstanceOf['Text::vCard::Precisely::V3']];
+has options => (
+    handles_via => 'Array',
+    is          => 'ro',
+    isa         => $vCards,
+    default     => sub { [] },
+    handles     => {
+        all_options   => 'all',
         add_option    => 'push',
         clear_options => 'clear',
 
@@ -44,8 +46,7 @@ sub push {    # don't be called yet
     croak "wrong version is set" if grep { $_->version() ne $self->version() } @_;
 }
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 sub load_arrayref {
     my $self = shift;

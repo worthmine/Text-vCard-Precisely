@@ -1,17 +1,18 @@
 package Text::vCard::Precisely::V3::Node::Address;
 
 use Carp;
-use Moose;
+use Moo;
+use Types::Standard qw(Str);
 
 extends 'Text::vCard::Precisely::V3::Node';
 
-has name    => ( is => 'ro', default => 'ADR', isa => 'Str' );
-has content => ( is => 'ro', default => '',    isa => 'Str' );
+has name    => ( is => 'ro', default => 'ADR', isa => Str );
+has content => ( is => 'ro', default => '',    isa => Str );
 
 our @order = qw( pobox extended street city region post_code country );
-has \@order => ( is => 'rw', isa => 'Str' );
+has \@order => ( is => 'rw', isa => Str );
 
-override 'as_string' => sub {
+sub as_string {
     my ($self) = @_;
     my @lines = $self->name() || croak "Empty name";
     push @lines, 'TYPE=' . join( ',', map {uc} @{ $self->types() } )
@@ -21,9 +22,8 @@ override 'as_string' => sub {
 
     my $string = join( ';', @lines ) . ':' . join ';', map { $self->_escape( $self->$_ ) } @order;
     return $self->fold($string);
-};
+}
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 1;

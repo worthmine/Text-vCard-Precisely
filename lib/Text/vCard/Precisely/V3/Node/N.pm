@@ -1,33 +1,34 @@
 package Text::vCard::Precisely::V3::Node::N;
 
 use Carp;
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use Type::Utils qw(declare coerce from via as where);
+use Types::Standard qw(Str Maybe HashRef ArrayRef);
 
 extends 'Text::vCard::Precisely::V3::Node';
 
 my @order = qw( family given additional prefixes suffixes );
 
-has name    => ( is => 'ro', default => 'N',         isa     => 'Str' );
-has \@order => ( is => 'rw', isa     => 'Str|Undef', default => undef );
+has name    => ( is => 'ro', default => 'N',   isa => Str );
+has \@order => ( is => 'rw', isa => Maybe[Str], default => undef );
 
-subtype 'Values' => as 'HashRef[Maybe[Str]]';
-coerce 'Values', from 'ArrayRef[Maybe[Str]]', via {
+my $Values = declare 'Values', as HashRef[Maybe[Str]];
+coerce $Values, from ArrayRef[Maybe[Str]], via {
     my @values = @$_;
     $values[4] ||= '';
     my $hash = {};
     map { $hash->{ $order[$_] } = $values[$_] } 0 .. 4;
     return $hash;
-}, from 'Str', via {
+}, from Str, via {
     my @values = split( /(?<!\\);/, $_ );
     $values[4] ||= '';
     my $hash = {};
     map { $hash->{ $order[$_] } = $values[$_] } 0 .. 4;
     return $hash;
 };
-has content => ( is => 'rw', isa => 'Values', coerce => 1 );
+has content => ( is => 'rw', isa => $Values, coerce => 1 );
 
-override 'as_string' => sub {
+sub as_string {
     my ($self) = @_;
     my @lines = $self->name() || croak "Empty name";
     push @lines, 'LANGUAGE=' . $self->language() if $self->language();
@@ -37,10 +38,9 @@ override 'as_string' => sub {
 
     my $string = join( ';', @lines ) . ':' . join( ';', @values );
     return $self->fold( $string, -force => 1 );
-};
+}
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 #Alias
 sub family_name {
