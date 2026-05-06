@@ -4,9 +4,9 @@ our $VERSION = '0.28';
 
 use overload( '""' => \&as_string );
 
-use Moose;
-use Moose::Util::TypeConstraints;
-use MooseX::Types::DateTime qw(TimeZone);
+use Moo;
+use Type::Utils qw(declare coerce from via as where message);
+use Types::Standard qw(Str Int ArrayRef HashRef Maybe Ref InstanceOf Object);
 
 extends 'Text::vCard::Precisely::V3';
 use Carp;
@@ -60,7 +60,7 @@ use Text::vCard::Precisely::V4::Node::Related;
 use Text::vCard::Precisely::V4::Node::Member;
 use Text::vCard::Precisely::V4::Node::Image;
 
-has version => ( is => 'ro', isa => 'Str', default => '4.0' );
+has version => ( is => 'ro', isa => Str, default => '4.0' );
 
 =head1 Constructors
 
@@ -78,9 +78,9 @@ SAME as 3.0
 
 =cut
 
-override '_parse_param' => sub {
-    my ( $self, $content ) = @_;
-    my $ref = super();
+around '_parse_param' => sub {
+    my ( $orig, $self, $content ) = @_;
+    my $ref = $self->$orig($content);
     $ref->{'media_type'} = $content->{'param'}{'MEDIATYPE'} if $content->{'param'}{'MEDIATYPE'};
     return $ref;
 };
@@ -144,7 +144,7 @@ The format in as_string() is B<different from 3.0>, but the interface is SAME
 
 =head1 COMPLEX GETTERS/SETTERS
 
-They are based on Moose with coercion
+They are based on Moo with coercion
 
 So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str],
 single HashRef or single Str
@@ -157,17 +157,17 @@ The format is SAME as 3.0
 
 =cut
 
-subtype 'v4N' => as 'Text::vCard::Precisely::V4::Node::N';
-coerce 'v4N', from 'HashRef[Maybe[Ref]|Maybe[Str]]', via {
+my $v4N = declare 'v4N', as InstanceOf['Text::vCard::Precisely::V4::Node::N'];
+coerce $v4N, from HashRef[Maybe[Ref] | Maybe[Str]], via {
     my %param;
     while ( my ( $key, $value ) = each %$_ ) {
         $param{$key} = $value if $value;
     }
     return Text::vCard::Precisely::V4::Node::N->new( \%param );
 },
-    from 'HashRef[Maybe[Str]]',
+    from HashRef[Maybe[Str]],
     via { Text::vCard::Precisely::V4::Node::N->new( { content => $_ } ) },
-    from 'ArrayRef[Maybe[Str]]', via {
+    from ArrayRef[Maybe[Str]], via {
     Text::vCard::Precisely::V4::Node::N->new(
         {   content => {
                 family     => $_->[0] || '',
@@ -179,9 +179,9 @@ coerce 'v4N', from 'HashRef[Maybe[Ref]|Maybe[Str]]', via {
         }
     )
     },
-    from 'Str',
+    from Str,
     via { Text::vCard::Precisely::V4::Node::N->new( { content => [ split /(?<!\\);/, $_ ] } ) };
-has n => ( is => 'rw', isa => 'v4N', coerce => 1 );
+has n => ( is => 'rw', isa => $v4N, coerce => 1 );
 
 =head2 tel()
 
@@ -189,21 +189,21 @@ The format in as_string() is B<different from 3.0>, but the interface is SAME
  
 =cut
 
-subtype 'v4Tels' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Tel]';
-coerce 'v4Tels',
-    from 'Str',
+my $v4Tels = declare 'v4Tels', as ArrayRef[InstanceOf['Text::vCard::Precisely::V4::Node::Tel']];
+coerce $v4Tels,
+    from Str,
     via { [ Text::vCard::Precisely::V4::Node::Tel->new( { content => $_ } ) ] },
-    from 'HashRef', via {
+    from HashRef, via {
     my $types = ref( $_->{'types'} ) eq 'ARRAY' ? $_->{'types'} : [ $_->{'types'} ];
     [ Text::vCard::Precisely::V4::Node::Tel->new( { %$_, types => $types } ) ]
-    }, from 'ArrayRef[HashRef]', via {
+    }, from ArrayRef[HashRef], via {
     [   map {
             my $types = ref( $_->{'types'} ) eq 'ARRAY' ? $_->{'types'} : [ $_->{'types'} ];
             Text::vCard::Precisely::V4::Node::Tel->new( { %$_, types => $types } )
         } @$_
     ]
     };
-has tel => ( is => 'rw', isa => 'v4Tels', coerce => 1 );
+has tel => ( is => 'rw', isa => $v4Tels, coerce => 1 );
 
 =head2 adr(), address()
 
@@ -213,13 +213,14 @@ LABEL param and GEO param are now available
 
 =cut
 
-subtype 'v4Address' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Address]';
-coerce 'v4Address',
-    from 'HashRef',
-    via { [ Text::vCard::Precisely::V4::Node::Address->new($_) ] }, from 'ArrayRef[HashRef]', via {
+my $v4Address = declare 'v4Address',
+    as ArrayRef[InstanceOf['Text::vCard::Precisely::V4::Node::Address']];
+coerce $v4Address,
+    from HashRef,
+    via { [ Text::vCard::Precisely::V4::Node::Address->new($_) ] }, from ArrayRef[HashRef], via {
     [ map { Text::vCard::Precisely::V4::Node::Address->new($_) } @$_ ]
     };
-has adr => ( is => 'rw', isa => 'v4Address', coerce => 1 );
+has adr => ( is => 'rw', isa => $v4Address, coerce => 1 );
 
 =head2 email()
 
@@ -235,8 +236,8 @@ The format is SAME as 3.0
 
 =cut
 
-subtype 'v4Photos' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Image]';
-coerce 'v4Photos', from 'HashRef', via {
+my $v4Photos = declare 'v4Photos', as ArrayRef[InstanceOf['Text::vCard::Precisely::V4::Node::Image']];
+coerce $v4Photos, from HashRef, via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V4::Node::Image->new(
@@ -246,7 +247,7 @@ coerce 'v4Photos', from 'HashRef', via {
             }
         )
     ]
-}, from 'ArrayRef[HashRef]', via {
+}, from ArrayRef[HashRef], via {
     [   map {
             if ( ref $_->{types} eq 'ARRAY' ) {
                 ( $_->{media_type} ) = @{ $_->{types} };
@@ -255,19 +256,19 @@ coerce 'v4Photos', from 'HashRef', via {
             Text::vCard::Precisely::V4::Node::Image->new($_)
         } @$_
     ]
-}, from 'Str',    # when parse BASE64 encoded strings
+}, from Str,    # when parse BASE64 encoded strings
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [ Text::vCard::Precisely::V4::Node::Image->new( { name => $name, content => $_, } ) ]
-    }, from 'ArrayRef[Str]',    # when parse BASE64 encoded strings
+    }, from ArrayRef[Str],    # when parse BASE64 encoded strings
     via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         map { Text::vCard::Precisely::V4::Node::Image->new( { name => $name, content => $_, } ) }
             @$_ ]
-    }, from 'Object',           # when URI.pm is used
+    }, from Object,           # when URI.pm is used
     via { [ Text::vCard::Precisely::V4::Node::Image->new( { content => $_->as_string() } ) ] };
-has [qw| photo logo |] => ( is => 'rw', isa => 'v4Photos', coerce => 1 );
+has [qw| photo logo |] => ( is => 'rw', isa => $v4Photos, coerce => 1 );
 
 =head2 note()
 
@@ -305,11 +306,11 @@ The format is SAME as 3.0
 
 =cut
 
-subtype 'v4Nodes' => as 'ArrayRef[Text::vCard::Precisely::V4::Node]';
-coerce 'v4Nodes', from 'Str', via {
+my $v4Nodes = declare 'v4Nodes', as ArrayRef[InstanceOf['Text::vCard::Precisely::V4::Node']];
+coerce $v4Nodes, from Str, via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [ Text::vCard::Precisely::V4::Node->new( { name => $name, content => $_ } ) ]
-}, from 'HashRef', via {
+}, from HashRef, via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         Text::vCard::Precisely::V4::Node->new(
@@ -320,7 +321,7 @@ coerce 'v4Nodes', from 'Str', via {
             }
         )
     ]
-}, from 'ArrayRef[Str]', via {
+}, from ArrayRef[Str], via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         map {
@@ -328,7 +329,7 @@ coerce 'v4Nodes', from 'Str', via {
                 { name => $name, content => $_ || croak "No value in ArrayRef[Str]!", } )
         } @$_
     ]
-}, from 'ArrayRef[HashRef]', via {
+}, from ArrayRef[HashRef], via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
         map {
@@ -343,7 +344,7 @@ coerce 'v4Nodes', from 'Str', via {
     ]
 };
 has [qw|note org title role fn lang impp xml geo key|] =>
-    ( is => 'rw', isa => 'v4Nodes', coerce => 1 );
+    ( is => 'rw', isa => $v4Nodes, coerce => 1 );
 
 =head2 source(), sound()
 
@@ -357,15 +358,16 @@ They are the B<new method from 4.0>
 
 =cut
 
-has [qw|source sound fburl caladruri caluri|] => ( is => 'rw', isa => 'URLs', coerce => 1 );
+has [qw|source sound fburl caladruri caluri|] =>
+    ( is => 'rw', isa => $Text::vCard::Precisely::V3::URLs, coerce => 1 );
 
-subtype 'Related' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Related]';
-coerce 'Related',
-    from 'HashRef',
-    via { [ Text::vCard::Precisely::V4::Node::Related->new($_) ] }, from 'ArrayRef[HashRef]', via {
+my $Related = declare 'Related', as ArrayRef[InstanceOf['Text::vCard::Precisely::V4::Node::Related']];
+coerce $Related,
+    from HashRef,
+    via { [ Text::vCard::Precisely::V4::Node::Related->new($_) ] }, from ArrayRef[HashRef], via {
     [ map { Text::vCard::Precisely::V4::Node::Related->new($_) } @$_ ]
     };
-has related => ( is => 'rw', isa => 'Related', coerce => 1 );
+has related => ( is => 'rw', isa => $Related, coerce => 1 );
 
 =head2 kind()
 
@@ -375,21 +377,22 @@ It's the B<new method from 4.0>
  
 =cut
 
-subtype 'KIND' => as 'Str' =>
-    where {m/^(?:individual|group|org|location|[a-z0-9\-]+|X-[a-z0-9\-]+)$/is}
-=> message {"The KIND you provided, $_, was not supported"};
-has kind => ( is => 'rw', isa => 'KIND' );
+my $KIND = declare 'KIND', as Str,
+    where {m/^(?:individual|group|org|location|[a-z0-9\-]+|X-[a-z0-9\-]+)$/is},
+    message {"The KIND you provided, $_, was not supported"};
+has kind => ( is => 'rw', isa => $KIND );
 
-subtype 'v4TimeStamp' => as 'Str' => where {m/^\d{8}T\d{6}(?:Z(?:-\d{2}(?:\d{2})?)?)?$/is}
-=> message {"The TimeStamp you provided, $_, was not correct"};
-coerce 'v4TimeStamp', from 'Str', via {
+my $v4TimeStamp = declare 'v4TimeStamp', as Str,
+    where {m/^\d{8}T\d{6}(?:Z(?:-\d{2}(?:\d{2})?)?)?$/is},
+    message {"The TimeStamp you provided, $_, was not correct"};
+coerce $v4TimeStamp, from Str, via {
     m/^(\d{4})-?(\d{2})-?(\d{2})(?:T(\d{2}):?(\d{2}):?(\d{2})Z)?$/is;
     return sprintf '%4d%02d%02dT%02d%02d%02dZ', $1, $2, $3, $4, $5, $6
-}, from 'Int', via {
+}, from Int, via {
     my ( $s, $m, $h, $d, $M, $y ) = gmtime($_);
     return sprintf '%4d%02d%02dT%02d%02d%02dZ', $y + 1900, $M + 1, $d, $h, $m, $s
-}, from 'ArrayRef[HashRef]', via { $_->[0]{'content'} };
-has rev => ( is => 'rw', isa => 'v4TimeStamp', coerce => 1 );
+}, from ArrayRef[HashRef], via { $_->[0]{'content'} };
+has rev => ( is => 'rw', isa => $v4TimeStamp, coerce => 1 );
 
 =head2 member(), clientpidmap()
 
@@ -399,20 +402,21 @@ It's the B<new method from 4.0>
 
 =cut
 
-subtype 'MEMBER' => as 'ArrayRef[Text::vCard::Precisely::V4::Node::Member]';
-coerce 'MEMBER',
-    from 'UID',
-    via { [ Text::vCard::Precisely::V4::Node::Member->new($_) ] }, from 'ArrayRef[UID]', via {
+my $UID = $Text::vCard::Precisely::V3::UID;
+my $MEMBER = declare 'MEMBER', as ArrayRef[InstanceOf['Text::vCard::Precisely::V4::Node::Member']];
+coerce $MEMBER,
+    from $UID,
+    via { [ Text::vCard::Precisely::V4::Node::Member->new($_) ] }, from ArrayRef[$UID], via {
     [ map { Text::vCard::Precisely::V4::Node::Member->new( { content => $_ } ) } @$_ ]
     };
-has member => ( is => 'rw', isa => 'MEMBER', coerce => 1 );
+has member => ( is => 'rw', isa => $MEMBER, coerce => 1 );
 
-subtype 'CLIENTPIDMAP' => as 'Str' =>
-    where {m/^\d+;urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is}
-=> message {"The CLIENTPIDMAP you provided, $_, was not correct"};
-subtype 'CLIENTPIDMAPs' => as 'ArrayRef[CLIENTPIDMAP]';
-coerce 'CLIENTPIDMAPs', from 'Str', via { [$_] };
-has clientpidmap => ( is => 'rw', isa => 'CLIENTPIDMAPs', coerce => 1 );
+my $CLIENTPIDMAP = declare 'CLIENTPIDMAP', as Str,
+    where {m/^\d+;urn:uuid:[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}$/is},
+    message {"The CLIENTPIDMAP you provided, $_, was not correct"};
+my $CLIENTPIDMAPs = declare 'CLIENTPIDMAPs', as ArrayRef[$CLIENTPIDMAP];
+coerce $CLIENTPIDMAPs, from Str, via { [$_] };
+has clientpidmap => ( is => 'rw', isa => $CLIENTPIDMAPs, coerce => 1 );
 
 =head2 tz(), timezone()
 
@@ -444,10 +448,9 @@ The format is SAME as 3.0
 
 =cut
 
-has [qw|bday anniversary gender prodid|] => ( is => 'rw', isa => 'Str' );
+has [qw|bday anniversary gender prodid|] => ( is => 'rw', isa => Str );
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 =head1 DEPRECATED Methods
 

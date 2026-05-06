@@ -3,12 +3,13 @@ package Text::vCard::Precisely::V4::Node;
 use Carp;
 use Encode qw(decode_utf8 is_utf8);
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use Type::Utils qw(declare enum as where message);
+use Types::Standard qw(Str Num Int Maybe ArrayRef);
 
 extends 'Text::vCard::Precisely::V3::Node';
 
-enum 'Name' => [
+our $Name = enum 'Name', [
     qw( FN ORG TITLE ROLE
         ADR TEL EMAIL PHOTO LOGO URL
         TZ GEO IMPP LANG XML KEY NOTE
@@ -16,28 +17,29 @@ enum 'Name' => [
         RELATED X-SOCIALPROFILE
         )
 ];
-has name => ( is => 'ro', required => 1, isa => 'Name' );
+has name => ( is => 'ro', required => 1, isa => $Name );
 
-subtype 'SortAs' => as 'Str' => where {
+our $SortAs = declare 'SortAs', as Str, where {
     use utf8;
     local $_ = is_utf8($_) ? $_ : decode_utf8($_);
     m|^[\p{ascii}\w\s]+$|s
 }    # Does everything pass?
-=> message {"The SORT-AS you provided, $_, was not supported"};
-has sort_as => ( is => 'rw', isa => 'Maybe[SortAs]' );
+, message {"The SORT-AS you provided, $_, was not supported"};
+has sort_as => ( is => 'rw', isa => Maybe[$SortAs] );
 
-subtype 'PIDNum' => as 'Num' => where {m/^\d(?:.\d)?$/s}
-=> message {"The PID you provided, $_, was not supported"};
-has pid => ( is => 'rw', isa => subtype 'PID' => as 'ArrayRef[PIDNum]' );
+our $PIDNum = declare 'PIDNum', as Num, where {m/^\d(?:\.\d)?$/s},
+    message {"The PID you provided, $_, was not supported"};
+our $PID = declare 'PID', as ArrayRef[$PIDNum];
+has pid => ( is => 'rw', isa => $PID );
 
-subtype 'ALTID' => as 'Int' => where { $_ > 0 and $_ <= 100 }
-=> message {"The number you provided, $_, was not supported in 'ALTID'"};
-has altID => ( is => 'rw', isa => 'ALTID' );
+our $ALTID = declare 'ALTID', as Int, where { $_ > 0 and $_ <= 100 },
+    message {"The number you provided, $_, was not supported in 'ALTID'"};
+has altID => ( is => 'rw', isa => $ALTID );
 
-subtype 'MediaType' => as 'Str' =>
-    where {m{^(?:application|audio|example|image|message|model|multipart|text|video)/[\w+\-\.]+$}is}
-=> message {"The MediaType you provided, $_, was not supported"};
-has media_type => ( is => 'rw', isa => 'MediaType' );
+our $MediaType = declare 'MediaType', as Str,
+    where {m{^(?:application|audio|example|image|message|model|multipart|text|video)/[\w+\-\.]+$}is},
+    message {"The MediaType you provided, $_, was not supported"};
+has media_type => ( is => 'rw', isa => $MediaType );
 
 sub as_string {
     my ($self) = @_;
@@ -65,7 +67,6 @@ sub as_string {
     return $self->fold($string);
 }
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 1;

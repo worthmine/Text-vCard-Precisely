@@ -5,51 +5,51 @@ use Carp;
 use Encode qw( decode_utf8 is_utf8);
 use Text::LineFold;
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use Type::Utils qw(declare coerce enum from via as where message);
+use Types::Standard qw(Str Int ArrayRef);
 
-enum 'Name' => [
+our $Name = enum 'Name', [
     qw( FN N SORT_STRING ORG TITLE ROLE
         ADR LABEL TEL EMAIL PHOTO LOGO URL SOURCE SOUND
         TZ GEO KEY NOTE
         X-SOCIALPROFILE
         )
 ];
-has name => ( is => 'rw', required => 1, isa => 'Name' );
+has name => ( is => 'rw', required => 1, isa => $Name );
 
-subtype 'Content' => as 'Str' => where {
+our $Content = declare 'Content', as Str, where {
     use utf8;
     local $_ = is_utf8($_) ? $_ : decode_utf8($_);
     m|^[\w\p{ascii}\s]+$|s    # It seems these lines
 }    # Does it need to be more strictly?                       # do NOT work
-=> message {"The value you provided, $_, was not supported"};    # like what I've thought
-has content => ( is => 'rw', required => 1, isa => 'Content' );
+, message {"The value you provided, $_, was not supported"};    # like what I've thought
+has content => ( is => 'rw', required => 1, isa => $Content );
 
-subtype 'Preffered' => as 'Int' => where { $_ > 0 and $_ <= 100 }
-=> message {"The number you provided, $_, was not supported in 'Preffered'"};
-has pref => ( is => 'rw', isa => 'Preffered' );
+our $Preffered = declare 'Preffered', as Int, where { $_ > 0 and $_ <= 100 },
+    message {"The number you provided, $_, was not supported in 'Preffered'"};
+has pref => ( is => 'rw', isa => $Preffered );
 
-subtype 'Type' => as 'Str' => where {
+our $Type = declare 'Type', as Str, where {
     m/^(?:work|home|PGP)$/is or                                  #common
         m|^(?:[a-zA-z0-9\-]+/X-[a-zA-z0-9\-]+)$|is;              # does everything pass?
-} => message {"The text you provided, $_, was not supported in 'Type'"};
+}, message {"The text you provided, $_, was not supported in 'Type'"};
 
-subtype 'Types' => as 'ArrayRef[Type]';
-coerce 'Types'  => from 'Str' => via { [$_] };
-has types       => ( is => 'rw', isa => 'Types', default => sub { [] }, coerce => 1 );
+our $Types = declare 'Types', as ArrayRef[$Type];
+coerce $Types, from Str, via { [$_] };
+has types => ( is => 'rw', isa => $Types, default => sub { [] }, coerce => 1 );
 
-subtype 'Language' => as 'Str' =>
-    where {m|^[a-z]{2}(?:-[a-z]{2})?$|s}                         # does it need something strictly?
-=> message {"The Language you provided, $_, was not supported"};
-has language => ( is => 'rw', isa => 'Language' );
+our $Language = declare 'Language', as Str,
+    where {m|^[a-z]{2}(?:-[a-z]{2})?$|s}    # does it need something strictly?
+    , message {"The Language you provided, $_, was not supported"};
+has language => ( is => 'rw', isa => $Language );
 
 sub charset {    # DEPRECATED in vCard 3.0
     my $self = shift;
     croak "'CHARSET' param is DEPRECATED! vCard3.0 will accept just ONLY UTF-8";
 }
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 sub as_string {
     my ($self) = @_;

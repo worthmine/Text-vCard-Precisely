@@ -2,13 +2,13 @@ package Text::vCard::Precisely;
 
 our $VERSION = '0.28';
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use Type::Utils qw(enum);
 
 extends 'Text::vCard::Precisely::V3';
 
-enum 'Version' => [qw( 3.0 4.0 )];
-has version    => ( is => 'ro', isa => 'Version', default => '3.0', required => 1 );
+my $Version = enum 'Version', [qw( 3.0 4.0 )];
+has version    => ( is => 'ro', isa => $Version, default => '3.0', required => 1 );
 
 sub BUILD {
     my $self = shift;
@@ -19,8 +19,7 @@ sub BUILD {
     return Text::vCard::Precisely::V4->new(@_);
 }
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 1;
 
@@ -188,7 +187,7 @@ B<This method is DEPRECATED in vCard4.0> Use C<SORT-AS> param instead of it.
 
 =head1 COMPLEX GETTERS/SETTERS
 
-They are based on Moose with coercion.
+They are based on Moo with coercion.
 So these methods accept not only ArrayRef[HashRef] but also ArrayRef[Str],
 single HashRef or single Str.
 

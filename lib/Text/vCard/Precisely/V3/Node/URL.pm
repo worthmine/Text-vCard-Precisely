@@ -3,19 +3,21 @@ package Text::vCard::Precisely::V3::Node::URL;
 use Carp;
 use URI;
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use Type::Utils qw(declare coerce from via as);
+use Types::Standard qw(Str);
 
 extends 'Text::vCard::Precisely::V3::Node';
 
-has name  => ( is => 'ro', default => 'URL',   isa    => 'Str' );
-has types => ( is => 'rw', isa     => 'Types', coerce => 1 );
+has name  => ( is => 'ro', default => 'URL', isa => Str );
+has types => ( is => 'rw', isa => $Text::vCard::Precisely::V3::Node::Types,
+    coerce => 1 );
 
-subtype 'URL' => as 'Str';
-coerce 'URL'  => from 'Str' => via { [ URI->new($_)->as_string() ] };
-has content   => ( is => 'ro', default => '', isa => 'URL', coerce => 1 );
+my $URL_content = declare 'URL_content', as Str;
+coerce $URL_content, from Str, via { URI->new($_)->as_string() };
+has content => ( is => 'ro', default => '', isa => $URL_content, coerce => 1 );
 
-override 'as_string' => sub {
+sub as_string {
     my ($self) = @_;
     my @lines = $self->name() || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID() if $self->can('altID') and $self->altID();
@@ -25,9 +27,8 @@ override 'as_string' => sub {
 
     my $string = join( ';', @lines ) . ':' . $self->content();
     return $self->fold( $string, -force => 1 );
-};
+}
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 1;

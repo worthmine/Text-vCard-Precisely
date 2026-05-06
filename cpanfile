@@ -1,9 +1,10 @@
 requires 'perl', 'v5.12.5';
 
-requires 'Moose',                        '2.2013';
-requires 'Moose::Util::TypeConstraints', '2.2013';
-requires 'MooseX::Types::DateTime',      '0.13';
-requires 'MooseX::Types::Email',         '0.008';
+requires 'Moo',              '2.003';
+requires 'Type::Tiny',       '1.004';
+requires 'MooX::HandlesVia', '0.001009';
+requires 'Email::Valid',     '1.202';
+requires 'DateTime::TimeZone', '2.19';
 
 requires 'Data::UUID',          '1.226';
 requires 'URI',                 '1.76';

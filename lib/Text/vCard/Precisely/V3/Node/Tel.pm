@@ -2,22 +2,23 @@ package Text::vCard::Precisely::V3::Node::Tel;
 
 use Carp;
 
-use Moose;
-use Moose::Util::TypeConstraints;
+use Moo;
+use Type::Utils qw(declare as where message);
+use Types::Standard qw(Str Bool ArrayRef Maybe);
 
 extends 'Text::vCard::Precisely::V3::Node';
 
-has name      => ( is => 'ro', default => 'TEL', isa => 'Str' );
-has content   => ( is => 'rw', default => '',    isa => 'Str' );
-has preferred => ( is => 'rw', default => 0,     isa => 'Bool' );
+has name      => ( is => 'ro', default => 'TEL', isa => Str );
+has content   => ( is => 'rw', default => '',    isa => Str );
+has preferred => ( is => 'rw', default => 0,     isa => Bool );
 
-subtype 'TelType' => as 'Str' => where {
+my $TelType = declare 'TelType', as Str, where {
     m/^(?:work|home|pref)$/is ||                                #common
         m/^(?:text|voice|fax|cell|video|pager|textphone)$/is    # for tel
-} => message {"The text you provided, $_, was not supported in 'TelType'"};
-has types => ( is => 'rw', isa => 'ArrayRef[Maybe[TelType]]', default => sub { [] } );
+}, message {"The text you provided, $_, was not supported in 'TelType'"};
+has types => ( is => 'rw', isa => ArrayRef[Maybe[$TelType]], default => sub { [] } );
 
-override 'as_string' => sub {
+sub as_string {
     my ($self) = @_;
     my @lines = $self->name() || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID() if $self->can('altID') and $self->altID();
@@ -30,9 +31,8 @@ override 'as_string' => sub {
 
     my $string = join( ';', @lines ) . ':' . $self->content();
     return $self->fold( $string, -force => 1 );
-};
+}
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 1;

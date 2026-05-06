@@ -1,20 +1,21 @@
 package Text::vCard::Precisely::V4::Node::Address;
 
 use Carp;
-use Moose;
+use Moo;
+use Types::Standard qw(Str);
 
 extends qw|Text::vCard::Precisely::V3::Node::Address Text::vCard::Precisely::V4::Node|;
 
-has name    => ( is => 'ro', default => 'ADR', isa => 'Str' );
-has content => ( is => 'ro', default => '',    isa => 'Str' );
+has name    => ( is => 'ro', default => 'ADR', isa => Str );
+has content => ( is => 'ro', default => '',    isa => Str );
 
-has label => ( is => 'rw', isa => 'Str' );
-has geo   => ( is => 'rw', isa => 'Str' );
-has tz    => ( is => 'rw', isa => 'Str' );
+has label => ( is => 'rw', isa => Str );
+has geo   => ( is => 'rw', isa => Str );
+has tz    => ( is => 'rw', isa => Str );
 
 my @order = @Text::vCard::Precisely::V3::Node::Address::order;
 
-override 'as_string' => sub {
+sub as_string {
     my ($self) = @_;
     my @lines = $self->name() || croak "Empty name";
     push @lines, 'ALTID=' . $self->altID() if $self->can('altID') and $self->altID();
@@ -29,9 +30,8 @@ override 'as_string' => sub {
 
     my $string = join( ';', @lines ) . ':' . join ';', map { $self->_escape( $self->$_ ) } @order;
     return $self->fold($string);
-};
+}
 
-__PACKAGE__->meta->make_immutable();
-no Moose;
+no Moo;
 
 1;
