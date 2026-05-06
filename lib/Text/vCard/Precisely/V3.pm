@@ -658,7 +658,7 @@ coerce $Nodes, from Str, via {
     ]
 }, from ArrayRef[Str], via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
-    return \map { Text::vCard::Precisely::V3::Node->new( { name => $name, content => $_ } ) } @$_
+    return [ map { Text::vCard::Precisely::V3::Node->new( { name => $name, content => $_ } ) } @$_ ]
 }, from ArrayRef[HashRef], via {
     my $name = uc [ split /::/, ( caller(2) )[3] ]->[-1];
     return [
