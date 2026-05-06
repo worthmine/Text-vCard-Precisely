@@ -27,7 +27,7 @@ our $SortAs = declare 'SortAs', as Str, where {
 , message {"The SORT-AS you provided, $_, was not supported"};
 has sort_as => ( is => 'rw', isa => Maybe[$SortAs] );
 
-our $PIDNum = declare 'PIDNum', as Num, where {m/^\d(?:.\d)?$/s},
+our $PIDNum = declare 'PIDNum', as Num, where {m/^\d(?:\.\d)?$/s},
     message {"The PID you provided, $_, was not supported"};
 our $PID = declare 'PID', as ArrayRef[$PIDNum];
 has pid => ( is => 'rw', isa => $PID );
